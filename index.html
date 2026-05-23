@@ -1232,12 +1232,44 @@ ul { list-style: none; }
 <script>
 /* ============================================
    DATA HELPERS — Read from LocalStorage
+   Also supports ?data= URL param and bro-data.json
    ============================================ */
+
+(function initDataSource() {
+  var urlParams = new URLSearchParams(window.location.search);
+  var dataParam = urlParams.get('data');
+  
+  if (dataParam) {
+    // URL parameter mode: parse inline data, do NOT use localStorage
+    try {
+      var data = JSON.parse(decodeURIComponent(dataParam));
+      window.__BRO_INLINE_DATA__ = data;
+      // Still populate localStorage so existing code paths work, but mark source
+      window.__BRO_DATA_SOURCE__ = 'url_param';
+      if (data.works) localStorage.setItem('bro_works', JSON.stringify(data.works));
+      if (data.content) localStorage.setItem('bro_content', JSON.stringify(data.content));
+      if (data.inquiries) localStorage.setItem('bro_inquiries', JSON.stringify(data.inquiries));
+      if (data.settings) localStorage.setItem('bro_settings', JSON.stringify(data.settings));
+    } catch(e) { console.warn('Failed to parse ?data= param:', e); }
+  }
+  // If no URL param, broGetData will use localStorage (existing behavior)
+})();
 function broGetData(key, def) {
+  // If URL ?data= param was used, inline data takes priority (read-only from URL)
+  if (window.__BRO_INLINE_DATA__) {
+    var map = {'bro_works':'works','bro_content':'content','bro_inquiries':'inquiries','bro_settings':'settings'};
+    var mapped = map[key];
+    if (mapped !== undefined && window.__BRO_INLINE_DATA__[mapped] !== undefined) {
+      return JSON.parse(JSON.stringify(window.__BRO_INLINE_DATA__[mapped]));
+    }
+  }
+  // Fallback to localStorage
   try { var d = localStorage.getItem(key); return d ? JSON.parse(d) : def; }
   catch(e) { return def; }
 }
 function broSetData(key, val) {
+  // If data came from URL param, still allow writes for inquiries (form submits)
+  // but works/content/settings writes persist to localStorage for this session only
   try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {}
 }
 
@@ -1635,6 +1667,37 @@ document.addEventListener('click', function(e) {
   stats.dailyViews = stats.dailyViews || {};
   stats.dailyViews[today] = (stats.dailyViews[today] || 0) + 1;
   broSetData('bro_stats', stats);
+})();
+
+/* ============================================
+   TRY LOAD bro-data.json (deployed data) IF LOCALSTORAGE IS EMPTY
+   ============================================ */
+(function tryLoadDeployData() {
+  var existingWorks = broGetData('bro_works', []);
+  if (existingWorks.length > 0) return; // Already have data, skip fetch
+  
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'bro-data.json', true);
+  xhr.timeout = 3000;
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      try {
+        var data = JSON.parse(xhr.responseText);
+        window.__BRO_DEPLOY_DATA__ = data;
+        if (data.works) localStorage.setItem('bro_works', JSON.stringify(data.works));
+        if (data.content) localStorage.setItem('bro_content', JSON.stringify(data.content));
+        if (data.inquiries) localStorage.setItem('bro_inquiries', JSON.stringify(data.inquiries));
+        if (data.settings) localStorage.setItem('bro_settings', JSON.stringify(data.settings));
+        // Re-render with loaded data
+        broContent = broGetData('bro_content', {});
+        mergeContent(i18n, broContent);
+        renderAllWorks();
+        console.log('BRO data loaded from bro-data.json');
+      } catch(e) { console.warn('Failed to parse bro-data.json:', e); }
+    }
+  };
+  xhr.onerror = function() {}; // Silently fail if file doesn't exist
+  xhr.send();
 })();
 
 /* ============================================

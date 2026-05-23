@@ -1,0 +1,71 @@
+{
+  "works": [
+    {
+      "name_zh": "Z-Tower Storm",
+      "name_en": "Z-Tower Storm",
+      "category": "custom",
+      "badge": "signature",
+      "desc_zh": "金属风暴主题，模组化弯管手工打造",
+      "desc_en": "Metal storm theme, handcrafted modular tubing",
+      "spec_case": "Z-Tower 定制",
+      "spec_cpu": "Intel i9-14900K",
+      "spec_gpu": "RTX 4090",
+      "spec_cooling": "双水路 360+240 冷排",
+      "temp_cpu": "78",
+      "temp_gpu": "52",
+      "image": "",
+      "clicks": 320
+    },
+    {
+      "name_zh": "WINBOT球 分体水冷",
+      "name_en": "WINBOT Sphere Custom Loop",
+      "category": "tower",
+      "badge": "iconic",
+      "desc_zh": "球形机箱分体水冷方案，RGB 流光溢彩",
+      "desc_en": "Sphere chassis liquid cooling, RGB spectrum flow",
+      "spec_case": "WINBOT 球体机箱",
+      "spec_cpu": "AMD Ryzen 7 7800X3D",
+      "spec_gpu": "RTX 4080 Super",
+      "spec_cooling": "单水路 240 冷排",
+      "temp_cpu": "72",
+      "temp_gpu": "55",
+      "image": "",
+      "clicks": 245
+    }
+  ],
+  "content": {
+    "hero_subtitle_zh": "每一台电脑，都是不可复制的艺术品",
+    "hero_subtitle_en": "Every PC, an irreplicable masterpiece.",
+    "footer_tagline_zh": "每一台电脑，都是不可复制的艺术品",
+    "footer_tagline_en": "Every PC, an irreplicable masterpiece.",
+    "nav_home_zh": "首页",
+    "nav_home_en": "Home",
+    "nav_atelier_zh": "作品馆",
+    "nav_atelier_en": "Atelier",
+    "nav_heritage_zh": "品牌传承",
+    "nav_heritage_en": "Heritage",
+    "nav_commission_zh": "委托定制",
+    "nav_commission_en": "Commission",
+    "nav_care_zh": "售后保养",
+    "nav_care_en": "BRO CARE",
+    "nav_news_zh": "新闻",
+    "nav_news_en": "News"
+  },
+  "inquiries": [
+    {
+      "name": "张先生",
+      "contact": "zhang@example.com / 138xxxx8888",
+      "budget": "2-3万",
+      "message": "想定制一台超级英雄主题的分体水冷主机，预算充足，希望用过年后交付。",
+      "time": "2026-05-18 14:30",
+      "status": "new"
+    }
+  ],
+  "settings": {
+    "email": "bro@bro-cooling.com",
+    "wechat": "BRO_COOLING",
+    "douyin": "@BRO水冷",
+    "bilibili": "BRO_COOLING"
+  },
+  "published_at": "2026-05-23T14:59:36.978416"
+}

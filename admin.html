@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BRO COOLING Admin</title>
+<style>
+:root{--bg:#0a0a0a;--surface:#141414;--border:rgba(255,255,255,0.06);--text:#e0e0e0;--text2:#888;--accent:#00ffff;--accent2:#ff00ff;--accent3:#00ff00;--danger:#ff3344;--warning:#ffaa00;--sidebar-w:220px}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Helvetica Neue','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex}
+a{color:var(--accent)}button{cursor:pointer;font-family:inherit}
+.sidebar{width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.sidebar-logo{padding:24px 20px;border-bottom:1px solid var(--border)}
+.sidebar-logo h1{font-size:16px;letter-spacing:3px;color:var(--accent)}
+.sidebar-logo span{font-size:10px;color:var(--text2);letter-spacing:1px;display:block;margin-top:4px}
+.lang-toggle{display:flex;gap:0;border:1px solid rgba(255,255,255,0.15);border-radius:2px;overflow:hidden;margin-top:12px}
+.lang-toggle button{flex:1;background:none;border:none;color:var(--text2);font-size:10px;letter-spacing:1px;padding:5px 10px;cursor:pointer;transition:all .3s;text-transform:uppercase}
+.lang-toggle button.active{background:rgba(255,255,255,.08);color:var(--accent)}
+.lang-toggle button:hover:not(.active){color:var(--text)}
+.sidebar-nav{flex:1;padding:12px 0;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:10px;padding:12px 20px;color:var(--text2);font-size:12px;letter-spacing:1px;transition:all .2s;border:none;background:none;width:100%;text-align:left;border-left:2px solid transparent}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+.nav-item.active{color:var(--accent);background:rgba(0,255,255,.04);border-left-color:var(--accent)}
+.nav-icon{font-size:16px;width:20px;text-align:center}
+.nav-badge{font-size:10px;background:var(--accent);color:#000;padding:1px 6px;border-radius:10px;margin-left:auto}
+.sidebar-footer{padding:16px 20px;border-top:1px solid var(--border);font-size:10px;color:var(--text2);letter-spacing:1px}
+.main{margin-left:var(--sidebar-w);flex:1;padding:32px 40px;max-width:1200px}
+.page{display:none}.page.active{display:block}
+.page-header{margin-bottom:32px}
+.page-header h2{font-size:22px;letter-spacing:2px;margin-bottom:6px}
+.page-header p{font-size:12px;color:var(--text2);letter-spacing:1px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px}
+.stat-card{background:var(--surface);border:1px solid var(--border);padding:24px}
+.stat-card .label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--text2);margin-bottom:8px}
+.stat-card .value{font-size:32px;font-weight:700}
+.cyan{color:var(--accent)}.magenta{color:var(--accent2)}.green{color:var(--accent3)}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:10px;letter-spacing:2px;color:var(--text2);text-transform:uppercase;padding:12px 12px;border-bottom:1px solid var(--border)}
+td{padding:12px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:middle}
+tr:hover td{background:rgba(255,255,255,.02)}
+.btn{padding:8px 16px;font-size:11px;letter-spacing:1px;border:1px solid var(--border);background:var(--surface);color:var(--text);transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{background:#1a1a1a;border-color:rgba(255,255,255,.2)}
+.btn-primary{border-color:var(--accent);color:var(--accent);background:rgba(0,255,255,.05)}.btn-primary:hover{background:rgba(0,255,255,.1)}
+.btn-danger{border-color:var(--danger);color:var(--danger)}.btn-danger:hover{background:rgba(255,50,70,.08)}
+.btn-publish{border-color:var(--accent-green);color:var(--accent-green);background:rgba(0,255,0,.05);font-weight:700;font-size:12px;padding:10px 20px;letter-spacing:2px;animation:pulse-publish 2s ease-in-out infinite}
+.btn-publish:hover{background:rgba(0,255,0,.15);border-color:#00ff00;box-shadow:0 0 20px rgba(0,255,0,0.2)}
+@keyframes pulse-publish{0%,100%{box-shadow:0 0 0 0 rgba(0,255,0,0.2)}50%{box-shadow:0 0 0 8px rgba(0,255,0,0)}}
+.publish-info{font-size:10px;color:var(--text2);margin-top:8px;letter-spacing:0.5px;line-height:1.6}
+
+.btn-sm{padding:4px 10px;font-size:10px}.btn-icon{padding:4px 6px;min-width:28px;justify-content:center}
+.badge{display:inline-block;padding:2px 8px;font-size:9px;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--border)}
+.badge-new{color:var(--accent);border-color:var(--accent)}.badge-read{color:var(--text2)}.badge-replied{color:var(--accent3);border-color:var(--accent3)}
+.badge-signature{color:var(--accent);border-color:var(--accent)}.badge-limited{color:var(--accent2);border-color:var(--accent2)}.badge-custom{color:var(--accent3);border-color:var(--accent3)}.badge-iconic{color:var(--warning);border-color:var(--warning)}
+.form-section{background:var(--surface);border:1px solid var(--border);padding:24px;margin-bottom:16px}
+.form-section h3{font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;color:var(--accent)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.form-row.single{grid-template-columns:1fr}
+.form-group label{display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:6px}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:10px 12px;background:#000;border:1px solid var(--border);color:var(--text);font-size:12px;font-family:inherit;outline:none;transition:border-color .2s}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--accent)}
+.form-group textarea{min-height:80px;resize:vertical}
+.lang-label{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--text2);margin-bottom:4px}.lang-label.zh{color:var(--accent)}.lang-label.en{color:var(--accent2)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;display:none;align-items:flex-start;justify-content:center;padding-top:60px;overflow-y:auto}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);width:90%;max-width:700px;margin-bottom:60px}
+.modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-header h3{font-size:14px;letter-spacing:2px}
+.modal-body{padding:24px;max-height:70vh;overflow-y:auto}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+.modal-close{background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;padding:4px 8px}.modal-close:hover{color:var(--text)}
+.img-preview{width:100%;max-height:200px;object-fit:cover;background:#000;border:1px solid var(--border);margin-bottom:12px;display:none}.img-preview.show{display:block}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);padding:12px 20px;font-size:12px;letter-spacing:1px;z-index:300;opacity:0;transform:translateY(12px);transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}.toast.success{border-color:var(--accent3);color:var(--accent3)}.toast.error{border-color:var(--danger);color:var(--danger)}
+.chart-bar-wrap{margin:8px 0}.chart-bar{height:24px;background:rgba(0,255,255,.08);position:relative}
+.chart-bar-fill{height:100%;background:var(--accent);position:absolute;left:0;top:0;transition:width .6s;display:flex;align-items:center;padding-left:8px;font-size:10px;color:#000;font-weight:700}
+.chart-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text2);margin-bottom:4px}
+.trend-grid{display:flex;gap:4px;align-items:flex-end;height:120px;padding:12px 0}
+.trend-bar-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.trend-bar{width:100%;background:var(--accent);min-height:4px;transition:height .6s;border-radius:2px 2px 0 0}
+.trend-label{font-size:8px;color:var(--text2);letter-spacing:1px}
+.empty{text-align:center;padding:48px;color:var(--text2);font-size:12px;letter-spacing:1px}
+.drag-btns{display:flex;flex-direction:column;gap:2px}
+.drag-btns button{padding:2px 6px;font-size:10px;background:var(--surface);border:1px solid var(--border);color:var(--text2);cursor:pointer}
+.drag-btns button:hover{color:var(--accent);border-color:var(--accent)}.drag-btns button:disabled{opacity:.3;cursor:default}
+.work-thumb{width:60px;height:40px;object-fit:cover;background:#000;border:1px solid var(--border)}
+@media(max-width:900px){.sidebar{width:60px}.sidebar-logo h1{font-size:12px;letter-spacing:1px}.sidebar-logo span,.nav-item span:not(.nav-icon),.sidebar-footer,.lang-toggle{display:none}.nav-item{justify-content:center;padding:12px}.main{margin-left:60px;padding:24px 16px}.stat-grid{grid-template-columns:repeat(2,1fr)}.form-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+<div class="sidebar-logo"><h1>BRO ADMIN</h1><span data-i18n="sidebar.subtitle">Content Management System</span>
+<div class="lang-toggle" id="langToggle"><button data-lang="zh" class="active">中文</button><button data-lang="en">EN</button></div>
+</div>
+<nav class="sidebar-nav">
+<button class="nav-item active" data-page="dashboard"><span class="nav-icon">&#9632;</span> <span data-i18n="nav.dashboard">Dashboard</span></button>
+<button class="nav-item" data-page="portfolio"><span class="nav-icon">&#9636;</span> <span data-i18n="nav.portfolio">Portfolio</span> <span class="nav-badge" id="workCount">0</span></button>
+<button class="nav-item" data-page="content"><span class="nav-icon">&#9998;</span> <span data-i18n="nav.content">Content</span></button>
+<button class="nav-item" data-page="inquiries"><span class="nav-icon">&#9993;</span> <span data-i18n="nav.inquiries">Inquiries</span> <span class="nav-badge" id="inqCount">0</span></button>
+<button class="nav-item" data-page="settings"><span class="nav-icon">&#9881;</span> <span data-i18n="nav.settings">Settings</span></button>
+</nav>
+<div class="sidebar-footer"><span data-i18n="sidebar.version">BRO COOLING Admin v1.0</span><br><span data-i18n="sidebar.storage">Data: LocalStorage</span></div>
+</aside>
+
+<main class="main">
+
+<!-- DASHBOARD -->
+<section class="page active" id="page-dashboard">
+<div class="page-header"><h2 data-i18n="dash.title">Dashboard</h2><p data-i18n="dash.subtitle">Data overview</p></div>
+<div class="stat-grid">
+<div class="stat-card"><div class="label" data-i18n="dash.totalWorks">Total Works</div><div class="value cyan" id="statWorks">0</div></div>
+<div class="stat-card"><div class="label" data-i18n="dash.totalInquiries">Total Inquiries</div><div class="value magenta" id="statInquiries">0</div></div>
+<div class="stat-card"><div class="label" data-i18n="dash.newInquiries">New (unread)</div><div class="value green" id="statNewInq">0</div></div>
+<div class="stat-card"><div class="label" data-i18n="dash.pageViews">Page Views (simulated)</div><div class="value" id="statViews">0</div></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+<div class="form-section"><h3 data-i18n="dash.popularWorks">Popular Works</h3><div id="topWorks"><div class="empty" data-i18n="dash.noData">No data yet</div></div></div>
+<div class="form-section"><h3 data-i18n="dash.last7Days">Last 7 Days Views (simulated)</h3><div class="trend-grid" id="trendChart"></div></div>
+</div>
+</section>
+
+<!-- PORTFOLIO -->
+<section class="page" id="page-portfolio">
+<div class="page-header"><h2 data-i18n="pf.title">Portfolio CMS</h2><p data-i18n="pf.subtitle">Manage all works displayed on the website</p></div>
+<div style="margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn btn-primary" onclick="openWorkModal()" data-i18n="pf.addWork">+ Add Work</button>
+<button class="btn" onclick="exportWorks()" data-i18n="pf.exportWorks">Export Works (JSON)</button>
+<label class="btn" style="cursor:pointer"><span data-i18n="pf.importWorks">Import Works (JSON)</span><input type="file" accept=".json" onchange="importWorks(this)" style="display:none"></label>
+</div>
+<table><thead><tr><th style="width:60px" data-i18n="pf.thThumb">Thumb</th><th data-i18n="pf.thName">Name</th><th data-i18n="pf.thCategory">Category</th><th data-i18n="pf.thBadge">Badge</th><th style="width:60px" data-i18n="pf.thOrder">Order</th><th style="width:150px" data-i18n="pf.thActions">Actions</th></tr></thead>
+<tbody id="workTableBody"><tr><td colspan="6" class="empty" data-i18n="pf.empty">No works yet. Click "+ Add Work" to begin.</td></tr></tbody>
+<div id="pfGuideTip" style="margin-top:12px;padding:10px 16px;background:rgba(0,255,255,.05);border:1px solid rgba(0,255,255,.15);font-size:11px;color:var(--text2);letter-spacing:.5px">
+  <span style="color:var(--accent)">&#9432;</span> <span data-i18n="pf.guideTip">点击 "+ 添加作品" 创建新作品，或点击"导入作品"批量导入JSON。已有作品可点击"编辑"修改、点上下箭头调整排序。</span>
+</div></table>
+</section>
+
+<!-- CONTENT EDITOR -->
+<section class="page" id="page-content">
+<div class="page-header"><h2 data-i18n="ce.title">Content Editor</h2><p data-i18n="ce.subtitle">Edit website text in both Chinese and English</p></div>
+<div class="form-section"><h3 data-i18n="ce.heroSection">Hero Section</h3>
+<div class="form-row">
+<div class="form-group"><div class="lang-label zh" data-i18n="ce.chinese">Chinese</div><label data-i18n="ce.subtitle">Subtitle</label><input id="ce-hero-zh" placeholder="每一台电脑，都是不可复制的艺术品"></div>
+<div class="form-group"><div class="lang-label en" data-i18n="ce.english">English</div><label data-i18n="ce.subtitle">Subtitle</label><input id="ce-hero-en" placeholder="Every PC, an irreplicable masterpiece."></div>
+</div></div>
+<div class="form-section"><h3 data-i18n="ce.navLabels">Navigation Labels</h3><div id="ce-nav-fields"></div></div>
+<div class="form-section"><h3 data-i18n="ce.footer">Footer</h3>
+<div class="form-row">
+<div class="form-group"><div class="lang-label zh" data-i18n="ce.chinese">Chinese</div><label data-i18n="ce.tagline">Tagline</label><input id="ce-footer-zh" placeholder="每一台电脑，都是不可复制的艺术品"></div>
+<div class="form-group"><div class="lang-label en" data-i18n="ce.english">English</div><label data-i18n="ce.tagline">Tagline</label><input id="ce-footer-en" placeholder="Every PC, an irreplicable masterpiece."></div>
+</div></div>
+<button class="btn btn-primary" onclick="saveContent()" data-i18n="ce.save">Save Content</button>
+</section>
+
+<!-- INQUIRIES -->
+<section class="page" id="page-inquiries">
+<div class="page-header"><h2 data-i18n="inq.title">Inquiry Manager</h2><p data-i18n="inq.subtitle">Customer consultation requests</p></div>
+<div style="margin-bottom:16px;display:flex;gap:8px">
+<button class="btn btn-primary" onclick="exportInquiriesCSV()" data-i18n="inq.exportCSV">Export CSV</button>
+<button class="btn btn-danger btn-sm" onclick="if(confirm(t('inq.confirmClear'))){setData('bro_inquiries',[]);renderInquiries();toast(t('inq.cleared'))}" data-i18n="inq.clearAll">Clear All</button>
+</div>
+<table><thead><tr><th data-i18n="inq.thName">Name</th><th data-i18n="inq.thContact">Contact</th><th data-i18n="inq.thBudget">Budget</th><th data-i18n="inq.thMessage">Message</th><th data-i18n="inq.thTime">Time</th><th data-i18n="inq.thStatus">Status</th><th style="width:120px" data-i18n="inq.thActions">Actions</th></tr></thead>
+<tbody id="inqTableBody"><tr><td colspan="7" class="empty" data-i18n="inq.empty">No inquiries yet.</td></tr></tbody></table>
+</section>
+
+<!-- SETTINGS -->
+<section class="page" id="page-settings">
+<div class="page-header"><h2 data-i18n="set.title">Settings</h2><p data-i18n="set.subtitle">System configuration</p></div>
+<div class="form-section"><h3 data-i18n="set.contactInfo">Contact Info</h3>
+<div class="form-row">
+<div class="form-group"><label data-i18n="set.email">Email</label><input id="set-email" placeholder="bro@bro-cooling.com"></div>
+<div class="form-group"><label data-i18n="set.wechat">WeChat</label><input id="set-wechat" placeholder="BRO_COOLING"></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label data-i18n="set.douyin">Douyin</label><input id="set-douyin" placeholder="@BRO水冷"></div>
+<div class="form-group"><label data-i18n="set.bilibili">Bilibili</label><input id="set-bilibili" placeholder="BRO_COOLING"></div>
+</div>
+<button class="btn btn-primary" onclick="saveSettings()" data-i18n="set.saveSettings">Save Settings</button>
+</div>
+<div class="form-section"><h3 data-i18n="set.dataMgmt">Data Management</h3>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn btn-publish" onclick="publishToSite()" data-i18n="set.publishBtn">Publish to Website</button>
+<p class="publish-info" data-i18n="set.publishDesc" style="margin-bottom:12px">Package admin data as bro-data.json for website deployment.</p>
+<button class="btn btn-primary" onclick="exportAll()" data-i18n="set.exportAll">Export All Data (JSON)</button>
+<label class="btn" style="cursor:pointer"><span data-i18n="set.importAll">Import All Data (JSON)</span><input type="file" accept=".json" onchange="importAll(this)" style="display:none"></label>
+<button class="btn btn-danger btn-sm" onclick="if(confirm(t('set.confirmReset'))){resetAll()}" data-i18n="set.resetAll">Reset All Data</button>
+</div></div>
+<div class="form-section"><h3 data-i18n="set.simTitle">Simulate Dashboard Data</h3>
+<p style="font-size:11px;color:var(--text2);margin-bottom:12px" data-i18n="set.simDesc">Since this is a local-only admin, analytics are simulated. Click to generate random data for testing.</p>
+<button class="btn" onclick="generateSimData()" data-i18n="set.simBtn">Generate Simulated Stats</button>
+</div>
+</section>
+
+</main>
+
+<!-- WORK MODAL -->
+<div class="modal-overlay" id="workModal">
+<div class="modal">
+<div class="modal-header"><h3 id="modalTitle">Add Work</h3><button class="modal-close" onclick="closeWorkModal()">&times;</button></div>
+<div class="modal-body">
+<input type="hidden" id="wm-id">
+<div class="form-group"><label data-i18n="modal.image">Image</label>
+<input type="file" accept="image/*" onchange="previewImage(this)" id="wm-image-file">
+<img class="img-preview" id="wm-image-preview">
+<input type="hidden" id="wm-image-data">
+<p style="font-size:10px;color:var(--text2);margin-top:4px" data-i18n="modal.imageHint">Max 2MB. Will be stored as base64.</p>
+</div>
+<div class="form-row">
+<div class="form-group"><label data-i18n="modal.nameZh">Work Name (Chinese)</label><input id="wm-name-zh"></div>
+<div class="form-group"><label data-i18n="modal.nameEn">Work Name (English)</label><input id="wm-name-en"></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label data-i18n="modal.category">Category</label><select id="wm-category"><option value="tower" data-i18n="cat.tower">Full Tower</option><option value="mid-tower" data-i18n="cat.midTower">Mid Tower</option><option value="custom" data-i18n="cat.customTheme">Custom Theme</option><option value="open-frame" data-i18n="cat.openFrame">Open Frame</option></select></div>
+<div class="form-group"><label data-i18n="modal.badge">Badge</label><select id="wm-badge"><option value="signature">Signature</option><option value="limited">Limited</option><option value="custom">Custom</option><option value="iconic">Iconic</option><option value="classic">Classic</option><option value="popular">Popular</option><option value="performance">Performance</option></select></div>
+</div>
+<div class="form-row">
+<div class="form-group"><div class="lang-label zh" data-i18n="ce.chinese">Chinese</div><label data-i18n="modal.description">Description</label><input id="wm-desc-zh"></div>
+<div class="form-group"><div class="lang-label en" data-i18n="ce.english">English</div><label data-i18n="modal.description">Description</label><input id="wm-desc-en"></div>
+</div>
+<div class="form-section" style="background:#0a0a0a"><h3 data-i18n="modal.specsTitle">Specifications</h3>
+<div class="form-row"><div class="form-group"><label data-i18n="modal.specCase">Case</label><input id="wm-spec-case"></div><div class="form-group"><label data-i18n="modal.specCpu">CPU</label><input id="wm-spec-cpu"></div></div>
+<div class="form-row"><div class="form-group"><label data-i18n="modal.specGpu">GPU</label><input id="wm-spec-gpu"></div><div class="form-group"><label data-i18n="modal.specCooling">Cooling</label><input id="wm-spec-cooling"></div></div>
+<div class="form-row"><div class="form-group"><label data-i18n="modal.cpuTemp">CPU Temp (stress test)</label><input id="wm-temp-cpu" placeholder="82"></div><div class="form-group"><label data-i18n="modal.gpuTemp">GPU Temp (stress test)</label><input id="wm-temp-gpu" placeholder="58"></div></div>
+</div>
+</div>
+<div class="modal-footer">
+<button class="btn" onclick="closeWorkModal()" data-i18n="modal.cancel">Cancel</button>
+<button class="btn btn-primary" onclick="saveWork()" data-i18n="modal.save">Save Work</button>
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ==========================================
+// i18n DICTIONARY
+// ==========================================
+var i18nDict = {
+  zh: {
+    'sidebar.subtitle':'内容管理系统','sidebar.version':'BRO COOLING Admin v1.0','sidebar.storage':'数据存储: LocalStorage',
+    'nav.dashboard':'数据看板','nav.portfolio':'作品管理','nav.content':'内容编辑','nav.inquiries':'咨询管理','nav.settings':'设置',
+    'dash.title':'数据看板','dash.subtitle':'数据概览','dash.totalWorks':'作品总数','dash.totalInquiries':'咨询总数','dash.newInquiries':'未读咨询','dash.pageViews':'访问量 (模拟)','dash.popularWorks':'热门作品排名','dash.last7Days':'最近7天访问趋势 (模拟)','dash.noData':'暂无数据',
+    'pf.title':'作品管理','pf.subtitle':'管理网站展示的所有作品','pf.addWork':'+ 添加作品','pf.exportWorks':'导出作品 (JSON)','pf.importWorks':'导入作品 (JSON)','pf.thThumb':'缩略图','pf.thName':'名称','pf.thCategory':'分类','pf.thBadge':'标签','pf.thOrder':'排序','pf.thActions':'操作','pf.empty':'暂无作品，点击"+ 添加作品"开始',
+    'pf.btnEdit':'编辑','pf.btnDel':'删除','pf.btnUp':'上移','pf.btnDown':'下移','pf.confirmDel':'确认删除此作品？',
+    'ce.title':'内容编辑','ce.subtitle':'编辑网站中英文文案','ce.heroSection':'Hero 区域','ce.chinese':'中文','ce.english':'英文','ce.subtitle':'副标题','ce.navLabels':'导航标签','ce.footer':'页脚','ce.tagline':'宣传语','ce.save':'保存全部内容',
+    'inq.title':'咨询管理','inq.subtitle':'客户咨询请求','inq.exportCSV':'导出 CSV','inq.clearAll':'全部清除','inq.confirmClear':'确认删除全部咨询？','inq.cleared':'全部咨询已清除','inq.thName':'姓名','inq.thContact':'联系方式','inq.thBudget':'预算','inq.thMessage':'需求描述','inq.thTime':'提交时间','inq.thStatus':'状态','inq.thActions':'操作','inq.empty':'暂无咨询',
+    'inq.btnRead':'标记已读','inq.btnReplied':'标记已回复','inq.btnDel':'删除','inq.confirmDel':'确认删除此咨询？',
+    'inq.statusNew':'新','inq.statusRead':'已读','inq.statusReplied':'已回复',
+    'set.title':'设置','set.subtitle':'系统配置','set.contactInfo':'联系方式','set.email':'邮箱','set.wechat':'微信','set.douyin':'抖音','set.bilibili':'Bilibili','set.saveSettings':'保存设置',
+    'set.dataMgmt':'数据管理','set.exportAll':'导出全部数据 (JSON)','set.importAll':'导入全部数据 (JSON)','set.resetAll':'重置全部数据','set.confirmReset':'此操作将删除全部数据，确认继续？',
+    'set.simTitle':'模拟看板数据','set.simDesc':'由于这是纯本地管理后台，分析数据为模拟生成。点击按钮生成随机测试数据。','set.simBtn':'生成模拟数据',
+    'modal.addWork':'添加作品','modal.editWork':'编辑作品','modal.image':'图片','modal.imageHint':'最大 2MB，将以 base64 存储','modal.nameZh':'作品名称 (中文)','modal.nameEn':'作品名称 (英文)','modal.category':'分类','modal.badge':'标签','modal.description':'描述','modal.specsTitle':'规格参数','modal.specCase':'机箱','modal.specCpu':'CPU','modal.specGpu':'GPU','modal.specCooling':'散热方案','modal.cpuTemp':'CPU 烤机温度','modal.gpuTemp':'GPU 烤机温度','modal.cancel':'取消','modal.save':'保存作品',
+    'cat.tower':'全塔','cat.midTower':'中塔','cat.customTheme':'主题定制','cat.openFrame':'开放式',
+    'toast.saved':'作品已保存','toast.deleted':'作品已删除','toast.contentSaved':'内容已保存','toast.settingsSaved':'设置已保存','toast.exported':'已导出','toast.imported':'已导入','toast.importedNum':'已导入 {0} 件作品','toast.markedRead':'已标记为已读','toast.markedReplied':'已标记为已回复','toast.inqDeleted':'咨询已删除','toast.inqCleared':'全部咨询已清除','toast.backupExported':'完整备份已导出','toast.dataImported':'数据已导入','toast.dataReset':'全部数据已重置','toast.simGenerated':'模拟数据已生成','toast.imageTooLarge':'图片过大 (最大 2MB)','toast.invalidFormat':'格式无效','toast.invalidJSON':'无效的 JSON 文件','toast.invalidBackup':'无效的备份文件','toast.noInquiries':'没有可导出的咨询','toast.csvExported':'CSV 已导出','toast.worksExported':'作品已导出',
+    'label.noImg':'无图','label.unnamed':'未命名','label.clicks':'次点击',
+    'pf.guideTip':'点击 + 添加作品 创建新作品，或点击导入作品批量导入JSON。已有作品可点击编辑修改、点上下箭头调整排序。',
+    'pf.publishBtn':'发布到网站','pf.publishDesc':'将当前数据导出为 bro-data.json，放入部署目录后 git push 更新网站。',
+    'set.publishBtn':'发布到网站','set.publishDesc':'将管理后台数据打包导出为 bro-data.json，放入 C:\\Users\\BRO\\Desktop\\bro-cooling-deploy 目录，然后 git add . && git commit -m "update data" && git push 即可触发 Vercel 自动部署。',
+    'toast.published':'数据已导出为 bro-data.json！请保存到部署目录，执行 git push 部署。',
+    'toast.adminSaved':'管理后台已保存提示：请同时将本文件复制到部署目录。',
+  },
+  en: {
+    'sidebar.subtitle':'Content Management System','sidebar.version':'BRO COOLING Admin v1.0','sidebar.storage':'Data: LocalStorage',
+    'nav.dashboard':'Dashboard','nav.portfolio':'Portfolio','nav.content':'Content','nav.inquiries':'Inquiries','nav.settings':'Settings',
+    'dash.title':'Dashboard','dash.subtitle':'Data overview','dash.totalWorks':'Total Works','dash.totalInquiries':'Total Inquiries','dash.newInquiries':'New (unread)','dash.pageViews':'Page Views (simulated)','dash.popularWorks':'Popular Works','dash.last7Days':'Last 7 Days Views (simulated)','dash.noData':'No data yet',
+    'pf.title':'Portfolio CMS','pf.subtitle':'Manage all works displayed on the website','pf.addWork':'+ Add Work','pf.exportWorks':'Export Works (JSON)','pf.importWorks':'Import Works (JSON)','pf.thThumb':'Thumb','pf.thName':'Name','pf.thCategory':'Category','pf.thBadge':'Badge','pf.thOrder':'Order','pf.thActions':'Actions','pf.empty':'No works yet. Click "+ Add Work" to begin.',
+    'pf.btnEdit':'Edit','pf.btnDel':'Del','pf.btnUp':'Move Up','pf.btnDown':'Move Down','pf.confirmDel':'Delete this work?',
+    'ce.title':'Content Editor','ce.subtitle':'Edit website text in both Chinese and English','ce.heroSection':'Hero Section','ce.chinese':'Chinese','ce.english':'English','ce.subtitle':'Subtitle','ce.navLabels':'Navigation Labels','ce.footer':'Footer','ce.tagline':'Tagline','ce.save':'Save All Content',
+    'inq.title':'Inquiry Manager','inq.subtitle':'Customer consultation requests','inq.exportCSV':'Export CSV','inq.clearAll':'Clear All','inq.confirmClear':'Delete ALL inquiries?','inq.cleared':'All inquiries cleared','inq.thName':'Name','inq.thContact':'Contact','inq.thBudget':'Budget','inq.thMessage':'Message','inq.thTime':'Time','inq.thStatus':'Status','inq.thActions':'Actions','inq.empty':'No inquiries yet.',
+    'inq.btnRead':'Mark Read','inq.btnReplied':'Mark Replied','inq.btnDel':'Del','inq.confirmDel':'Delete this inquiry?',
+    'inq.statusNew':'New','inq.statusRead':'Read','inq.statusReplied':'Replied',
+    'set.title':'Settings','set.subtitle':'System configuration','set.contactInfo':'Contact Info','set.email':'Email','set.wechat':'WeChat','set.douyin':'Douyin','set.bilibili':'Bilibili','set.saveSettings':'Save Settings',
+    'set.dataMgmt':'Data Management','set.exportAll':'Export All Data (JSON)','set.importAll':'Import All Data (JSON)','set.resetAll':'Reset All Data','set.confirmReset':'This will DELETE ALL data. Are you sure?',
+    'set.simTitle':'Simulate Dashboard Data','set.simDesc':'Since this is a local-only admin, analytics are simulated. Click to generate random data for testing.','set.simBtn':'Generate Simulated Stats',
+    'modal.addWork':'Add Work','modal.editWork':'Edit Work','modal.image':'Image','modal.imageHint':'Max 2MB. Will be stored as base64.','modal.nameZh':'Work Name (Chinese)','modal.nameEn':'Work Name (English)','modal.category':'Category','modal.badge':'Badge','modal.description':'Description','modal.specsTitle':'Specifications','modal.specCase':'Case','modal.specCpu':'CPU','modal.specGpu':'GPU','modal.specCooling':'Cooling','modal.cpuTemp':'CPU Temp (stress test)','modal.gpuTemp':'GPU Temp (stress test)','modal.cancel':'Cancel','modal.save':'Save Work',
+    'cat.tower':'Full Tower','cat.midTower':'Mid Tower','cat.customTheme':'Custom Theme','cat.openFrame':'Open Frame',
+    'toast.saved':'Work saved!','toast.deleted':'Work deleted','toast.contentSaved':'Content saved!','toast.settingsSaved':'Settings saved!','toast.exported':'Exported','toast.imported':'Imported','toast.importedNum':'Imported {0} works','toast.markedRead':'Marked as read','toast.markedReplied':'Marked as replied','toast.inqDeleted':'Inquiry deleted','toast.inqCleared':'All inquiries cleared','toast.backupExported':'Full backup exported','toast.dataImported':'Data imported!','toast.dataReset':'All data reset','toast.simGenerated':'Simulated data generated','toast.imageTooLarge':'Image too large (max 2MB)','toast.invalidFormat':'Invalid format','toast.invalidJSON':'Invalid JSON','toast.invalidBackup':'Invalid backup file','toast.noInquiries':'No inquiries to export','toast.csvExported':'CSV exported','toast.worksExported':'Works exported',
+    'label.noImg':'NO IMG','label.unnamed':'Unnamed','label.clicks':'clicks',
+    'pf.guideTip':'Click + Add Work to create new entries, or Import Works to batch import JSON. Click Edit to modify existing works, use arrows to reorder.',
+    'pf.publishBtn':'Publish to Site','pf.publishDesc':'Export current data as bro-data.json. Place in deploy directory and git push to update the site.',
+    'set.publishBtn':'Publish to Site','set.publishDesc':'Export admin data as bro-data.json. Save to C:\\Users\\BRO\\Desktop\\bro-cooling-deploy, then git add . && git commit -m "update data" && git push to trigger Vercel auto-deploy.',
+    'toast.published':'bro-data.json exported! Save to deploy directory, then git push to deploy.',
+    'toast.adminSaved':'Admin panel saved. Please also copy this file to the deploy directory.',
+  }
+};
+
+// ============ LANGUAGE ============
+var adminLang = localStorage.getItem('bro_admin_lang') || 'zh';
+function t(key) { return (i18nDict[adminLang] && i18nDict[adminLang][key]) || key; }
+function setLang(lang) {
+  adminLang = lang;
+  localStorage.setItem('bro_admin_lang', lang);
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+  document.querySelectorAll('#langToggle button').forEach(function(b) { b.classList.toggle('active', b.dataset.lang === lang); });
+  // Update all data-i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (i18nDict[lang] && i18nDict[lang][key] !== undefined) el.textContent = i18nDict[lang][key];
+  });
+  // Update select options with data-i18n
+  document.querySelectorAll('select option[data-i18n]').forEach(function(opt) {
+    var key = opt.getAttribute('data-i18n');
+    if (i18nDict[lang] && i18nDict[lang][key] !== undefined) opt.textContent = i18nDict[lang][key];
+  });
+  // Re-render dynamic content
+  renderWorks(); renderInquiries(); renderContentEditor(); refreshDashboard();
+}
+document.querySelectorAll('#langToggle button').forEach(function(b) { b.addEventListener('click', function() { setLang(b.dataset.lang); }); });
+// Initialize
+setLang(adminLang);
+
+// ============ DATA HELPERS ============
+function getData(key,defaultVal){try{var d=localStorage.getItem(key);return d?JSON.parse(d):defaultVal}catch(e){return defaultVal}}
+function setData(key,val){localStorage.setItem(key,JSON.stringify(val))}
+
+// ============ TOAST ============
+function toast(msg,type){var t=document.getElementById('toast');t.textContent=msg;t.className='toast show '+(type||'');setTimeout(function(){t.className='toast'},2500)}
+
+// ============ NAVIGATION ============
+document.querySelectorAll('.nav-item').forEach(function(btn){btn.addEventListener('click',function(){document.querySelectorAll('.nav-item').forEach(function(b){b.classList.remove('active')});btn.classList.add('active');document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});document.getElementById('page-'+btn.dataset.page).classList.add('active');if(btn.dataset.page==='dashboard')refreshDashboard();if(btn.dataset.page==='portfolio')renderWorks();if(btn.dataset.page==='content')renderContentEditor();if(btn.dataset.page==='inquiries')renderInquiries();if(btn.dataset.page==='settings')renderSettings()})});
+
+// ============ DASHBOARD ============
+function refreshDashboard(){
+var works=getData('bro_works',[]);var inqs=getData('bro_inquiries',[]);var stats=getData('bro_stats',{views:0,workClicks:{},dailyViews:{}});
+document.getElementById('statWorks').textContent=works.length;
+document.getElementById('statInquiries').textContent=inqs.length;
+document.getElementById('statNewInq').textContent=inqs.filter(function(i){return i.status==='new'}).length;
+stats.views=stats.views||0;document.getElementById('statViews').textContent=stats.views;
+var topDiv=document.getElementById('topWorks');var sorted=works.slice().sort(function(a,b){return(b.clicks||0)-(a.clicks||0)});
+if(sorted.length===0){topDiv.innerHTML='<div class="empty">'+t('dash.noData')+'</div>'}
+else{topDiv.innerHTML=sorted.slice(0,5).map(function(w,i){var pct=sorted[0].clicks?Math.round((w.clicks||0)/Math.max(1,sorted[0].clicks)*100):0;return'<div class="chart-bar-wrap"><div class="chart-labels"><span>'+(w.name_zh||w.name||t('label.unnamed'))+'</span><span>'+(w.clicks||0)+' '+t('label.clicks')+'</span></div><div class="chart-bar"><div class="chart-bar-fill" style="width:'+pct+'%">'+(i+1)+'</div></div></div>'}).join('')}
+var days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];var trendDiv=document.getElementById('trendChart');stats.dailyViews=stats.dailyViews||{};
+var maxV=0;for(var i=0;i<7;i++){var k=days[i];maxV=Math.max(maxV,stats.dailyViews[k]||0)}
+trendDiv.innerHTML=days.map(function(d){var h=Math.max(4,maxV>0?Math.round((stats.dailyViews[d]||0)/Math.max(1,maxV)*100):4);return'<div class="trend-bar-item"><div class="trend-bar" style="height:'+h+'px"></div><div class="trend-label">'+d+'</div></div>'}).join('')
+}
+
+// ============ PORTFOLIO ============
+function renderWorks(){
+var works=getData('bro_works',[]);var tbody=document.getElementById('workTableBody');
+document.getElementById('workCount').textContent=works.length;
+if(works.length===0){tbody.innerHTML='<tr><td colspan="6" class="empty">'+t('pf.empty')+'</td></tr>';return}
+tbody.innerHTML=works.map(function(w,i){
+var img=w.image?'<img class="work-thumb" src="'+w.image+'" alt="">':'<div class="work-thumb" style="display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:9px">'+t('label.noImg')+'</div>';
+var up=i>0?'':'disabled';var down=i<works.length-1?'':'disabled';
+return'<tr><td>'+img+'</td><td>'+(w.name_zh||w.name||t('label.unnamed'))+'</td><td>'+w.category+'</td><td><span class="badge badge-'+w.badge+'">'+w.badge+'</span></td><td><div class="drag-btns"><button '+up+' onclick="moveWork('+i+',-1)" title="'+t('pf.btnUp')+'">&#9650;</button><button '+down+' onclick="moveWork('+i+',1)" title="'+t('pf.btnDown')+'">&#9660;</button></div></td><td><button class="btn btn-sm" onclick="editWork('+i+')">'+t('pf.btnEdit')+'</button> <button class="btn btn-sm btn-danger" onclick="deleteWork('+i+')">'+t('pf.btnDel')+'</button></td></tr>'
+}).join('')
+}
+
+function openWorkModal(idx){
+document.getElementById('modalTitle').textContent=t(idx===undefined?'modal.addWork':'modal.editWork');
+document.getElementById('wm-id').value=idx!==undefined?idx:'';
+document.getElementById('wm-image-file').value='';document.getElementById('wm-image-data').value='';document.getElementById('wm-image-preview').className='img-preview';
+if(idx!==undefined){var w=getData('bro_works',[])[idx];
+document.getElementById('wm-name-zh').value=w.name_zh||'';document.getElementById('wm-name-en').value=w.name_en||'';
+document.getElementById('wm-category').value=w.category||'tower';document.getElementById('wm-badge').value=w.badge||'custom';
+document.getElementById('wm-desc-zh').value=w.desc_zh||'';document.getElementById('wm-desc-en').value=w.desc_en||'';
+document.getElementById('wm-spec-case').value=w.spec_case||'';document.getElementById('wm-spec-cpu').value=w.spec_cpu||'';
+document.getElementById('wm-spec-gpu').value=w.spec_gpu||'';document.getElementById('wm-spec-cooling').value=w.spec_cooling||'';
+document.getElementById('wm-temp-cpu').value=w.temp_cpu||'';document.getElementById('wm-temp-gpu').value=w.temp_gpu||'';
+if(w.image){document.getElementById('wm-image-data').value=w.image;document.getElementById('wm-image-preview').src=w.image;document.getElementById('wm-image-preview').className='img-preview show'}
+}else{
+['wm-name-zh','wm-name-en','wm-desc-zh','wm-desc-en','wm-spec-case','wm-spec-cpu','wm-spec-gpu','wm-spec-cooling','wm-temp-cpu','wm-temp-gpu'].forEach(function(id){document.getElementById(id).value=''})
+}
+document.getElementById('workModal').classList.add('open')
+}
+
+function closeWorkModal(){document.getElementById('workModal').classList.remove('open')}
+
+function previewImage(input){
+var f=input.files[0];if(!f)return;if(f.size>2*1024*1024){toast(t('toast.imageTooLarge'),'error');input.value='';return}
+var r=new FileReader();r.onload=function(e){document.getElementById('wm-image-data').value=e.target.result;document.getElementById('wm-image-preview').src=e.target.result;document.getElementById('wm-image-preview').className='img-preview show'};r.readAsDataURL(f)
+}
+
+function saveWork(){
+var works=getData('bro_works',[]);var idx=document.getElementById('wm-id').value;
+var wClicks=0;if(idx!==''){wClicks=works[parseInt(idx)].clicks||0;}
+var w={
+name_zh:document.getElementById('wm-name-zh').value||'Untitled',
+name_en:document.getElementById('wm-name-en').value||'Untitled',
+category:document.getElementById('wm-category').value,
+badge:document.getElementById('wm-badge').value,
+desc_zh:document.getElementById('wm-desc-zh').value,
+desc_en:document.getElementById('wm-desc-en').value,
+spec_case:document.getElementById('wm-spec-case').value,
+spec_cpu:document.getElementById('wm-spec-cpu').value,
+spec_gpu:document.getElementById('wm-spec-gpu').value,
+spec_cooling:document.getElementById('wm-spec-cooling').value,
+temp_cpu:document.getElementById('wm-temp-cpu').value,
+temp_gpu:document.getElementById('wm-temp-gpu').value,
+image:document.getElementById('wm-image-data').value,
+clicks:wClicks
+};
+if(idx!==''){works[parseInt(idx)]=w}else{works.push(w)}
+setData('bro_works',works);closeWorkModal();renderWorks();refreshDashboard();toast(t('toast.saved'),'success')
+}
+
+function editWork(i){openWorkModal(i)}
+function deleteWork(i){if(!confirm(t('pf.confirmDel')))return;var w=getData('bro_works',[]);w.splice(i,1);setData('bro_works',w);renderWorks();refreshDashboard();toast(t('toast.deleted'),'success')}
+function moveWork(i,dir){var w=getData('bro_works',[]);var j=i+dir;if(j<0||j>=w.length)return;var tmp=w[i];w[i]=w[j];w[j]=tmp;setData('bro_works',w);renderWorks()}
+function exportWorks(){var w=getData('bro_works',[]);downloadJSON('bro-works-export.json',w);toast(t('toast.worksExported'),'success')}
+function importWorks(input){var f=input.files[0];if(!f)return;var r=new FileReader();r.onload=function(e){try{var d=JSON.parse(e.target.result);if(Array.isArray(d)){setData('bro_works',d);renderWorks();refreshDashboard();toast(t('toast.importedNum').replace('{0}',d.length),'success')}else{toast(t('toast.invalidFormat'),'error')}}catch(ex){toast(t('toast.invalidJSON'),'error')}};r.readAsText(f);input.value=''}
+
+// ============ CONTENT EDITOR ============
+var navKeys=['home','atelier','heritage','commission','care','news'];
+function renderContentEditor(){
+var content=getData('bro_content',{});
+document.getElementById('ce-hero-zh').value=content.hero_subtitle_zh||'';
+document.getElementById('ce-hero-en').value=content.hero_subtitle_en||'';
+document.getElementById('ce-footer-zh').value=content.footer_tagline_zh||'';
+document.getElementById('ce-footer-en').value=content.footer_tagline_en||'';
+var navDiv=document.getElementById('ce-nav-fields');navDiv.innerHTML=navKeys.map(function(k){return'<div class="form-row"><div class="form-group"><div class="lang-label zh">'+t('ce.chinese')+'</div><label>Nav: '+k+'</label><input id="ce-nav-'+k+'-zh" value="'+(content['nav_'+k+'_zh']||'')+'"></div><div class="form-group"><div class="lang-label en">'+t('ce.english')+'</div><label>Nav: '+k+'</label><input id="ce-nav-'+k+'-en" value="'+(content['nav_'+k+'_en']||'')+'"></div></div>'}).join('')
+}
+function saveContent(){
+var c=getData('bro_content',{});
+c.hero_subtitle_zh=document.getElementById('ce-hero-zh').value;
+c.hero_subtitle_en=document.getElementById('ce-hero-en').value;
+c.footer_tagline_zh=document.getElementById('ce-footer-zh').value;
+c.footer_tagline_en=document.getElementById('ce-footer-en').value;
+navKeys.forEach(function(k){c['nav_'+k+'_zh']=document.getElementById('ce-nav-'+k+'-zh').value;c['nav_'+k+'_en']=document.getElementById('ce-nav-'+k+'-en').value});
+setData('bro_content',c);toast(t('toast.contentSaved'),'success')
+}
+
+// ============ INQUIRIES ============
+function renderInquiries(){
+var inqs=getData('bro_inquiries',[]);
+document.getElementById('inqCount').textContent=inqs.length;
+if(inqs.length===0){document.getElementById('inqTableBody').innerHTML='<tr><td colspan="7" class="empty">'+t('inq.empty')+'</td></tr>';return}
+document.getElementById('inqTableBody').innerHTML=inqs.map(function(inq,i){
+var badgeKey='inq.statusNew';if(inq.status==='read')badgeKey='inq.statusRead';else if(inq.status==='replied')badgeKey='inq.statusReplied';
+var badge='<span class="badge badge-'+inq.status+'">'+t(badgeKey)+'</span>';
+var msg=(inq.message||'').substring(0,60)+(inq.message&&inq.message.length>60?'...':'');
+var btns='';
+if(inq.status==='new')btns+='<button class="btn btn-sm" onclick="markInq('+i+',\'read\')">'+t('inq.btnRead')+'</button> ';
+if(inq.status==='read')btns+='<button class="btn btn-sm btn-primary" onclick="markInq('+i+',\'replied\')">'+t('inq.btnReplied')+'</button> ';
+btns+='<button class="btn btn-sm btn-danger" onclick="deleteInq('+i+')">'+t('inq.btnDel')+'</button>';
+return'<tr><td>'+inq.name+'</td><td>'+inq.contact+'</td><td>'+inq.budget+'</td><td title="'+(inq.message||'')+'">'+msg+'</td><td>'+inq.time+'</td><td>'+badge+'</td><td>'+btns+'</td></tr>'
+}).join('')
+}
+function markInq(i,status){var inqs=getData('bro_inquiries',[]);inqs[i].status=status;setData('bro_inquiries',inqs);renderInquiries();toast(t(status==='read'?'toast.markedRead':'toast.markedReplied'),'success')}
+function deleteInq(i){if(!confirm(t('inq.confirmDel')))return;var inqs=getData('bro_inquiries',[]);inqs.splice(i,1);setData('bro_inquiries',inqs);renderInquiries();refreshDashboard();toast(t('toast.inqDeleted'))}
+function exportInquiriesCSV(){
+var inqs=getData('bro_inquiries',[]);if(inqs.length===0){toast(t('toast.noInquiries'),'error');return}
+var csv='Name,Contact,Budget,Message,Time,Status\n'+inqs.map(function(i){return'"'+i.name+'","'+i.contact+'","'+i.budget+'","'+(i.message||'').replace(/"/g,'""')+'","'+i.time+'","'+i.status+'"'}).join('\n');
+downloadFile('bro-inquiries.csv',csv,'text/csv');toast(t('toast.csvExported'),'success')
+}
+
+// ============ SETTINGS ============
+function renderSettings(){
+var s=getData('bro_settings',{});
+document.getElementById('set-email').value=s.email||'';document.getElementById('set-wechat').value=s.wechat||'';
+document.getElementById('set-douyin').value=s.douyin||'';document.getElementById('set-bilibili').value=s.bilibili||''
+}
+function saveSettings(){
+var s={email:document.getElementById('set-email').value,wechat:document.getElementById('set-wechat').value,douyin:document.getElementById('set-douyin').value,bilibili:document.getElementById('set-bilibili').value};
+setData('bro_settings',s);toast(t('toast.settingsSaved'),'success')
+}
+
+// ============ DATA EXPORT/IMPORT ============
+function exportAll(){
+var data={works:getData('bro_works',[]),content:getData('bro_content',{}),inquiries:getData('bro_inquiries',[]),settings:getData('bro_settings',{}),stats:getData('bro_stats',{})};
+downloadJSON('bro-cooling-full-backup.json',data);toast(t('toast.backupExported'),'success')
+}
+function importAll(input){var f=input.files[0];if(!f)return;var r=new FileReader();r.onload=function(e){try{var d=JSON.parse(e.target.result);if(d.works){setData('bro_works',d.works)}if(d.content){setData('bro_content',d.content)}if(d.inquiries){setData('bro_inquiries',d.inquiries)}if(d.settings){setData('bro_settings',d.settings)}if(d.stats){setData('bro_stats',d.stats)}renderAll();toast(t('toast.dataImported'),'success')}catch(ex){toast(t('toast.invalidBackup'),'error')}};r.readAsText(f);input.value=''}
+function resetAll(){['bro_works','bro_content','bro_inquiries','bro_settings','bro_stats'].forEach(function(k){localStorage.removeItem(k)});renderAll();toast(t('toast.dataReset'),'success')}
+function generateSimData(){
+var stats=getData('bro_stats',{views:Math.floor(Math.random()*5000)+1000,workClicks:{},dailyViews:{}});
+var days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];days.forEach(function(d){stats.dailyViews[d]=Math.floor(Math.random()*200)+20});
+setData('bro_stats',stats);
+var works=getData('bro_works',[]);works.forEach(function(w){w.clicks=Math.floor(Math.random()*500)+10});
+setData('bro_works',works);refreshDashboard();toast(t('toast.simGenerated'),'success')
+}
+
+// ============ HELPERS ============
+function downloadJSON(filename,data){downloadFile(filename,JSON.stringify(data,null,2),'application/json')}
+function downloadFile(filename,content,mime){var b=new Blob([content],{type:mime});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=filename;a.click();URL.revokeObjectURL(a.href)}
+function renderAll(){renderWorks();renderInquiries();renderContentEditor();renderSettings();refreshDashboard()}
+
+// ============ DEMO DATA SEED ============
+(function seedDemo(){
+  if(getData('bro_works',[]).length === 0) {
+    var now = Date.now();
+    var demos = [
+      {
+        name_zh: 'Z-Tower Storm',
+        name_en: 'Z-Tower Storm',
+        category: 'custom',
+        badge: 'signature',
+        desc_zh: '金属风暴主题，模组化弯管手工打造',
+        desc_en: 'Metal storm theme, handcrafted modular tubing',
+        spec_case: 'Z-Tower 定制',
+        spec_cpu: 'Intel i9-14900K',
+        spec_gpu: 'RTX 4090',
+        spec_cooling: '双水路 360+240 冷排',
+        temp_cpu: '78',
+        temp_gpu: '52',
+        image: '',
+        clicks: 320
+      },
+      {
+        name_zh: 'WINBOT球 分体水冷',
+        name_en: 'WINBOT Sphere Custom Loop',
+        category: 'tower',
+        badge: 'iconic',
+        desc_zh: '球形机箱分体水冷方案，RGB 流光溢彩',
+        desc_en: 'Sphere chassis liquid cooling, RGB spectrum flow',
+        spec_case: 'WINBOT 球体机箱',
+        spec_cpu: 'AMD Ryzen 7 7800X3D',
+        spec_gpu: 'RTX 4080 Super',
+        spec_cooling: '单水路 240 冷排',
+        temp_cpu: '72',
+        temp_gpu: '55',
+        image: '',
+        clicks: 245
+      },
+      {
+        name_zh: '创世神 电镀超人',
+        name_en: 'Genesis Chrome Superman',
+        category: 'tower',
+        badge: 'limited',
+        desc_zh: '电镀镜面超人主题，红蓝配色限量版',
+        desc_en: 'Chrome mirror Superman theme, red-blue limited edition',
+        spec_case: 'ROG Hyperion 创世神',
+        spec_cpu: 'Intel i7-14700KF',
+        spec_gpu: 'RTX 4070 Ti',
+        spec_cooling: '双水路 360+360 冷排',
+        temp_cpu: '75',
+        temp_gpu: '60',
+        image: '',
+        clicks: 189
+      }
+    ];
+    setData('bro_works', demos);
+    setData('bro_stats', {views: 4580, workClicks: {}, dailyViews: {'Mon':142,'Tue':198,'Wed':173,'Thu':221,'Fri':186,'Sat':310,'Sun':267}});
+    setData('bro_inquiries', [{
+      name: '张先生',
+      contact: 'zhang@example.com / 138xxxx8888',
+      budget: '2-3万',
+      message: '想定制一台超级英雄主题的分体水冷主机，预算充足，希望用过年后交付。',
+      time: '2026-05-18 14:30',
+      status: 'new'
+    }]);
+    setData('bro_content', {
+      hero_subtitle_zh: '每一台电脑，都是不可复制的艺术品',
+      hero_subtitle_en: 'Every PC, an irreplicable masterpiece.',
+      footer_tagline_zh: '每一台电脑，都是不可复制的艺术品',
+      footer_tagline_en: 'Every PC, an irreplicable masterpiece.',
+      nav_home_zh: '首页', nav_home_en: 'Home',
+      nav_atelier_zh: '作品馆', nav_atelier_en: 'Atelier',
+      nav_heritage_zh: '品牌传承', nav_heritage_en: 'Heritage',
+      nav_commission_zh: '委托定制', nav_commission_en: 'Commission',
+      nav_care_zh: '售后保养', nav_care_en: 'BRO CARE',
+      nav_news_zh: '新闻', nav_news_en: 'News'
+    });
+    setData('bro_settings', {
+      email: 'bro@bro-cooling.com',
+      wechat: 'BRO_COOLING',
+      douyin: '@BRO水冷',
+      bilibili: 'BRO_COOLING'
+    });
+  }
+})();
+
+
+// ============ PUBLISH TO SITE ============
+function publishToSite(){
+var data={
+works:getData('bro_works',[]),
+content:getData('bro_content',{}),
+inquiries:getData('bro_inquiries',[]),
+settings:getData('bro_settings',{}),
+published_at:new Date().toISOString()
+};
+// Also save admin.html itself
+var adminBlob=new Blob([document.documentElement.outerHTML],{type:'text/html'});
+var a1=document.createElement('a');a1.href=URL.createObjectURL(adminBlob);a1.download='admin.html';a1.click();URL.revokeObjectURL(a1.href);
+// Download bro-data.json
+setTimeout(function(){
+downloadJSON('bro-data.json',data);
+toast(t('toast.published'),'success');
+},300);
+}
+
+// ============ INIT ============
+renderAll();
+var stats=getData('bro_stats',{views:0,workClicks:{},dailyViews:{}});stats.views=(stats.views||0)+1;setData('bro_stats',stats);
+</script>
+</body>
+</html>
