@@ -3127,6 +3127,14 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
           if (!file) return;
           compressAndPreview(file, document.getElementById('timelineImgPreview' + idx), 800);
         });
+        // 绑定点击区域触发文件选择
+        var uploadArea = item.querySelector('.image-upload-area');
+        if (uploadArea) {
+          uploadArea.addEventListener('click', function(e) {
+            var fi = this.querySelector('input[type="file"]');
+            if (fi) fi.click();
+          });
+        }
       });
     }
     
@@ -3163,6 +3171,14 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
           if (!file) return;
           compressAndPreview(file, document.getElementById('stepImgPreview' + idx), 400);
         });
+        // 绑定点击区域触发文件选择
+        var uploadArea = item.querySelector('.image-upload-area');
+        if (uploadArea) {
+          uploadArea.addEventListener('click', function(e) {
+            var fi = this.querySelector('input[type="file"]');
+            if (fi) fi.click();
+          });
+        }
       });
     }
     
@@ -3203,8 +3219,24 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
           if (!file) return;
           compressAndPreview(file, document.getElementById('newsImgPreview' + idx), 800);
         });
+        // 绑定点击区域触发文件选择
+        var uploadArea = item.querySelector('.image-upload-area');
+        if (uploadArea) {
+          uploadArea.addEventListener('click', function(e) {
+            var fi = this.querySelector('input[type="file"]');
+            if (fi) fi.click();
+          });
+        }
       });
     }
+    
+    // 全局绑定：让所有 .image-upload-area 点击时触发文件选择
+    blockEditPanel.querySelectorAll('.image-upload-area').forEach(function(area) {
+      area.addEventListener('click', function(e) {
+        var fileInput = area.querySelector('input[type="file"]');
+        if (fileInput) fileInput.click();
+      });
+    });
   }
   
   function bindItemEvents(item) {
