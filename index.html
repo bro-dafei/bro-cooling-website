@@ -1265,6 +1265,41 @@ body.edit-mode .editable-block:hover {
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 2px;
 }
+.image-upload-area {
+  margin: 16px 0;
+  border: 1px dashed rgba(255,255,255,0.2);
+  padding: 20px;
+  text-align: center;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.image-upload-area:hover {
+  border-color: var(--accent-cyan);
+  background: rgba(0,255,255,0.05);
+}
+.image-upload-area.mini {
+  padding: 12px;
+  margin: 8px 0;
+}
+.image-upload-area input[type="file"] {
+  display: none;
+}
+.upload-icon {
+  font-size: 24px;
+  color: var(--accent-cyan);
+  margin-bottom: 8px;
+}
+.upload-text {
+  font-size: 12px;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.upload-hint {
+  font-size: 10px;
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
 .block-bilingual-input {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -2575,7 +2610,11 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
             '<option value="iconic"' + (work.badge === 'iconic' ? ' selected' : '') + '>Iconic</option>' +
             '<option value="popular"' + (work.badge === 'popular' ? ' selected' : '') + '>Popular</option>' +
           '</select></div>' +
-          '<div class="form-group"><label>图片链接</label><input type="text" id="workImage" value="' + escapeAttr(work.image || '') + '" placeholder="https://..."></div>' +
+          '<div class="image-upload-area mini"><div class="upload-text">上传封面图</div>' +
+            '<div class="upload-hint">最大5MB | JPG, PNG, WebP</div>' +
+            '<input type="file" id="workImageFile" accept="image/*"></div>' +
+          '<div class="block-image-preview" id="workImagePreview">' + (work.image ? '<img src="' + escapeAttr(work.image) + '" style="max-width:200px">' : '') + '</div>' +
+          '<div class="form-group"><label>或粘贴图片链接</label><input type="text" id="workImage" value="' + escapeAttr(work.image || '') + '" placeholder="https://..."></div>' +
           '<div class="edit-modal-actions">' +
             '<button class="cancel-btn" id="cancelWorkBtn">取消</button>' +
             '<button class="save-btn" id="saveWorkBtn">保存</button>' +
@@ -2590,12 +2629,15 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
     });
     
     document.getElementById('saveWorkBtn').addEventListener('click', function() {
+      var preview = document.getElementById('workImagePreview');
+      var compressed = preview ? preview.getAttribute('data-compressed') : '';
+      var imageUrl = compressed || document.getElementById('workImage').value;
       var updatedWork = {
         name_zh: document.getElementById('workNameZh').value,
         name_en: document.getElementById('workNameEn').value,
         category: document.getElementById('workCategory').value,
         badge: document.getElementById('workBadge').value,
-        image: document.getElementById('workImage').value
+        image: imageUrl
       };
       
       if (workIndex !== null) {
@@ -2614,6 +2656,42 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
     document.getElementById('workModalOverlay').addEventListener('click', function(e) {
       if (e.target === this) this.remove();
     });
+    
+    // Works cover image upload
+    var workFileInput = document.getElementById('workImageFile');
+    if (workFileInput) {
+      workFileInput.addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+        if (file.size > 5242880) { 
+          showToast('文件过大（最大5MB）', 'error'); 
+          return; 
+        }
+        var reader = new FileReader();
+        reader.onerror = function() { showToast('文件读取失败，请重试', 'error'); };
+        reader.onload = function(ev) {
+          var img = new Image();
+          img.onload = function() {
+            var w = img.width, h = img.height, maxW = 1200;
+            if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+            var canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+            var compressed = canvas.toDataURL('image/jpeg', 0.85);
+            var preview = document.getElementById('workImagePreview');
+            if (preview) { 
+              preview.innerHTML = '<img src="' + compressed + '" style="max-width:200px">'; 
+              preview.setAttribute('data-compressed', compressed);
+            }
+            document.getElementById('workImage').value = '';
+          };
+          img.onerror = function() { showToast('图片解码失败', 'error'); };
+          img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
   }
   
   function escapeAttr(str) {
@@ -2651,6 +2729,69 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
   });
   
   console.log('Edit mode initialized (URL: ?edit=1)');
+})();
+
+/* ============================================
+   IMAGE RESTORATION — 页面加载时从 localStorage 恢复图片
+   ============================================ */
+(function restoreImages() {
+  var content = broGetData('bro_content', {});
+  
+  // 恢复首屏背景图
+  if (content.hero_bg_image) {
+    var heroBg = document.querySelector('.hero-bg');
+    if (heroBg) heroBg.style.backgroundImage = 'url(' + content.hero_bg_image + ')';
+  }
+  
+  // 恢复时间线配图
+  if (content.timeline_items && content.timeline_items.length) {
+    var timelineItems = document.querySelectorAll('.timeline-item');
+    content.timeline_items.forEach(function(item, i) {
+      if (item.image && timelineItems[i]) {
+        var img = document.createElement('img');
+        img.src = item.image;
+        img.className = 'timeline-img';
+        img.style.cssText = 'max-width:200px;margin-top:8px;display:block;';
+        timelineItems[i].appendChild(img);
+      }
+    });
+  }
+  
+  // 恢复流程步骤图标
+  if (content.commission_steps && content.commission_steps.length) {
+    var stepCards = document.querySelectorAll('.step-card');
+    content.commission_steps.forEach(function(step, i) {
+      if (step.image && stepCards[i]) {
+        var img = document.createElement('img');
+        img.src = step.image;
+        img.className = 'step-img';
+        img.style.cssText = 'max-width:80px;margin:8px auto 0;display:block;';
+        stepCards[i].appendChild(img);
+      }
+    });
+  }
+  
+  // 恢复新闻图片
+  if (content.news_items && content.news_items.length) {
+    var newsCards = document.querySelectorAll('.news-card');
+    content.news_items.forEach(function(news, i) {
+      if (news.image && newsCards[i]) {
+        var img = document.createElement('img');
+        img.src = news.image;
+        img.className = 'news-img';
+        img.style.cssText = 'width:100%;max-height:200px;object-fit:cover;margin-bottom:12px;';
+        newsCards[i].insertBefore(img, newsCards[i].firstChild);
+      }
+    });
+  }
+  
+  // 恢复页脚Logo
+  if (content.footer_logo) {
+    var footerLogo = document.querySelector('.footer-logo');
+    if (footerLogo) {
+      footerLogo.innerHTML = '<img src="' + content.footer_logo + '" alt="BRO Atelier">';
+    }
+  }
 })();
 
 /* ============================================
@@ -2761,6 +2902,9 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
             '<input type="text" class="timeline-year-input" value="' + escapeHtml(year) + '" data-index="' + i + '"></div>' +
           '<div class="form-group"><label>描述</label>' +
             '<textarea class="timeline-text-input" rows="2" data-index="' + i + '">' + escapeHtml(text) + '</textarea></div>' +
+          '<div class="image-upload-area mini"><div class="upload-text">上传配图</div>' +
+            '<input type="file" accept="image/*" class="timeline-image-input" data-index="' + i + '"></div>' +
+          '<div class="block-image-preview timeline-image-preview" id="timelineImgPreview' + i + '"></div>' +
         '</div>';
       });
       html += '</div><button class="add-item-btn" id="addTimelineItem">+ 添加条目</button></div>' +
@@ -2789,6 +2933,9 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
             '<input type="text" class="step-title-input" value="' + escapeHtml(title) + '" data-index="' + i + '"></div>' +
           '<div class="form-group"><label>描述</label>' +
             '<textarea class="step-desc-input" rows="2" data-index="' + i + '">' + escapeHtml(desc) + '</textarea></div>' +
+          '<div class="image-upload-area mini"><div class="upload-text">上传图标</div>' +
+            '<input type="file" accept="image/*" class="step-image-input" data-index="' + i + '"></div>' +
+          '<div class="block-image-preview step-image-preview" id="stepImgPreview' + i + '"></div>' +
         '</div>';
       });
       html += '</div><button class="add-item-btn" id="addStepBtn">+ 添加步骤</button></div>' +
@@ -2819,6 +2966,9 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
             '<input type="text" class="news-title-input" value="' + escapeHtml(title) + '" data-index="' + i + '"></div>' +
           '<div class="form-group"><label>摘要</label>' +
             '<textarea class="news-desc-input" rows="2" data-index="' + i + '">' + escapeHtml(desc) + '</textarea></div>' +
+          '<div class="image-upload-area mini"><div class="upload-text">上传图片</div>' +
+            '<input type="file" accept="image/*" class="news-image-input" data-index="' + i + '"></div>' +
+          '<div class="block-image-preview news-image-preview" id="newsImgPreview' + i + '"></div>' +
         '</div>';
       });
       html += '</div><button class="add-item-btn" id="addNewsBtn">+ 添加新闻</button></div>' +
@@ -2836,6 +2986,10 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
           '<textarea id="footerTaglineEn" rows="2"></textarea></div>' +
         '<div class="form-group"><label>版权</label>' +
           '<input type="text" id="footerCopyright" value="&copy; 2024 BRO COOLING. All Rights Reserved."></div>' +
+        '<div class="image-upload-area"><div class="upload-text">上传页脚 Logo</div>' +
+          '<div class="upload-hint">最大5MB | JPG, PNG, WebP</div>' +
+          '<input type="file" id="footerLogoImage" accept="image/*"></div>' +
+        '<div class="block-image-preview" id="footerLogoPreview"></div>' +
         '<div class="form-group"><label>社交链接</label>' +
           '<div class="item-list-edit" id="socialLinks"></div>' +
           '<button class="add-item-btn" id="addSocialBtn">+ 添加链接</button></div>' +
@@ -2867,21 +3021,80 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
       saveBlockChanges(blockId, blockType);
     });
     
-    // Image upload
-    var fileInput = document.getElementById('heroBgImage');
-    if (fileInput) {
-      fileInput.addEventListener('change', function(e) {
+    // 修复2：共享图片压缩函数
+    function compressAndPreview(file, previewEl, maxW) {
+      maxW = maxW || 1920;
+      if (file.size > 5242880) { showToast('文件过大（最大5MB）', 'error'); return; }
+      var reader = new FileReader();
+      reader.onerror = function() { showToast('文件读取失败，请重试', 'error'); };
+      reader.onload = function(ev) {
+        var img = new Image();
+        img.onload = function() {
+          var w = img.width, h = img.height;
+          if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+          var canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          var compressed = canvas.toDataURL('image/jpeg', 0.85);
+          if (previewEl) { previewEl.innerHTML = '<img src="' + compressed + '" style="max-width:200px">'; }
+          previewEl.setAttribute('data-compressed', compressed);
+        };
+        img.onerror = function() { showToast('图片解码失败，请尝试其他图片', 'error'); };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+    
+    // Hero 背景图上传
+    var heroFileInput = document.getElementById('heroBgImage');
+    if (heroFileInput) {
+      heroFileInput.addEventListener('change', function(e) {
         var file = e.target.files[0];
         if (!file) return;
-        if (file.size > 2097152) { showToast('文件过大（最大2MB）', 'error'); return; }
-        var reader = new FileReader();
-        reader.onload = function(ev) {
-          var preview = document.getElementById('heroBgPreview');
-          if (preview) { preview.innerHTML = '<img src="' + ev.target.result + '" style="max-width:200px">'; }
-        };
-        reader.readAsDataURL(file);
+        compressAndPreview(file, document.getElementById('heroBgPreview'), 1920);
       });
     }
+    
+    // 页脚 Logo 上传
+    var footerFileInput = document.getElementById('footerLogoImage');
+    if (footerFileInput) {
+      footerFileInput.addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+        compressAndPreview(file, document.getElementById('footerLogoPreview'), 600);
+      });
+    }
+    
+    // Timeline 配图上传
+    document.querySelectorAll('.timeline-image-input').forEach(function(input) {
+      input.addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+        var idx = input.getAttribute('data-index');
+        compressAndPreview(file, document.getElementById('timelineImgPreview' + idx), 800);
+      });
+    });
+    
+    // Steps 图标上传
+    document.querySelectorAll('.step-image-input').forEach(function(input) {
+      input.addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+        var idx = input.getAttribute('data-index');
+        compressAndPreview(file, document.getElementById('stepImgPreview' + idx), 400);
+      });
+    });
+    
+    // News 图片上传
+    document.querySelectorAll('.news-image-input').forEach(function(input) {
+      input.addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+        var idx = input.getAttribute('data-index');
+        compressAndPreview(file, document.getElementById('newsImgPreview' + idx), 800);
+      });
+    });
     
     // Timeline events
     var addTimeline = document.getElementById('addTimelineItem');
@@ -2894,16 +3107,26 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
         item.setAttribute('data-index', idx);
         item.innerHTML = '<div class="item-header"><div class="item-title">新条目</div>' +
           '<div class="item-actions">' +
-            '<button class="move-up-btn" data-index="' + idx + '">Up</button>' +
-            '<button class="move-down-btn" data-index="' + idx + '">Down</button>' +
-            '<button class="delete-item-btn" data-index="' + idx + '">Del</button>' +
+            '<button class="move-up-btn" data-index="' + idx + '">上移</button>' +
+            '<button class="move-down-btn" data-index="' + idx + '">下移</button>' +
+            '<button class="delete-item-btn" data-index="' + idx + '">删除</button>' +
           '</div></div>' +
           '<div class="form-group"><label>年份</label>' +
             '<input type="text" class="timeline-year-input" value="2024" data-index="' + idx + '"></div>' +
           '<div class="form-group"><label>描述</label>' +
-            '<textarea class="timeline-text-input" rows="2" data-index="' + idx + '"></textarea></div>';
+            '<textarea class="timeline-text-input" rows="2" data-index="' + idx + '"></textarea></div>' +
+          '<div class="image-upload-area mini"><div class="upload-text">上传配图</div>' +
+            '<input type="file" accept="image/*" class="timeline-image-input" data-index="' + idx + '"></div>' +
+          '<div class="block-image-preview timeline-image-preview" id="timelineImgPreview' + idx + '"></div>';
         container.appendChild(item);
         bindItemEvents(item);
+        // 为新元素绑定图片上传
+        var newInput = item.querySelector('.timeline-image-input');
+        newInput.addEventListener('change', function(e) {
+          var file = e.target.files[0];
+          if (!file) return;
+          compressAndPreview(file, document.getElementById('timelineImgPreview' + idx), 800);
+        });
       });
     }
     
@@ -2919,18 +3142,27 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
         item.setAttribute('data-index', idx);
         item.innerHTML = '<div class="item-header"><div class="item-title">步骤 ' + num + '</div>' +
           '<div class="item-actions">' +
-            '<button class="move-up-btn" data-index="' + idx + '">Up</button>' +
-            '<button class="move-down-btn" data-index="' + idx + '">Down</button>' +
-            '<button class="delete-item-btn" data-index="' + idx + '">Del</button>' +
+            '<button class="move-up-btn" data-index="' + idx + '">上移</button>' +
+            '<button class="move-down-btn" data-index="' + idx + '">下移</button>' +
+            '<button class="delete-item-btn" data-index="' + idx + '">删除</button>' +
           '</div></div>' +
           '<div class="form-group"><label>序号</label>' +
             '<input type="text" class="step-num-input" value="' + num + '" data-index="' + idx + '"></div>' +
           '<div class="form-group"><label>标题</label>' +
             '<input type="text" class="step-title-input" value="新步骤" data-index="' + idx + '"></div>' +
           '<div class="form-group"><label>描述</label>' +
-            '<textarea class="step-desc-input" rows="2" data-index="' + idx + '"></textarea></div>';
+            '<textarea class="step-desc-input" rows="2" data-index="' + idx + '"></textarea></div>' +
+          '<div class="image-upload-area mini"><div class="upload-text">上传图标</div>' +
+            '<input type="file" accept="image/*" class="step-image-input" data-index="' + idx + '"></div>' +
+          '<div class="block-image-preview step-image-preview" id="stepImgPreview' + idx + '"></div>';
         container.appendChild(item);
         bindItemEvents(item);
+        var newInput = item.querySelector('.step-image-input');
+        newInput.addEventListener('change', function(e) {
+          var file = e.target.files[0];
+          if (!file) return;
+          compressAndPreview(file, document.getElementById('stepImgPreview' + idx), 400);
+        });
       });
     }
     
@@ -2938,6 +3170,41 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
     document.querySelectorAll('.item-list-edit .item').forEach(function(item) {
       bindItemEvents(item);
     });
+
+    // News add event
+    var addNews = document.getElementById('addNewsBtn');
+    if (addNews) {
+      addNews.addEventListener('click', function() {
+        var container = addNews.parentElement.querySelector('.item-list-edit');
+        var idx = container.querySelectorAll('.item').length;
+        var item = document.createElement('div');
+        item.className = 'item';
+        item.setAttribute('data-index', idx);
+        item.innerHTML = '<div class="item-header"><div class="item-title">新闻 ' + (idx+1) + '</div>' +
+          '<div class="item-actions">' +
+            '<button class="move-up-btn" data-index="' + idx + '">上移</button>' +
+            '<button class="move-down-btn" data-index="' + idx + '">下移</button>' +
+            '<button class="delete-item-btn" data-index="' + idx + '">删除</button>' +
+          '</div></div>' +
+          '<div class="form-group"><label>日期</label>' +
+            '<input type="text" class="news-date-input" value="2024-05-01" data-index="' + idx + '"></div>' +
+          '<div class="form-group"><label>标题</label>' +
+            '<input type="text" class="news-title-input" value="新动态" data-index="' + idx + '"></div>' +
+          '<div class="form-group"><label>摘要</label>' +
+            '<textarea class="news-desc-input" rows="2" data-index="' + idx + '"></textarea></div>' +
+          '<div class="image-upload-area mini"><div class="upload-text">上传图片</div>' +
+            '<input type="file" accept="image/*" class="news-image-input" data-index="' + idx + '"></div>' +
+          '<div class="block-image-preview news-image-preview" id="newsImgPreview' + idx + '"></div>';
+        container.appendChild(item);
+        bindItemEvents(item);
+        var newInput = item.querySelector('.news-image-input');
+        newInput.addEventListener('change', function(e) {
+          var file = e.target.files[0];
+          if (!file) return;
+          compressAndPreview(file, document.getElementById('newsImgPreview' + idx), 800);
+        });
+      });
+    }
   }
   
   function bindItemEvents(item) {
@@ -2994,49 +3261,77 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
         i18n.en['hero.subtitle'] = subtitleEnEl.value;
       }
       
-      // Save background image
+      // Save background image (use compressed version if available)
       var preview = document.getElementById('heroBgPreview');
       if (preview) {
+        var compressed = preview.getAttribute('data-compressed');
         var img = preview.querySelector('img');
-        if (img) {
-          content.hero_bg_image = img.src;
+        var src = compressed || (img ? img.src : '');
+        if (src) {
+          content.hero_bg_image = src;
+          // 修复1：立即应用背景图到页面
+          document.querySelector('.hero-bg').style.backgroundImage = 'url(' + src + ')';
         }
       }
     }
     else if (blockType === 'timeline') {
       content.timeline_items = [];
-      document.querySelectorAll('.item-list-edit .item').forEach(function(item) {
+      document.querySelectorAll('.item-list-edit .item').forEach(function(item, i) {
         var year = item.querySelector('.timeline-year-input');
         var text = item.querySelector('.timeline-text-input');
+        var preview = document.getElementById('timelineImgPreview' + i);
+        var image = '';
+        if (preview) {
+          var compressed = preview.getAttribute('data-compressed');
+          var img = preview.querySelector('img');
+          image = compressed || (img ? img.src : '');
+        }
         content.timeline_items.push({
           year: year ? year.value : '',
-          text: text ? text.value : ''
+          text: text ? text.value : '',
+          image: image
         });
       });
     }
     else if (blockType === 'steps') {
       content.commission_steps = [];
-      document.querySelectorAll('.item-list-edit .item').forEach(function(item) {
+      document.querySelectorAll('.item-list-edit .item').forEach(function(item, i) {
         var num = item.querySelector('.step-num-input');
         var title = item.querySelector('.step-title-input');
         var desc = item.querySelector('.step-desc-input');
+        var preview = document.getElementById('stepImgPreview' + i);
+        var image = '';
+        if (preview) {
+          var compressed = preview.getAttribute('data-compressed');
+          var img = preview.querySelector('img');
+          image = compressed || (img ? img.src : '');
+        }
         content.commission_steps.push({
           number: num ? num.value : '',
           title: title ? title.value : '',
-          desc: desc ? desc.value : ''
+          desc: desc ? desc.value : '',
+          image: image
         });
       });
     }
     else if (blockType === 'news') {
       content.news_items = [];
-      document.querySelectorAll('.item-list-edit .item').forEach(function(item) {
+      document.querySelectorAll('.item-list-edit .item').forEach(function(item, i) {
         var date = item.querySelector('.news-date-input');
         var title = item.querySelector('.news-title-input');
         var desc = item.querySelector('.news-desc-input');
+        var preview = document.getElementById('newsImgPreview' + i);
+        var image = '';
+        if (preview) {
+          var compressed = preview.getAttribute('data-compressed');
+          var img = preview.querySelector('img');
+          image = compressed || (img ? img.src : '');
+        }
         content.news_items.push({
           date: date ? date.value : '',
           title: title ? title.value : '',
-          desc: desc ? desc.value : ''
+          desc: desc ? desc.value : '',
+          image: image
         });
       });
     }
@@ -3047,6 +3342,14 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
       if (taglineZh) content.footer_tagline_zh = taglineZh.value;
       if (taglineEn) content.footer_tagline_en = taglineEn.value;
       if (copyright) content.footer_copyright = copyright.value;
+      // Footer logo
+      var preview = document.getElementById('footerLogoPreview');
+      if (preview) {
+        var compressed = preview.getAttribute('data-compressed');
+        var img = preview.querySelector('img');
+        var src = compressed || (img ? img.src : '');
+        if (src) content.footer_logo = src;
+      }
     }
     
     // Save all content atomically
@@ -3059,8 +3362,57 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
     showToast('区块修改已保存', 'success');
     closeBlockEditor();
     
-    // Reload to reflect changes
-    setTimeout(function() { location.reload(); }, 800);
+    // 修复3：不强制刷新，直接更新页面内容
+    // 首屏背景图已在上面修复1中更新
+    // 其他区块内容需要动态更新
+    if (blockType === 'timeline') {
+      var container = document.querySelector('.timeline');
+      if (container) {
+        container.innerHTML = '';
+        content.timeline_items.forEach(function(item, i) {
+          var itemEl = document.createElement('div');
+          itemEl.className = 'timeline-item';
+          var imgHtml = item.image ? '<img src="' + item.image + '" class="timeline-img" style="max-width:200px;margin-top:8px;display:block;">' : '';
+          itemEl.innerHTML = '<div class="timeline-year">' + escapeHtml(item.year) + '</div>' +
+            '<div class="timeline-text">' + escapeHtml(item.text) + '</div>' + imgHtml;
+          container.appendChild(itemEl);
+        });
+      }
+    } else if (blockType === 'steps') {
+      var container = document.querySelector('.step-flow');
+      if (container) {
+        container.innerHTML = '';
+        content.commission_steps.forEach(function(step, i) {
+          var stepEl = document.createElement('div');
+          stepEl.className = 'step-card';
+          var imgHtml = step.image ? '<img src="' + step.image + '" class="step-img" style="max-width:80px;margin:8px auto 0;display:block;">' : '';
+          stepEl.innerHTML = '<div class="step-number">' + escapeHtml(step.number) + '</div>' +
+            '<div class="step-title">' + escapeHtml(step.title) + '</div>' +
+            '<div class="step-desc">' + escapeHtml(step.desc) + '</div>' + imgHtml;
+          container.appendChild(stepEl);
+        });
+      }
+    } else if (blockType === 'news') {
+      var container = document.querySelector('.news-grid');
+      if (container) {
+        container.innerHTML = '';
+        content.news_items.forEach(function(news, i) {
+          var newsEl = document.createElement('div');
+          newsEl.className = 'news-card';
+          var imgHtml = news.image ? '<img src="' + news.image + '" class="news-img" style="width:100%;max-height:200px;object-fit:cover;margin-bottom:12px;">' : '';
+          newsEl.innerHTML = imgHtml +
+            '<div class="news-date">' + escapeHtml(news.date) + '</div>' +
+            '<h4>' + escapeHtml(news.title) + '</h4>' +
+            '<p class="cn">' + escapeHtml(news.desc) + '</p>';
+          container.appendChild(newsEl);
+        });
+      }
+    } else if (blockType === 'footer') {
+      var footerLogo = document.querySelector('.footer-logo');
+      if (footerLogo && content.footer_logo) {
+        footerLogo.innerHTML = '<img src="' + content.footer_logo + '" alt="BRO Atelier">';
+      }
+    }
   }
   
   console.log('Block editing ready');
