@@ -193,30 +193,79 @@ ul { list-style: none; }
   align-items: center;
   justify-content: center;
 }
-.hero-bg {
+.hero-slider {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #0a0a0a 0%, #000 30%, #0a0a10 60%, #000 100%);
   z-index: 0;
+  overflow: hidden;
 }
-.hero-bg::before {
-  content: '';
+.hero-slide {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(ellipse at 30% 40%, rgba(0,255,255,0.08) 0%, transparent 60%),
-    radial-gradient(ellipse at 70% 60%, rgba(255,0,255,0.08) 0%, transparent 60%),
-    radial-gradient(ellipse at 50% 80%, rgba(0,255,0,0.05) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
-.hero-bg::after {
-  content: '';
+.hero-slide.active {
+  opacity: 1;
+}
+.hero-slide-link {
   position: absolute;
   inset: 0;
-  background-image:
-    radial-gradient(circle at 20% 30%, rgba(0,255,255,0.15) 1px, transparent 1px),
-    radial-gradient(circle at 80% 45%, rgba(255,0,255,0.12) 2px, transparent 2px),
-    radial-gradient(circle at 65% 80%, rgba(0,255,0,0.1) 1px, transparent 1px);
-  background-size: 200px 200px, 280px 280px, 180px 180px;
+  z-index: 1;
+  cursor: pointer;
+}
+.hero-slider-controls {
+  position: absolute;
+  bottom: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.slider-prev,
+.slider-next {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 24px;
+  transition: all 0.3s;
+}
+.slider-prev:hover,
+.slider-next:hover {
+  background: rgba(0, 0, 0, 0.8);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+.slider-dots {
+  display: flex;
+  gap: 8px;
+}
+.slider-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.slider-dot.active {
+  background: var(--accent-cyan);
+  transform: scale(1.2);
+}
+.slider-dot:hover {
+  background: rgba(255, 255, 255, 0.6);
 }
 .hero-content {
   position: relative;
@@ -856,6 +905,11 @@ ul { list-style: none; }
   .timeline { padding-left: 24px; }
   .timeline-item { padding-left: 20px; }
   .hero-title { letter-spacing: 6px; }
+  .hero-slider-controls { bottom: 140px; }
+  .slider-prev,
+  .slider-next { width: 32px; height: 32px; font-size: 18px; }
+  .slider-dots { gap: 6px; }
+  .slider-dot { width: 6px; height: 6px; }
 }
 
 .reveal {
@@ -1442,6 +1496,88 @@ body.edit-mode .editable-block:hover {
   background: rgba(0,255,255,0.1);
   border-style: solid;
 }
+
+/* 幻灯片编辑面板 */
+.slide-edit-item {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 16px;
+  margin-bottom: 12px;
+  border-radius: 2px;
+}
+.slide-edit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.slide-edit-title {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--accent-cyan);
+}
+.slide-edit-actions {
+  display: flex;
+  gap: 6px;
+}
+.slide-edit-actions button {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-secondary);
+  padding: 3px 8px;
+  font-size: 9px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.slide-edit-actions button:hover:not(:disabled) {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+.slide-edit-actions button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.slide-edit-body {
+  display: grid;
+  gap: 12px;
+}
+.add-slide-btn {
+  width: 100%;
+  padding: 10px;
+  background: rgba(0,255,255,0.05);
+  border: 1px dashed rgba(0,255,255,0.3);
+  color: var(--accent-cyan);
+  font-size: 10px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.3s;
+}
+.add-slide-btn:hover {
+  background: rgba(0,255,255,0.1);
+  border-style: solid;
+}
+
+/* 幻灯片预览相关 */
+.block-image-preview img {
+  max-width: 200px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 2px;
+  margin-top: 8px;
+}
+.image-upload-area.mini {
+  padding: 16px;
+}
+
+.slide-preview {
+  margin-top: 8px;
+}
+.slide-preview img {
+  max-width: 200px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 2px;
+}
 </style>
 </head>
 <body>
@@ -1474,7 +1610,14 @@ body.edit-mode .editable-block:hover {
      HERO
      ============================================ -->
 <section id="hero" class="hero editable-block" data-block-type="hero" data-block-id="hero">
-  <div class="hero-bg"></div>
+  <div class="hero-slider">
+    <!-- 轮播图将在这里动态生成 -->
+  </div>
+  <div class="hero-slider-controls">
+    <button class="slider-prev" aria-label="上一张">‹</button>
+    <button class="slider-next" aria-label="下一张">›</button>
+    <div class="slider-dots"></div>
+  </div>
   <div class="hero-content">
   <button class="edit-block-btn" data-block="hero">编辑首屏</button>
     <h1 class="hero-title fade-in">BRO COOLING</h1>
@@ -2732,16 +2875,175 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
 })();
 
 /* ============================================
+   HERO SLIDER — 首屏轮播图功能
+   ============================================ */
+(function initHeroSlider() {
+  var slider = null;
+  var currentIndex = 0;
+  var autoSlideInterval = null;
+  var isHovering = false;
+  
+  // 更新轮播图
+  window.updateHeroSlider = function(slides) {
+    if (!slides || slides.length === 0) {
+      // 如果没有幻灯片，使用默认渐变背景
+      var sliderContainer = document.querySelector('.hero-slider');
+      if (sliderContainer) {
+        sliderContainer.innerHTML = '<div class="hero-slide active" style="background: linear-gradient(135deg, #0a0a0a 0%, #000 30%, #0a0a10 60%, #000 100%);"></div>';
+      }
+      return;
+    }
+    
+    var sliderContainer = document.querySelector('.hero-slider');
+    var dotsContainer = document.querySelector('.slider-dots');
+    if (!sliderContainer || !dotsContainer) return;
+    
+    // 清空现有内容
+    sliderContainer.innerHTML = '';
+    dotsContainer.innerHTML = '';
+    
+    // 创建幻灯片和指示点
+    slides.forEach(function(slide, index) {
+      var slideEl = document.createElement('div');
+      slideEl.className = 'hero-slide' + (index === 0 ? ' active' : '');
+      
+      // 设置背景图片
+      if (slide.image) {
+        slideEl.style.backgroundImage = 'url(' + slide.image + ')';
+      } else {
+        slideEl.style.background = 'linear-gradient(135deg, #0a0a0a 0%, #000 30%, #0a0a10 60%, #000 100%)';
+      }
+      
+      // 添加点击链接
+      if (slide.link) {
+        var linkEl = document.createElement('a');
+        linkEl.className = 'hero-slide-link';
+        linkEl.href = slide.link;
+        linkEl.target = '_blank';
+        slideEl.appendChild(linkEl);
+      }
+      
+      sliderContainer.appendChild(slideEl);
+      
+      // 创建指示点
+      var dotEl = document.createElement('div');
+      dotEl.className = 'slider-dot' + (index === 0 ? ' active' : '');
+      dotEl.setAttribute('data-index', index);
+      dotEl.addEventListener('click', function() {
+        goToSlide(index);
+      });
+      dotsContainer.appendChild(dotEl);
+    });
+    
+    // 初始化轮播控制
+    initSliderControls();
+    
+    // 如果有多个幻灯片，开始自动轮播
+    if (slides.length > 1) {
+      startAutoSlide();
+    }
+  };
+  
+  function initSliderControls() {
+    var prevBtn = document.querySelector('.slider-prev');
+    var nextBtn = document.querySelector('.slider-next');
+    
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function() {
+        goToSlide(currentIndex - 1);
+        resetAutoSlide();
+      });
+    }
+    
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function() {
+        goToSlide(currentIndex + 1);
+        resetAutoSlide();
+      });
+    }
+    
+    // 悬停暂停
+    var sliderContainer = document.querySelector('.hero-slider');
+    if (sliderContainer) {
+      sliderContainer.addEventListener('mouseenter', function() {
+        isHovering = true;
+        stopAutoSlide();
+      });
+      sliderContainer.addEventListener('mouseleave', function() {
+        isHovering = false;
+        startAutoSlide();
+      });
+    }
+  }
+  
+  function goToSlide(index) {
+    var slides = document.querySelectorAll('.hero-slide');
+    var dots = document.querySelectorAll('.slider-dot');
+    if (slides.length === 0) return;
+    
+    // 计算新索引
+    if (index < 0) index = slides.length - 1;
+    if (index >= slides.length) index = 0;
+    
+    // 更新当前幻灯片
+    slides[currentIndex].classList.remove('active');
+    dots[currentIndex].classList.remove('active');
+    
+    slides[index].classList.add('active');
+    dots[index].classList.add('active');
+    
+    currentIndex = index;
+  }
+  
+  function startAutoSlide() {
+    if (isHovering) return;
+    var slides = document.querySelectorAll('.hero-slide');
+    if (slides.length <= 1) return;
+    
+    stopAutoSlide();
+    autoSlideInterval = setInterval(function() {
+      goToSlide(currentIndex + 1);
+    }, 5000); // 5秒切换
+  }
+  
+  function stopAutoSlide() {
+    if (autoSlideInterval) {
+      clearInterval(autoSlideInterval);
+      autoSlideInterval = null;
+    }
+  }
+  
+  function resetAutoSlide() {
+    stopAutoSlide();
+    startAutoSlide();
+  }
+  
+  // 页面加载时初始化
+  document.addEventListener('DOMContentLoaded', function() {
+    // 从 localStorage 加载数据并初始化轮播
+    var content = broGetData('bro_content', {});
+    if (content.hero_slides && content.hero_slides.length > 0) {
+      updateHeroSlider(content.hero_slides);
+    } else if (content.hero_bg_image) {
+      // 兼容旧数据
+      updateHeroSlider([{
+        image: content.hero_bg_image,
+        title: '',
+        subtitle: '',
+        link: '',
+        order: 0
+      }]);
+    }
+  });
+})();
+
+/* ============================================
    IMAGE RESTORATION — 页面加载时从 localStorage 恢复图片
    ============================================ */
 (function restoreImages() {
   var content = broGetData('bro_content', {});
   
-  // 恢复首屏背景图
-  if (content.hero_bg_image) {
-    var heroBg = document.querySelector('.hero-bg');
-    if (heroBg) heroBg.style.backgroundImage = 'url(' + content.hero_bg_image + ')';
-  }
+  // 首屏轮播图已在 initHeroSlider 中处理
   
   // 恢复时间线配图
   if (content.timeline_items && content.timeline_items.length) {
@@ -2862,7 +3164,7 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
     
     if (blockType === 'hero') {
       var heroTitle = document.querySelector('.hero-title').textContent;
-      html = '<h3>编辑首屏</h3>' +
+      html = '<h3>编辑首屏 — 幻灯片管理</h3>' +
         '<div class="block-edit-content active">' +
           '<div class="form-group"><label>主标题</label>' +
             '<input type="text" id="heroTitle" value="' + escapeHtml(heroTitle) + '"></div>' +
@@ -2872,13 +3174,10 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
             '<div class="form-group"><label>副标题（英文）</label>' +
               '<textarea id="heroSubtitleEn" rows="2">' + escapeHtml(i18n.en['hero.subtitle']) + '</textarea></div>' +
           '</div>' +
-          '<div class="image-upload-area">' +
-            '<div class="upload-icon">图片</div>' +
-            '<div class="upload-text">上传背景图片</div>' +
-            '<div class="upload-hint">最大2MB | JPG, PNG, WebP</div>' +
-            '<input type="file" id="heroBgImage" accept="image/*">' +
+          '<div class="slides-manager" id="slidesManager">' +
+            '<h4 style="font-size:12px;letter-spacing:1px;color:var(--text-secondary);margin-bottom:12px;">幻灯片列表</h4>' +
           '</div>' +
-          '<div class="block-image-preview" id="heroBgPreview"></div>' +
+          '<button class="add-slide-btn" id="addSlideBtn">+ 添加幻灯片</button>' +
         '</div>' +
         '<div class="block-edit-actions">' +
           '<button class="cancel-btn" id="cancelBlockEdit">取消</button>' +
@@ -3046,14 +3345,141 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
       reader.readAsDataURL(file);
     }
     
-    // Hero 背景图上传
-    var heroFileInput = document.getElementById('heroBgImage');
-    if (heroFileInput) {
-      heroFileInput.addEventListener('change', function(e) {
-        var file = e.target.files[0];
-        if (!file) return;
-        compressAndPreview(file, document.getElementById('heroBgPreview'), 1920);
-      });
+    // Hero 幻灯片管理
+    var slidesManager = document.getElementById('slidesManager');
+    if (slidesManager) {
+      // 加载已有幻灯片数据
+      var content = broGetData('bro_content', {});
+      var slides = content.hero_slides || [];
+      
+      // 兼容旧数据：如果有旧的 hero_bg_image，转为单张幻灯片
+      if (slides.length === 0 && content.hero_bg_image) {
+        slides = [{
+          image: content.hero_bg_image,
+          title: '',
+          subtitle: '',
+          link: '',
+          order: 0
+        }];
+      }
+
+      // 刷新幻灯片列表
+      function refreshSlidesList() {
+        var container = document.getElementById('slidesManager');
+        // 保留标题
+        var html = '<h4 style="font-size:12px;letter-spacing:1px;color:var(--text-secondary);margin-bottom:12px;">幻灯片列表</h4>';
+        slides.forEach(function(slide, i) {
+          html += '<div class="slide-edit-item" data-index="' + i + '">' +
+            '<div class="slide-edit-header">' +
+              '<div class="slide-edit-title">幻灯片 ' + (i + 1) + '</div>' +
+              '<div class="slide-edit-actions">' +
+                '<button class="slide-move-up" data-index="' + i + '"' + (i === 0 ? ' disabled' : '') + '>上移</button>' +
+                '<button class="slide-move-down" data-index="' + i + '"' + (i === slides.length - 1 ? ' disabled' : '') + '>下移</button>' +
+                '<button class="slide-delete" data-index="' + i + '">删除</button>' +
+              '</div>' +
+            '</div>' +
+            '<div class="slide-edit-body">' +
+              '<div class="form-group"><label>标题（可选）</label>' +
+                '<input type="text" class="slide-title-input" value="' + escapeHtml(slide.title || '') + '" data-index="' + i + '"></div>' +
+              '<div class="form-group"><label>副标题（可选）</label>' +
+                '<input type="text" class="slide-subtitle-input" value="' + escapeHtml(slide.subtitle || '') + '" data-index="' + i + '"></div>' +
+              '<div class="form-group"><label>跳转链接（可选）</label>' +
+                '<input type="text" class="slide-link-input" value="' + escapeHtml(slide.link || '') + '" data-index="' + i + '" placeholder="https://..."></div>' +
+              '<div class="image-upload-area mini">' +
+                '<div class="upload-text">上传背景图片</div>' +
+                '<input type="file" accept="image/*" class="slide-image-input" data-index="' + i + '">' +
+              '</div>' +
+              '<div class="block-image-preview slide-preview" id="slidePreview' + i + '">' +
+                (slide.image ? '<img src="' + slide.image + '" style="max-width:200px;">' : '') +
+              '</div>' +
+            '</div>' +
+          '</div>';
+        });
+        if (slides.length === 0) {
+          html += '<div style="color:var(--text-secondary);font-size:11px;padding:16px;text-align:center;">暂无幻灯片，点击下方按钮添加</div>';
+        }
+        container.innerHTML = html;
+        bindSlideEvents();
+      }
+
+      function bindSlideEvents() {
+        // 删除
+        document.querySelectorAll('.slide-delete').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            var idx = parseInt(btn.getAttribute('data-index'));
+            if (confirm('确认删除幻灯片 ' + (idx + 1) + '？')) {
+              slides.splice(idx, 1);
+              refreshSlidesList();
+            }
+          });
+        });
+        // 上移
+        document.querySelectorAll('.slide-move-up').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            var idx = parseInt(btn.getAttribute('data-index'));
+            if (idx > 0) {
+              var tmp = slides[idx];
+              slides[idx] = slides[idx - 1];
+              slides[idx - 1] = tmp;
+              refreshSlidesList();
+            }
+          });
+        });
+        // 下移
+        document.querySelectorAll('.slide-move-down').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            var idx = parseInt(btn.getAttribute('data-index'));
+            if (idx < slides.length - 1) {
+              var tmp = slides[idx];
+              slides[idx] = slides[idx + 1];
+              slides[idx + 1] = tmp;
+              refreshSlidesList();
+            }
+          });
+        });
+        // 图片上传
+        document.querySelectorAll('.slide-image-input').forEach(function(input) {
+          input.addEventListener('change', function(e) {
+            var file = e.target.files[0];
+            if (!file) return;
+            var idx = parseInt(input.getAttribute('data-index'));
+            var preview = document.getElementById('slidePreview' + idx);
+            compressAndPreview(file, preview, 1920);
+            // 压缩完成后更新 slides 数据
+            var checkInterval = setInterval(function() {
+              var compressed = preview.getAttribute('data-compressed');
+              if (compressed) {
+                slides[idx].image = compressed;
+                clearInterval(checkInterval);
+              }
+            }, 100);
+          });
+        });
+        // 上传区域点击
+        document.querySelectorAll('.slide-edit-item .image-upload-area').forEach(function(area) {
+          area.addEventListener('click', function(e) {
+            var fi = area.querySelector('input[type="file"]');
+            if (fi) fi.click();
+          });
+        });
+      }
+
+      refreshSlidesList();
+
+      // 添加幻灯片
+      var addSlideBtn = document.getElementById('addSlideBtn');
+      if (addSlideBtn) {
+        addSlideBtn.addEventListener('click', function() {
+          slides.push({
+            image: '',
+            title: '',
+            subtitle: '',
+            link: '',
+            order: slides.length
+          });
+          refreshSlidesList();
+        });
+      }
     }
     
     // 页脚 Logo 上传
@@ -3293,18 +3719,33 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
         i18n.en['hero.subtitle'] = subtitleEnEl.value;
       }
       
-      // Save background image (use compressed version if available)
-      var preview = document.getElementById('heroBgPreview');
-      if (preview) {
-        var compressed = preview.getAttribute('data-compressed');
-        var img = preview.querySelector('img');
-        var src = compressed || (img ? img.src : '');
-        if (src) {
-          content.hero_bg_image = src;
-          // 修复1：立即应用背景图到页面
-          document.querySelector('.hero-bg').style.backgroundImage = 'url(' + src + ')';
+      // 收集幻灯片数据
+      content.hero_slides = [];
+      document.querySelectorAll('.slide-edit-item').forEach(function(item, i) {
+        var titleInput = item.querySelector('.slide-title-input');
+        var subtitleInput = item.querySelector('.slide-subtitle-input');
+        var linkInput = item.querySelector('.slide-link-input');
+        var preview = document.getElementById('slidePreview' + i);
+        var image = '';
+        if (preview) {
+          var compressed = preview.getAttribute('data-compressed');
+          var img = preview.querySelector('img');
+          image = compressed || (img ? img.src : '');
         }
-      }
+        content.hero_slides.push({
+          image: image,
+          title: titleInput ? titleInput.value : '',
+          subtitle: subtitleInput ? subtitleInput.value : '',
+          link: linkInput ? linkInput.value : '',
+          order: i
+        });
+      });
+      
+      // 兼容旧字段（删除旧数据）
+      delete content.hero_bg_image;
+      
+      // 立即更新轮播
+      updateHeroSlider(content.hero_slides);
     }
     else if (blockType === 'timeline') {
       content.timeline_items = [];
