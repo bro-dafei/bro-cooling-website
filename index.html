@@ -864,6 +864,274 @@ ul { list-style: none; }
   transition: opacity 0.8s ease, transform 0.8s ease;
 }
 .reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ========================================
+   EDIT MODE — WYSIWYG Toolbar & Styles
+   ======================================== */
+.edit-toolbar {
+  position: fixed;
+  top: 80px; right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(10,10,10,0.95);
+  border: 1px solid rgba(0,255,255,0.3);
+  border-radius: 4px;
+  padding: 12px;
+  backdrop-filter: blur(8px);
+  min-width: 160px;
+  transition: transform 0.3s, opacity 0.3s;
+}
+.edit-toolbar.collapsed {
+  transform: translateX(calc(100% + 20px));
+  opacity: 0.5;
+}
+.edit-toolbar-toggle {
+  position: fixed;
+  top: 80px; right: 20px;
+  z-index: 10000;
+  width: 40px; height: 40px;
+  background: rgba(10,10,10,0.95);
+  border: 1px solid rgba(0,255,255,0.3);
+  border-radius: 4px;
+  color: var(--accent-cyan);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  backdrop-filter: blur(8px);
+}
+.edit-toolbar-toggle:hover {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 12px rgba(0,255,255,0.2);
+}
+.edit-toolbar-toggle.hidden { display: none; }
+.edit-toolbar-title {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 4px;
+}
+.edit-toolbar button {
+  width: 100%;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-secondary);
+  padding: 8px 12px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: var(--font-en);
+  border-radius: 2px;
+}
+.edit-toolbar button:hover {
+  background: rgba(0,255,255,0.08);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+.edit-toolbar button.active {
+  background: rgba(0,255,255,0.12);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+.edit-toolbar button.save-btn {
+  border-color: rgba(0,255,0,0.3);
+  color: var(--accent-green);
+}
+.edit-toolbar button.save-btn:hover {
+  background: rgba(0,255,0,0.1);
+  border-color: var(--accent-green);
+}
+.edit-toolbar button.publish-btn {
+  border-color: rgba(255,0,255,0.3);
+  color: var(--accent-magenta);
+}
+.edit-toolbar button.publish-btn:hover {
+  background: rgba(255,0,255,0.1);
+  border-color: var(--accent-magenta);
+}
+
+/* Edit Mode — Editable Element Styles */
+body.edit-mode .editable {
+  outline: 1px dashed transparent;
+  transition: outline 0.2s;
+  cursor: text;
+  position: relative;
+}
+body.edit-mode .editable:hover {
+  outline: 1px dashed rgba(0,255,255,0.5);
+  background: rgba(0,255,255,0.03);
+}
+body.edit-mode .editable.editing {
+  outline: 1px solid var(--accent-cyan) !important;
+  background: rgba(0,255,255,0.06) !important;
+}
+body.edit-mode .editable-image {
+  outline: 1px dashed transparent;
+  transition: outline 0.2s;
+  cursor: pointer;
+}
+body.edit-mode .editable-image:hover {
+  outline: 1px dashed rgba(255,0,255,0.5);
+}
+
+/* Edit mode inline editor */
+.edit-inline-input {
+  background: #0a0a0a;
+  border: 1px solid var(--accent-cyan);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  padding: 4px 8px;
+  width: 100%;
+  outline: none;
+  box-sizing: border-box;
+  resize: none;
+  overflow: hidden;
+}
+.edit-inline-input.textarea {
+  min-height: 60px;
+}
+
+/* Edit mode toast */
+.edit-toast {
+  position: fixed;
+  bottom: 30px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 99999;
+  background: rgba(0,0,0,0.9);
+  border: 1px solid var(--accent-cyan);
+  color: var(--text-primary);
+  padding: 10px 24px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.edit-toast.show { opacity: 1; }
+.edit-toast.success { border-color: var(--accent-green); color: var(--accent-green); }
+.edit-toast.error { border-color: #ff4444; color: #ff4444; }
+
+/* Edit mode work card indicator */
+body.edit-mode .grid-item {
+  outline: 1px dashed transparent;
+  transition: outline 0.2s;
+  cursor: pointer;
+}
+body.edit-mode .grid-item:hover {
+  outline: 1px dashed rgba(255,0,255,0.4);
+}
+body.edit-mode .grid-item .edit-work-badge {
+  position: absolute;
+  top: 8px; left: 8px;
+  z-index: 4;
+  background: rgba(0,0,0,0.8);
+  border: 1px solid var(--accent-magenta);
+  color: var(--accent-magenta);
+  padding: 2px 8px;
+  font-size: 9px;
+  letter-spacing: 1px;
+  display: none;
+}
+body.edit-mode .grid-item:hover .edit-work-badge {
+  display: block;
+}
+
+/* Edit work modal */
+.edit-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+.edit-modal {
+  background: #0a0a0a;
+  border: 1px solid rgba(0,255,255,0.2);
+  border-radius: 4px;
+  padding: 32px;
+  width: 90%;
+  max-width: 480px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.edit-modal h3 {
+  font-size: 14px;
+  letter-spacing: 2px;
+  margin-bottom: 24px;
+  color: var(--accent-cyan);
+}
+.edit-modal .form-group { margin-bottom: 16px; }
+.edit-modal .form-group label {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.edit-modal .form-group input,
+.edit-modal .form-group textarea,
+.edit-modal .form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  background: #111;
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  font-family: var(--font-cn);
+}
+.edit-modal .form-group input:focus,
+.edit-modal .form-group textarea:focus,
+.edit-modal .form-group select:focus {
+  border-color: var(--accent-cyan);
+}
+.edit-modal .form-group textarea { min-height: 80px; resize: vertical; }
+.edit-modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+.edit-modal-actions button {
+  flex: 1;
+  padding: 10px;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: none;
+  color: var(--text-secondary);
+  transition: all 0.3s;
+  font-family: var(--font-en);
+}
+.edit-modal-actions button.save-btn {
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+}
+.edit-modal-actions button.save-btn:hover { background: rgba(0,255,0,0.1); }
+.edit-modal-actions button.cancel-btn:hover { background: rgba(255,255,255,0.05); }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 </style>
 </head>
 <body>
@@ -1727,6 +1995,382 @@ window.addEventListener('load', function() {
 console.log('BRO COOLING — Atelier of Liquid Masterpieces — Ready.');
 console.log('i18n: 中文/English bilingual support active. Current: ' + currentLang);
 console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).length);
+
+/* ============================================
+   EDIT MODE — WYSIWYG Inline Editing System
+   ============================================ */
+(function initEditMode() {
+  var urlParams = new URLSearchParams(window.location.search);
+  var editMode = urlParams.get('edit') === '1';
+  
+  if (!editMode) return;
+  
+  document.body.classList.add('edit-mode');
+  
+  var toolbarHTML = 
+    '<div class="edit-toolbar-toggle" id="editToolbarToggle">&#9998;</div>' +
+    '<div class="edit-toolbar" id="editToolbar">' +
+      '<div class="edit-toolbar-title">EDIT MODE</div>' +
+      '<button id="toggleEditModeBtn" class="active">Edit Mode ON</button>' +
+      '<button id="saveBtn" class="save-btn">Save to LocalStorage</button>' +
+      '<button id="publishBtn" class="publish-btn">Download bro-data.json</button>' +
+      '<div style="height:1px;background:rgba(255,255,255,0.1);margin:8px 0"></div>' +
+      '<button id="addWorkBtn">+ Add Work</button>' +
+      '<button id="reloadBtn">Reload Page</button>' +
+    '</div>' +
+    '<div class="edit-toast" id="editToast"></div>';
+  document.body.insertAdjacentHTML('beforeend', toolbarHTML);
+  
+  var toolbarToggle = document.getElementById('editToolbarToggle');
+  var toolbar = document.getElementById('editToolbar');
+  var toggleEditBtn = document.getElementById('toggleEditModeBtn');
+  var saveBtn = document.getElementById('saveBtn');
+  var publishBtn = document.getElementById('publishBtn');
+  var addWorkBtn = document.getElementById('addWorkBtn');
+  var reloadBtn = document.getElementById('reloadBtn');
+  var toast = document.getElementById('editToast');
+  
+  var isToolbarCollapsed = false;
+  toolbarToggle.addEventListener('click', function() {
+    isToolbarCollapsed = !isToolbarCollapsed;
+    toolbar.classList.toggle('collapsed', isToolbarCollapsed);
+  });
+  
+  toggleEditBtn.addEventListener('click', function() {
+    var isEdit = document.body.classList.toggle('edit-mode');
+    toggleEditBtn.textContent = isEdit ? 'Edit Mode ON' : 'Edit Mode OFF';
+    toggleEditBtn.classList.toggle('active', isEdit);
+    showToast('Edit mode ' + (isEdit ? 'enabled' : 'disabled'));
+  });
+  
+  saveBtn.addEventListener('click', function() {
+    saveAllContent();
+    showToast('Saved to LocalStorage', 'success');
+  });
+  
+  publishBtn.addEventListener('click', function() {
+    try {
+      var works = broGetData('bro_works', []);
+      var content = broGetData('bro_content', {});
+      var inquiries = broGetData('bro_inquiries', []);
+      var settings = broGetData('bro_settings', {});
+      var data = { works: works, content: content, inquiries: inquiries, settings: settings };
+      var jsonStr = JSON.stringify(data, null, 2);
+      var blob = new Blob([jsonStr], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'bro-data.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('bro-data.json downloaded', 'success');
+    } catch(e) {
+      showToast('Publish failed: ' + e.message, 'error');
+    }
+  });
+  
+  addWorkBtn.addEventListener('click', function() {
+    showWorkModal();
+  });
+  
+  reloadBtn.addEventListener('click', function() {
+    location.reload();
+  });
+  
+  function showToast(message, type) {
+    type = type || 'info';
+    toast.textContent = message;
+    toast.className = 'edit-toast show ' + type;
+    setTimeout(function() { toast.classList.remove('show'); }, 3000);
+  }
+  
+  function saveAllContent() {
+    var content = {};
+    document.querySelectorAll('[data-content-key]').forEach(function(el) {
+      var key = el.getAttribute('data-content-key');
+      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        content[key] = el.value;
+      } else {
+        content[key] = el.textContent;
+      }
+    });
+    broSetData('bro_content', content);
+  }
+  
+  function setupEditableElements() {
+    var heroTitle = document.querySelector('.hero-title');
+    var heroSubtitle = document.querySelector('.hero-subtitle');
+    
+    if (heroTitle) {
+      heroTitle.classList.add('editable');
+      heroTitle.setAttribute('data-content-key', 'hero_title');
+      heroTitle.addEventListener('click', function() { editInline(heroTitle, 'hero_title'); });
+    }
+    if (heroSubtitle) {
+      heroSubtitle.classList.add('editable');
+      heroSubtitle.setAttribute('data-content-key', 'hero_subtitle');
+      heroSubtitle.addEventListener('click', function() { editInline(heroSubtitle, 'hero_subtitle'); });
+    }
+    
+    document.querySelectorAll('.section-title').forEach(function(title, idx) {
+      title.classList.add('editable');
+      title.setAttribute('data-content-key', 'section_title_' + idx);
+      title.addEventListener('click', function() { editInline(title, 'section_title_' + idx); });
+    });
+    
+    document.querySelectorAll('.section-label').forEach(function(label, idx) {
+      label.classList.add('editable');
+      label.setAttribute('data-content-key', 'section_label_' + idx);
+      label.addEventListener('click', function() { editInline(label, 'section_label_' + idx); });
+    });
+    
+    document.querySelectorAll('.timeline-year').forEach(function(year, idx) {
+      year.classList.add('editable');
+      year.setAttribute('data-content-key', 'timeline_year_' + idx);
+      year.addEventListener('click', function() { editInline(year, 'timeline_year_' + idx); });
+    });
+    
+    document.querySelectorAll('.timeline-text').forEach(function(text, idx) {
+      text.classList.add('editable');
+      text.setAttribute('data-content-key', 'timeline_text_' + idx);
+      text.addEventListener('click', function() { editInline(text, 'timeline_text_' + idx); });
+    });
+    
+    document.querySelectorAll('.step-title').forEach(function(el, idx) {
+      el.classList.add('editable');
+      el.setAttribute('data-content-key', 'step_title_' + idx);
+      el.addEventListener('click', function() { editInline(el, 'step_title_' + idx); });
+    });
+    
+    document.querySelectorAll('.step-desc').forEach(function(el, idx) {
+      el.classList.add('editable');
+      el.setAttribute('data-content-key', 'step_desc_' + idx);
+      el.addEventListener('click', function() { editInline(el, 'step_desc_' + idx); });
+    });
+    
+    document.querySelectorAll('.care-title').forEach(function(el, idx) {
+      el.classList.add('editable');
+      el.setAttribute('data-content-key', 'care_title_' + idx);
+      el.addEventListener('click', function() { editInline(el, 'care_title_' + idx); });
+    });
+    
+    document.querySelectorAll('.care-desc').forEach(function(el, idx) {
+      el.classList.add('editable');
+      el.setAttribute('data-content-key', 'care_desc_' + idx);
+      el.addEventListener('click', function() { editInline(el, 'care_desc_' + idx); });
+    });
+    
+    document.querySelectorAll('.news-card-body h4').forEach(function(el, idx) {
+      el.classList.add('editable');
+      el.setAttribute('data-content-key', 'news_title_' + idx);
+      el.addEventListener('click', function() { editInline(el, 'news_title_' + idx); });
+    });
+    
+    document.querySelectorAll('.news-card-body p.cn').forEach(function(el, idx) {
+      el.classList.add('editable');
+      el.setAttribute('data-content-key', 'news_desc_' + idx);
+      el.addEventListener('click', function() { editInline(el, 'news_desc_' + idx); });
+    });
+    
+    document.querySelectorAll('.news-date').forEach(function(el, idx) {
+      el.classList.add('editable');
+      el.setAttribute('data-content-key', 'news_date_' + idx);
+      el.addEventListener('click', function() { editInline(el, 'news_date_' + idx); });
+    });
+    
+    document.querySelectorAll('.footer-tagline').forEach(function(el, idx) {
+      el.classList.add('editable');
+      el.setAttribute('data-content-key', 'footer_tagline_' + idx);
+      el.addEventListener('click', function() { editInline(el, 'footer_tagline_' + idx); });
+    });
+    
+    document.querySelectorAll('.footer-heading').forEach(function(el, idx) {
+      el.classList.add('editable');
+      el.setAttribute('data-content-key', 'footer_heading_' + idx);
+      el.addEventListener('click', function() { editInline(el, 'footer_heading_' + idx); });
+    });
+    
+    // Nav links
+    document.querySelectorAll('.header-nav a').forEach(function(link, idx) {
+      link.classList.add('editable');
+      link.setAttribute('data-content-key', 'nav_link_' + idx);
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        editInline(link, 'nav_link_' + idx);
+      });
+    });
+    
+    // Spec table values
+    document.querySelectorAll('.spec-table td').forEach(function(td, idx) {
+      td.classList.add('editable');
+      td.setAttribute('data-content-key', 'spec_td_' + idx);
+      td.addEventListener('click', function() { editInline(td, 'spec_td_' + idx); });
+    });
+  }
+  
+  function editInline(element, key) {
+    if (element.classList.contains('editing')) return;
+    
+    element.classList.add('editing');
+    var original = element.textContent;
+    var isTextarea = element.classList.contains('cn') || original.length > 60;
+    
+    var input = document.createElement(isTextarea ? 'textarea' : 'input');
+    input.className = 'edit-inline-input' + (isTextarea ? ' textarea' : '');
+    input.value = original;
+    input.setAttribute('data-content-key', key);
+    
+    var cs = getComputedStyle(element);
+    input.style.fontFamily = cs.fontFamily;
+    input.style.fontSize = cs.fontSize;
+    input.style.fontWeight = cs.fontWeight;
+    input.style.letterSpacing = cs.letterSpacing;
+    input.style.lineHeight = cs.lineHeight;
+    input.style.color = cs.color;
+    input.style.textAlign = cs.textAlign;
+    
+    element.innerHTML = '';
+    element.appendChild(input);
+    input.focus();
+    
+    if (isTextarea) {
+      input.rows = 3;
+      input.style.height = 'auto';
+      input.style.height = input.scrollHeight + 'px';
+    }
+    
+    function save() {
+      var newValue = input.value.trim();
+      element.textContent = newValue || original;
+      element.classList.remove('editing');
+      
+      var content = broGetData('bro_content', {});
+      content[key] = newValue || original;
+      broSetData('bro_content', content);
+      
+      showToast('Saved', 'success');
+    }
+    
+    function cancel() {
+      element.textContent = original;
+      element.classList.remove('editing');
+    }
+    
+    input.addEventListener('blur', save);
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey && !isTextarea) {
+        e.preventDefault();
+        save();
+      }
+      if (e.key === 'Escape') {
+        cancel();
+      }
+    });
+  }
+  
+  function showWorkModal(workIndex) {
+    var works = broGetData('bro_works', []);
+    var work = workIndex !== null ? works[workIndex] : { name_zh: '', name_en: '', category: 'tower', badge: 'custom', image: '' };
+    
+    var modalHTML =
+      '<div class="edit-modal-overlay" id="workModalOverlay">' +
+        '<div class="edit-modal">' +
+          '<h3>' + (workIndex !== null ? 'Edit Work' : 'Add New Work') + '</h3>' +
+          '<div class="form-group"><label>Name (Chinese)</label><input type="text" id="workNameZh" value="' + escapeAttr(work.name_zh || '') + '" placeholder="作品名称"></div>' +
+          '<div class="form-group"><label>Name (English)</label><input type="text" id="workNameEn" value="' + escapeAttr(work.name_en || '') + '" placeholder="Work Name"></div>' +
+          '<div class="form-group"><label>Category</label><select id="workCategory">' +
+            '<option value="tower"' + (work.category === 'tower' ? ' selected' : '') + '>Full Tower</option>' +
+            '<option value="mid-tower"' + (work.category === 'mid-tower' ? ' selected' : '') + '>Mid Tower</option>' +
+            '<option value="custom"' + (work.category === 'custom' ? ' selected' : '') + '>Custom Theme</option>' +
+            '<option value="open-frame"' + (work.category === 'open-frame' ? ' selected' : '') + '>Open Frame</option>' +
+          '</select></div>' +
+          '<div class="form-group"><label>Badge</label><select id="workBadge">' +
+            '<option value="signature"' + (work.badge === 'signature' ? ' selected' : '') + '>Signature</option>' +
+            '<option value="limited"' + (work.badge === 'limited' ? ' selected' : '') + '>Limited</option>' +
+            '<option value="custom"' + (work.badge === 'custom' ? ' selected' : '') + '>Custom</option>' +
+            '<option value="classic"' + (work.badge === 'classic' ? ' selected' : '') + '>Classic</option>' +
+            '<option value="iconic"' + (work.badge === 'iconic' ? ' selected' : '') + '>Iconic</option>' +
+            '<option value="popular"' + (work.badge === 'popular' ? ' selected' : '') + '>Popular</option>' +
+          '</select></div>' +
+          '<div class="form-group"><label>Image URL</label><input type="text" id="workImage" value="' + escapeAttr(work.image || '') + '" placeholder="https://..."></div>' +
+          '<div class="edit-modal-actions">' +
+            '<button class="cancel-btn" id="cancelWorkBtn">Cancel</button>' +
+            '<button class="save-btn" id="saveWorkBtn">Save</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    document.getElementById('cancelWorkBtn').addEventListener('click', function() {
+      document.getElementById('workModalOverlay').remove();
+    });
+    
+    document.getElementById('saveWorkBtn').addEventListener('click', function() {
+      var updatedWork = {
+        name_zh: document.getElementById('workNameZh').value,
+        name_en: document.getElementById('workNameEn').value,
+        category: document.getElementById('workCategory').value,
+        badge: document.getElementById('workBadge').value,
+        image: document.getElementById('workImage').value
+      };
+      
+      if (workIndex !== null) {
+        works[workIndex] = updatedWork;
+      } else {
+        works.push(updatedWork);
+      }
+      
+      broSetData('bro_works', works);
+      renderAllWorks();
+      document.getElementById('workModalOverlay').remove();
+      setupWorkEditing();
+      showToast('Work ' + (workIndex !== null ? 'updated' : 'added'), 'success');
+    });
+    
+    document.getElementById('workModalOverlay').addEventListener('click', function(e) {
+      if (e.target === this) this.remove();
+    });
+  }
+  
+  function escapeAttr(str) {
+    return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  
+  function setupWorkEditing() {
+    document.querySelectorAll('[data-work-id]').forEach(function(card) {
+      if (!card.querySelector('.edit-work-badge')) {
+        var badge = document.createElement('div');
+        badge.className = 'edit-work-badge';
+        badge.textContent = 'EDIT';
+        card.appendChild(badge);
+      }
+      
+      card.addEventListener('click', function(e) {
+        if (!document.body.classList.contains('edit-mode')) return;
+        e.preventDefault();
+        e.stopPropagation();
+        var workId = parseInt(card.getAttribute('data-work-id'));
+        showWorkModal(workId);
+      });
+    });
+  }
+  
+  setupEditableElements();
+  setupWorkEditing();
+  
+  var savedContent = broGetData('bro_content', {});
+  Object.keys(savedContent).forEach(function(key) {
+    var el = document.querySelector('[data-content-key="' + key + '"]');
+    if (el && el.tagName !== 'INPUT' && el.tagName !== 'TEXTAREA') {
+      el.textContent = savedContent[key];
+    }
+  });
+  
+  console.log('Edit mode initialized (URL: ?edit=1)');
+})();
 </script>
 
 </body>
