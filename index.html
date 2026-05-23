@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BRO COOLING — Atelier of Liquid Masterpieces</title>
+<style>
+/* ========================================
+   BRO COOLING — DESIGN SYSTEM (Mansory DNA)
+   ======================================== */
+
+/* --- CSS Variables / Design Tokens --- */
+:root {
+  --bg: #000000;
+  --text-primary: #FFFFFF;
+  --text-secondary: #888888;
+  --accent-cyan: #00ffff;
+  --accent-magenta: #ff00ff;
+  --accent-green: #00ff00;
+  --fluid-gradient: linear-gradient(135deg, #00ffff, #ff00ff, #00ff00);
+  --font-en: 'Helvetica Neue', 'Helvetica Now', 'Arial', sans-serif;
+  --font-cn: 'Noto Sans SC', 'Source Han Sans SC', 'Microsoft YaHei', sans-serif;
+  --grid-gap: 8px;
+  --header-height: 72px;
+}
+
+/* --- Reset & Base --- */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; background: var(--bg); }
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-en);
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+ul { list-style: none; }
+
+.cn { font-family: var(--font-cn); }
+
+/* --- Water-channel decorative strip --- */
+.water-channel {
+  position: relative;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(0,255,255,0.4) 20%,
+    rgba(255,0,255,0.4) 50%,
+    rgba(0,255,0,0.4) 80%,
+    transparent 100%
+  );
+  overflow: hidden;
+}
+.water-channel::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 30%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+  animation: flow 3s ease-in-out infinite;
+}
+@keyframes flow {
+  0% { left: -30%; }
+  100% { left: 130%; }
+}
+
+/* --- Fluid line decorative element --- */
+.fluid-line {
+  width: 100%;
+  height: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--accent-cyan) 0px, var(--accent-cyan) 4px,
+    transparent 4px, transparent 12px,
+    var(--accent-magenta) 12px, var(--accent-magenta) 16px,
+    transparent 16px, transparent 24px,
+    var(--accent-green) 24px, var(--accent-green) 28px,
+    transparent 28px, transparent 40px
+  );
+  opacity: 0.4;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeInUp 0.8s ease-out both; }
+.fade-in-d1 { animation-delay: 0.2s; }
+.fade-in-d2 { animation-delay: 0.5s; }
+.fade-in-d3 { animation-delay: 0.8s; }
+
+/* ========================================
+   HEADER
+   ======================================== */
+.site-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 48px;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.header-logo {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  background: linear-gradient(135deg, #fff 0%, #aaa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.header-right { display: flex; align-items: center; gap: 32px; }
+.header-nav { display: flex; gap: 40px; }
+.header-nav a {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-secondary);
+  transition: color 0.3s;
+  position: relative;
+}
+.header-nav a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0; right: 0;
+  height: 1px;
+  background: var(--accent-cyan);
+  transform: scaleX(0);
+  transition: transform 0.3s;
+}
+.header-nav a:hover { color: var(--text-primary); }
+.header-nav a:hover::after { transform: scaleX(1); }
+
+/* Language Toggle */
+.lang-toggle {
+  display: flex;
+  gap: 0;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 2px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.lang-toggle button {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: var(--font-en);
+  text-transform: uppercase;
+}
+.lang-toggle button.active {
+  background: rgba(255,255,255,0.08);
+  color: var(--accent-cyan);
+}
+.lang-toggle button:hover:not(.active) { color: var(--text-primary); }
+
+.header-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+.header-hamburger span {
+  width: 24px; height: 2px;
+  background: var(--text-primary);
+  transition: 0.3s;
+}
+
+/* ========================================
+   HERO SECTION
+   ======================================== */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 700px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #0a0a0a 0%, #000 30%, #0a0a10 60%, #000 100%);
+  z-index: 0;
+}
+.hero-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 40%, rgba(0,255,255,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 60%, rgba(255,0,255,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 80%, rgba(0,255,0,0.05) 0%, transparent 50%);
+}
+.hero-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(0,255,255,0.15) 1px, transparent 1px),
+    radial-gradient(circle at 80% 45%, rgba(255,0,255,0.12) 2px, transparent 2px),
+    radial-gradient(circle at 65% 80%, rgba(0,255,0,0.1) 1px, transparent 1px);
+  background-size: 200px 200px, 280px 280px, 180px 180px;
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+.hero-title {
+  font-size: clamp(48px, 8vw, 96px);
+  font-weight: 800;
+  letter-spacing: 12px;
+  line-height: 1;
+  background: linear-gradient(180deg, #fff 30%, rgba(255,255,255,0.7) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-subtitle {
+  margin-top: 24px;
+  font-size: clamp(14px, 2vw, 18px);
+  color: var(--text-secondary);
+  letter-spacing: 3px;
+  font-family: var(--font-cn);
+}
+.hero-scroll {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+.hero-scroll-line {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);
+  margin: 0 auto 8px;
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+.hero-scroll-text {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--text-secondary);
+}
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.3; transform: scaleY(0.6); }
+  50% { opacity: 1; transform: scaleY(1); }
+}
+
+/* ========================================
+   MASONRY GRID
+   ======================================== */
+.section { padding: 100px 48px; }
+.section-header {
+  margin-bottom: 60px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.section-label {
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+}
+.section-title {
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+.masonry-grid {
+  columns: 3;
+  column-gap: var(--grid-gap);
+}
+.grid-item {
+  break-inside: avoid;
+  margin-bottom: var(--grid-gap);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  background: #111;
+}
+.grid-item img {
+  width: 100%;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+.grid-item:hover img { transform: scale(1.05); }
+.grid-item-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%);
+  display: flex;
+  align-items: flex-end;
+  padding: 24px;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.grid-item:hover .grid-item-overlay { opacity: 1; }
+.grid-item-overlay h3 {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+.grid-item-overlay p {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  letter-spacing: 1px;
+}
+.grid-item.tall .placeholder-img { padding-bottom: 150%; }
+.grid-item.wide .placeholder-img { padding-bottom: 60%; }
+.grid-item.square .placeholder-img { padding-bottom: 100%; }
+
+.placeholder-img {
+  width: 100%;
+  padding-bottom: 100%;
+  position: relative;
+  background: linear-gradient(135deg, #111 0%, #1a1a1a 50%, #111 100%);
+  overflow: hidden;
+}
+.placeholder-img::before {
+  content: '';
+  position: absolute;
+  inset: 20%;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 2px;
+}
+.placeholder-img::after {
+  content: '';
+  position: absolute;
+  top: 10%; left: 15%;
+  width: 35%;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(0,255,255,0.3), transparent);
+  box-shadow: 0 0 8px rgba(0,255,255,0.2);
+}
+
+/* ========================================
+   ATELIER FILTERS & BADGES
+   ======================================== */
+.atelier-filters {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+.filter-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 12px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  padding: 8px 0;
+  transition: color 0.3s;
+  position: relative;
+  text-transform: uppercase;
+  font-family: var(--font-en);
+}
+.filter-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: var(--accent-cyan);
+  transform: scaleX(0);
+  transition: transform 0.3s;
+}
+.filter-btn.active, .filter-btn:hover { color: var(--text-primary); }
+.filter-btn.active::after, .filter-btn:hover::after { transform: scaleX(1); }
+.filter-btn.active { color: var(--accent-cyan); }
+
+.atelier-card { position: relative; }
+.card-badge {
+  position: absolute;
+  top: 12px; right: 12px;
+  z-index: 3;
+  background: rgba(0,0,0,0.8);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 4px 10px;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* ========================================
+   CAROUSEL PLACEHOLDER
+   ======================================== */
+.carousel-placeholder {
+  width: 80%;
+  max-width: 900px;
+  padding-bottom: 50%;
+  background: linear-gradient(135deg, #0a0a0a, #111);
+  position: relative;
+  margin: 0 auto;
+}
+.carousel-placeholder::after {
+  content: var(--carousel-text, 'FULLSCREEN CAROUSEL');
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.1);
+  font-size: 14px;
+  letter-spacing: 4px;
+}
+
+/* ========================================
+   TIMELINE
+   ======================================== */
+.timeline {
+  position: relative;
+  padding-left: 40px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom,
+    transparent 0%, var(--accent-cyan) 10%,
+    var(--accent-magenta) 50%, var(--accent-green) 90%, transparent 100%);
+}
+.timeline-item {
+  position: relative;
+  padding-bottom: 48px;
+  padding-left: 32px;
+}
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -44px; top: 6px;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  border: 2px solid var(--bg);
+  z-index: 2;
+}
+.timeline-item:nth-child(3n)::before { background: var(--accent-magenta); }
+.timeline-item:nth-child(3n+2)::before { background: var(--accent-green); }
+.timeline-year {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, #fff, #666);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.timeline-text {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-family: var(--font-cn);
+  line-height: 1.6;
+}
+
+/* ========================================
+   COMMISSION STEPS
+   ======================================== */
+.step-flow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.step-card {
+  background: #0a0a0a;
+  padding: 48px 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s;
+}
+.step-card:hover { background: #111; }
+.step-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--fluid-gradient);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.step-card:hover::before { opacity: 1; }
+.step-number {
+  font-size: 56px;
+  font-weight: 800;
+  letter-spacing: -2px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.step-title {
+  font-size: 16px;
+  margin-top: 16px;
+  letter-spacing: 2px;
+}
+.step-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 12px;
+  line-height: 1.6;
+  font-family: var(--font-cn);
+}
+
+/* ========================================
+   BRO CARE
+   ======================================== */
+.care-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.care-card {
+  background: #0a0a0a;
+  padding: 48px 32px;
+  text-align: center;
+  transition: background 0.3s;
+}
+.care-card:hover { background: #111; }
+.care-icon {
+  width: 48px; height: 48px;
+  margin: 0 auto 24px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: var(--text-secondary);
+  transition: border-color 0.3s, color 0.3s;
+}
+.care-card:hover .care-icon { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+.care-title {
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.care-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-family: var(--font-cn);
+}
+
+/* ========================================
+   FORM
+   ======================================== */
+.consult-form { max-width: 600px; margin: 0 auto; }
+.form-group { margin-bottom: 24px; }
+.form-group label {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 14px 16px;
+  background: #0a0a0a;
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-primary);
+  font-family: var(--font-cn);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus { border-color: var(--accent-cyan); }
+.form-group textarea { min-height: 120px; resize: vertical; }
+.btn-submit {
+  width: 100%;
+  padding: 16px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: var(--text-primary);
+  font-size: 12px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: var(--font-en);
+}
+.btn-submit:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+
+/* ========================================
+   ADMIN NOTICE
+   ======================================== */
+.admin-notice {
+  margin: 0 48px 60px;
+  padding: 32px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.02);
+}
+.admin-notice h3 {
+  font-size: 14px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  color: var(--accent-cyan);
+}
+.notice-badge {
+  display: inline-block;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: rgba(0,255,255,0.1);
+  color: var(--accent-cyan);
+  padding: 3px 10px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(0,255,255,0.2);
+}
+.admin-notice > p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  font-family: var(--font-cn);
+  max-width: 700px;
+}
+.admin-features {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+}
+.admin-feature-item {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,0.05);
+  font-family: var(--font-cn);
+}
+.admin-feature-item strong {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  font-family: var(--font-en);
+}
+
+/* ========================================
+   NEWS
+   ======================================== */
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.news-card {
+  background: #0a0a0a;
+  overflow: hidden;
+  transition: background 0.3s;
+}
+.news-card:hover { background: #111; }
+.news-card .placeholder-img { padding-bottom: 56%; }
+.news-card-body { padding: 24px; }
+.news-date {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--accent-cyan);
+}
+.news-card-body h4 {
+  font-size: 14px;
+  margin-top: 8px;
+  letter-spacing: 1px;
+}
+.news-card-body p {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+  line-height: 1.5;
+  font-family: var(--font-cn);
+}
+
+/* ========================================
+   SPEC TABLE & TEMP BARS
+   ======================================== */
+.spec-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 40px 0;
+}
+.spec-table th, .spec-table td {
+  padding: 16px 24px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.spec-table th {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  width: 30%;
+}
+.spec-table td { font-size: 13px; letter-spacing: 1px; }
+.temp-bar-wrap { margin: 12px 0; }
+.temp-bar-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.temp-bar {
+  height: 4px;
+  background: #1a1a1a;
+  position: relative;
+}
+.temp-bar-fill {
+  height: 100%;
+  position: absolute;
+  left: 0; top: 0;
+  transition: width 1.5s ease;
+}
+.temp-bar-fill.cpu { background: var(--accent-cyan); }
+.temp-bar-fill.gpu { background: var(--accent-magenta); }
+
+/* ========================================
+   FOOTER
+   ======================================== */
+.site-footer {
+  padding: 80px 48px 40px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+.footer-logo {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  margin-bottom: 16px;
+}
+.footer-tagline {
+  font-size: 11px;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+  font-family: var(--font-cn);
+}
+.footer-heading {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+.footer-links a {
+  display: block;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  transition: color 0.3s;
+  letter-spacing: 1px;
+}
+.footer-links a:hover { color: var(--accent-cyan); }
+.footer-social {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+.footer-social a {
+  font-size: 11px;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+  transition: color 0.3s;
+}
+.footer-social a:hover { color: var(--accent-cyan); }
+.footer-bottom {
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+}
+
+/* ========================================
+   LOAD MORE
+   ======================================== */
+.load-more { text-align: center; padding: 40px 0; }
+.load-more-btn {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--text-secondary);
+  padding: 12px 40px;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: var(--font-en);
+}
+.load-more-btn:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 1024px) {
+  .masonry-grid { columns: 2; }
+  .step-flow { grid-template-columns: repeat(2, 1fr); }
+  .care-grid { grid-template-columns: repeat(2, 1fr); }
+  .news-grid { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .admin-features { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .section { padding: 60px 20px; }
+  .site-header { padding: 0 20px; }
+  .header-right { gap: 16px; }
+  .header-nav { display: none; }
+  .header-hamburger { display: flex; }
+  .masonry-grid { columns: 1; }
+  .step-flow { grid-template-columns: 1fr; }
+  .care-grid { grid-template-columns: 1fr; }
+  .news-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .admin-features { grid-template-columns: 1fr; }
+  .admin-notice { margin: 0 20px 40px; }
+  .timeline { padding-left: 24px; }
+  .timeline-item { padding-left: 20px; }
+  .hero-title { letter-spacing: 6px; }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     HEADER
+     ============================================ -->
+<header class="site-header">
+  <div class="header-logo">BRO COOLING</div>
+  <div class="header-right">
+    <nav class="header-nav">
+      <a href="#hero" data-i18n="nav.home">Home</a>
+      <a href="#atelier" data-i18n="nav.atelier">Atelier</a>
+      <a href="#heritage" data-i18n="nav.heritage">Heritage</a>
+      <a href="#commission" data-i18n="nav.commission">Commission</a>
+      <a href="#care" data-i18n="nav.care">BRO CARE</a>
+      <a href="#news" data-i18n="nav.news">News</a>
+    </nav>
+    <div class="lang-toggle" id="langToggle">
+      <button data-lang="zh" class="active">中文</button>
+      <button data-lang="en">EN</button>
+    </div>
+  </div>
+  <div class="header-hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</header>
+
+<!-- ============================================
+     HERO
+     ============================================ -->
+<section id="hero" class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <h1 class="hero-title fade-in">BRO COOLING</h1>
+    <p class="hero-subtitle fade-in fade-in-d1 cn" data-i18n="hero.subtitle">每一台电脑，都是不可复制的艺术品</p>
+  </div>
+  <div class="hero-scroll fade-in fade-in-d3">
+    <div class="hero-scroll-line"></div>
+    <div class="hero-scroll-text" data-i18n="hero.scroll">SCROLL</div>
+  </div>
+</section>
+
+<!-- ============================================
+     LATEST MASTERPIECES
+     ============================================ -->
+<section id="latest" class="section">
+  <div class="section-header">
+    <span class="section-label" data-i18n="latest.label">Latest Masterpieces</span>
+    <h2 class="section-title" data-i18n="latest.title">最新作品</h2>
+  </div>
+  <div class="water-channel" style="margin-bottom:40px;"></div>
+
+  <div class="masonry-grid" id="latestGrid">
+    <!-- Dynamically populated from localStorage bro_works -->
+  </div>
+</section>
+
+<!-- ============================================
+     ATELIER GALLERY
+     ============================================ -->
+<section id="atelier" class="section">
+  <div class="section-header">
+    <span class="section-label" data-i18n="atelier.label">BRO Atelier</span>
+    <h2 class="section-title" data-i18n="atelier.title">作品馆</h2>
+  </div>
+  <div class="water-channel" style="margin-bottom:40px;"></div>
+
+  <div class="atelier-filters">
+    <button class="filter-btn active" data-filter="all" data-i18n="filter.all">All Works</button>
+    <button class="filter-btn" data-filter="tower" data-i18n="filter.tower">Full Tower</button>
+    <button class="filter-btn" data-filter="mid-tower" data-i18n="filter.mid">Mid Tower</button>
+    <button class="filter-btn" data-filter="custom" data-i18n="filter.custom">Custom Theme</button>
+    <button class="filter-btn" data-filter="open-frame" data-i18n="filter.open">Open Frame</button>
+  </div>
+
+  <div class="masonry-grid" id="atelierGrid">
+    <!-- Dynamically populated from localStorage bro_works -->
+  </div>
+
+  <div class="load-more">
+    <button class="load-more-btn" id="loadMoreBtn" data-i18n="loadmore">Load More Works</button>
+  </div>
+</section>
+
+<!-- ============================================
+     DETAIL PREVIEW
+     ============================================ -->
+<section id="detail-preview" class="section">
+  <div class="section-header">
+    <span class="section-label" data-i18n="detail.label">Masterpiece Detail</span>
+    <h2 class="section-title" data-i18n="detail.title">作品详情示例</h2>
+  </div>
+  <div class="fluid-line" style="margin-bottom:40px;"></div>
+
+  <div class="carousel-placeholder" data-i18n-placeholder="detail.carousel"></div>
+
+  <div style="margin-top:60px;">
+    <table class="spec-table">
+      <tr><th data-i18n="spec.case">Case / 机箱</th><td>Z-Tower Storm Custom</td></tr>
+      <tr><th data-i18n="spec.cpu">CPU</th><td>Intel Core i9-14900KS</td></tr>
+      <tr><th data-i18n="spec.gpu">GPU</th><td>NVIDIA RTX 4090 24GB</td></tr>
+      <tr><th data-i18n="spec.cooling">Cooling / 散热</th><td>BRO Custom Dual-Loop Liquid</td></tr>
+      <tr><th data-i18n="spec.lighting">Lighting / 灯光</th><td>Electro-Ion Luminescence System</td></tr>
+      <tr><th data-i18n="spec.completion">Completion / 完成时间</th><td>2024 · BRO Atelier Signature Edition</td></tr>
+    </table>
+
+    <div style="margin-top:40px;">
+      <h3 style="font-size:14px;letter-spacing:3px;margin-bottom:24px;" data-i18n="spec.stress">STRESS TEST · 烤机温度</h3>
+      <div class="temp-bar-wrap">
+        <div class="temp-bar-label"><span data-i18n="spec.cpu_load">CPU Package (Prime95)</span><span>82°C</span></div>
+        <div class="temp-bar"><div class="temp-bar-fill cpu" style="width:72%;"></div></div>
+      </div>
+      <div class="temp-bar-wrap">
+        <div class="temp-bar-label"><span data-i18n="spec.gpu_load">GPU Core (FurMark)</span><span>58°C</span></div>
+        <div class="temp-bar"><div class="temp-bar-fill gpu" style="width:48%;"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     HERITAGE
+     ============================================ -->
+<section id="heritage" class="section">
+  <div class="section-header">
+    <span class="section-label" data-i18n="heritage.label">Brand Heritage</span>
+    <h2 class="section-title" data-i18n="heritage.title">品牌传承</h2>
+  </div>
+  <div class="water-channel" style="margin-bottom:60px;"></div>
+
+  <div class="timeline">
+    <div class="timeline-item reveal">
+      <div class="timeline-year">2008</div>
+      <div class="timeline-text cn" data-i18n="heritage.2008">入行电脑硬件改装领域，从第一台DIY水冷主机起步，开启手工定制之路。</div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-year">2016</div>
+      <div class="timeline-text cn" data-i18n="heritage.2016">入驻斗鱼直播，向全网展示水冷改装全过程，积累首批忠实粉丝。</div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-year">2018</div>
+      <div class="timeline-text cn" data-i18n="heritage.2018">骨伽征服者主题定制作品问世，标志性设计语言初步成型，引发行业关注。</div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-year">2019</div>
+      <div class="timeline-text cn" data-i18n="heritage.2019">自研电离子发光技术；Z-Tower Storm 横空出世，20万级旗舰奠定行业地位。</div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-year">2023</div>
+      <div class="timeline-text cn" data-i18n="heritage.2023">全国送机行启动，足迹覆盖北上广深等十余城，亲手将每台作品交付客户。</div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-year">2024</div>
+      <div class="timeline-text cn" data-i18n="heritage.2024">BRO Atelier 正式品牌化，每台作品署名认证，作品馆累计收录50+独创方案。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     COMMISSION
+     ============================================ -->
+<section id="commission" class="section">
+  <div class="section-header">
+    <span class="section-label" data-i18n="commission.label">Commission</span>
+    <h2 class="section-title" data-i18n="commission.title">委托定制</h2>
+  </div>
+  <div class="fluid-line" style="margin-bottom:60px;"></div>
+
+  <div class="step-flow">
+    <div class="step-card reveal">
+      <div class="step-number">01</div>
+      <h3 class="step-title" data-i18n="step.1.title">咨询需求</h3>
+      <p class="step-desc cn" data-i18n="step.1.desc">在线提交您的定制需求，包括预算范围、机箱偏好、主题风格和使用场景。我们将在24小时内与您取得联系。</p>
+    </div>
+    <div class="step-card reveal">
+      <div class="step-number">02</div>
+      <h3 class="step-title" data-i18n="step.2.title">方案设计</h3>
+      <p class="step-desc cn" data-i18n="step.2.desc">BRO Atelier 设计师根据需求出3D渲染方案，包含水路布局、灯光系统与主题涂装。方案确认后进入制作排期。</p>
+    </div>
+    <div class="step-card reveal">
+      <div class="step-number">03</div>
+      <h3 class="step-title" data-i18n="step.3.title">精工制作</h3>
+      <p class="step-desc cn" data-i18n="step.3.desc">全部手工打造，从水道板CNC加工到硬管弯折、灯光编程，制作周期约4-8周，全程同步进度照片。</p>
+    </div>
+    <div class="step-card reveal">
+      <div class="step-number">04</div>
+      <h3 class="step-title" data-i18n="step.4.title">交付验收</h3>
+      <p class="step-desc cn" data-i18n="step.4.desc">48小时烤机测试通过后，全国送机上门或顺丰保价发货。附赠BRO署名认证证书及终身售后保障。</p>
+    </div>
+  </div>
+
+  <div class="consult-form" style="margin-top:80px;">
+    <div class="section-header" style="margin-bottom:40px;">
+      <span class="section-label" data-i18n="form.label">Start Your Journey</span>
+      <h2 class="section-title" style="font-size:24px;" data-i18n="form.title">在线咨询</h2>
+    </div>
+    <form id="consultForm">
+      <div class="form-group">
+        <label data-i18n="form.name_label">Name / 称呼</label>
+        <input type="text" data-i18n-placeholder="form.name_placeholder" placeholder="您的称呼" required>
+      </div>
+      <div class="form-group">
+        <label data-i18n="form.contact_label">Contact / 联系方式</label>
+        <input type="text" data-i18n-placeholder="form.contact_placeholder" placeholder="微信 / 手机 / 邮箱" required>
+      </div>
+      <div class="form-group">
+        <label data-i18n="form.budget_label">Budget Range / 预算范围</label>
+        <select data-i18n-select="form.budget_options">
+          <option value="" data-i18n="form.budget_default">请选择预算范围</option>
+          <option>¥5,000 - ¥10,000</option>
+          <option>¥10,000 - ¥30,000</option>
+          <option>¥30,000 - ¥100,000</option>
+          <option>¥100,000+</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label data-i18n="form.vision_label">Your Vision / 您的构想</label>
+        <textarea data-i18n-placeholder="form.vision_placeholder" placeholder="请描述您想要的机箱、主题、灯光效果、使用场景等"></textarea>
+      </div>
+      <button type="submit" class="btn-submit" data-i18n="form.submit">Submit Inquiry / 提交咨询</button>
+    </form>
+  </div>
+</section>
+
+<!-- ============================================
+     BRO CARE
+     ============================================ -->
+<section id="care" class="section">
+  <div class="section-header">
+    <span class="section-label">BRO CARE</span>
+    <h2 class="section-title" data-i18n="care.title">售后承诺</h2>
+  </div>
+  <div class="water-channel" style="margin-bottom:60px;"></div>
+
+  <div class="care-grid">
+    <div class="care-card reveal">
+      <div class="care-icon">W</div>
+      <h3 class="care-title" data-i18n="care.warranty.title">终身质保</h3>
+      <p class="care-desc cn" data-i18n="care.warranty.desc">所有BRO Atelier出品的水冷系统享受终身技术支持与维护服务。非人为损坏免费维修。</p>
+    </div>
+    <div class="care-card reveal">
+      <div class="care-icon">S</div>
+      <h3 class="care-title" data-i18n="care.delivery.title">全国送机</h3>
+      <p class="care-desc cn" data-i18n="care.delivery.desc">国内主要城市提供亲自送机上门服务，现场安装调试，确保每一台作品完美运行。</p>
+    </div>
+    <div class="care-card reveal">
+      <div class="care-icon">R</div>
+      <h3 class="care-title" data-i18n="care.response.title">快速响应</h3>
+      <p class="care-desc cn" data-i18n="care.response.desc">专属客服一对一响应，工作时间内2小时回复。紧急情况提供远程视频诊断支持。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     NEWS
+     ============================================ -->
+<section id="news" class="section">
+  <div class="section-header">
+    <span class="section-label" data-i18n="news.label">News & Updates</span>
+    <h2 class="section-title" data-i18n="news.title">最新动态</h2>
+  </div>
+  <div class="fluid-line" style="margin-bottom:40px;"></div>
+
+  <div class="news-grid">
+    <div class="news-card reveal">
+      <div class="placeholder-img" style="padding-bottom:56%; background:linear-gradient(135deg,#0a0a1a,#111);">
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.06);font-size:14px;letter-spacing:2px;">2024 CJ</div>
+      </div>
+      <div class="news-card-body">
+        <div class="news-date">2024.07.28</div>
+        <h4 data-i18n="news.1.title">BRO COOLING 参展 ChinaJoy 2024</h4>
+        <p class="cn" data-i18n="news.1.desc">Z-Tower Storm 亮相上海ChinaJoy，现场展示电离子发光技术，吸引数万观众驻足。</p>
+      </div>
+    </div>
+    <div class="news-card reveal">
+      <div class="placeholder-img" style="padding-bottom:56%; background:linear-gradient(135deg,#1a0a0a,#0a0a1a);">
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.06);font-size:14px;letter-spacing:2px;">O11D EVO</div>
+      </div>
+      <div class="news-card-body">
+        <div class="news-date">2024.06.15</div>
+        <h4 data-i18n="news.2.title">O11D EVO 全视界水冷方案发布</h4>
+        <p class="cn" data-i18n="news.2.desc">全新Lian Li O11D EVO定制方案上线，支持双360冷排+水道板一体化设计。</p>
+      </div>
+    </div>
+    <div class="news-card reveal">
+      <div class="placeholder-img" style="padding-bottom:56%; background:linear-gradient(135deg,#0a1a0a,#0a0a0a);">
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.06);font-size:14px;letter-spacing:2px;">DELIVERY</div>
+      </div>
+      <div class="news-card-body">
+        <div class="news-date">2024.05.01</div>
+        <h4 data-i18n="news.3.title">2024全国送机行启动</h4>
+        <p class="cn" data-i18n="news.3.desc">新一轮全国送机行五一启动，首站杭州，BRO亲自驾车护送三台作品交付客户。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     ADMIN NOTICE
+     ============================================ -->
+<div class="admin-notice" id="adminNotice">
+  <div class="notice-badge">Data-Driven</div>
+  <h3>Management — 后台管理系统</h3>
+  <p style="margin-bottom:16px">This site is powered by <strong>bro-cooling-admin.html</strong>. All content (works, text, inquiries) is stored in your browser's LocalStorage and shared between the admin panel and this website. No server required.</p>
+  <div style="margin-top:16px">
+    <a href="bro-cooling-admin.html" style="display:inline-block;padding:10px 24px;border:1px solid rgba(0,255,255,0.3);color:var(--accent-cyan);font-size:11px;letter-spacing:2px;text-transform:uppercase;transition:all 0.3s">Open Admin Panel</a>
+  </div>
+  <div class="admin-features">
+    <div class="admin-feature-item"><strong>Portfolio CMS</strong><span>Works upload, edit, sort</span></div>
+    <div class="admin-feature-item"><strong>Content Editor</strong><span>Bilingual text management</span></div>
+    <div class="admin-feature-item"><strong>Inquiry Manager</strong><span>View & manage inquiries</span></div>
+    <div class="admin-feature-item"><strong>Dashboard</strong><span>Stats & analytics</span></div>
+  </div>
+</div>
+
+<!-- ============================================
+     FOOTER
+     ============================================ -->
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo">BRO COOLING</div>
+      <p class="footer-tagline cn" data-i18n="footer.tagline">每一台电脑，都是不可复制的艺术品</p>
+      <div class="footer-social" style="margin-top:24px;">
+        <a href="#">抖音</a>
+        <a href="#">Bilibili</a>
+        <a href="#">淘宝</a>
+        <a href="#">斗鱼</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-heading" data-i18n="footer.col1">Atelier</div>
+      <div class="footer-links">
+        <a href="#atelier" data-i18n="footer.atelier">作品馆</a>
+        <a href="#commission" data-i18n="footer.commission">委托定制</a>
+        <a href="#heritage" data-i18n="footer.heritage">品牌传承</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-heading" data-i18n="footer.col2">Support</div>
+      <div class="footer-links">
+        <a href="#care" data-i18n="footer.care">BRO CARE</a>
+        <a href="#commission" data-i18n="footer.consult">在线咨询</a>
+        <a href="#" data-i18n="footer.faq">FAQ</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-heading" data-i18n="footer.col3">Contact</div>
+      <div class="footer-links">
+        <a href="#">bro@bro-cooling.com</a>
+        <a href="#" data-i18n="footer.wechat">微信: BRO_COOLING</a>
+        <a href="#" data-i18n="footer.douyin">抖音: @BRO水冷</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2024 BRO COOLING. All Rights Reserved.</span>
+    <span>BRO Atelier — Each Machine, A Signed Masterpiece.</span>
+  </div>
+</footer>
+
+<!-- ============================================
+     SCRIPTS
+     ============================================ -->
+<script>
+/* ============================================
+   DATA HELPERS — Read from LocalStorage
+   ============================================ */
+function broGetData(key, def) {
+  try { var d = localStorage.getItem(key); return d ? JSON.parse(d) : def; }
+  catch(e) { return def; }
+}
+function broSetData(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {}
+}
+
+/* ============================================
+   MERGE ADMIN CONTENT INTO i18n
+   ============================================ */
+var broContent = broGetData('bro_content', {});
+function mergeContent(dict, content) {
+  if (content.hero_subtitle_zh) dict.zh['hero.subtitle'] = content.hero_subtitle_zh;
+  if (content.hero_subtitle_en) dict.en['hero.subtitle'] = content.hero_subtitle_en;
+  if (content.footer_tagline_zh) dict.zh['footer.tagline'] = content.footer_tagline_zh;
+  if (content.footer_tagline_en) dict.en['footer.tagline'] = content.footer_tagline_en;
+  var navKeys = ['home','atelier','heritage','commission','care','news'];
+  for (var i = 0; i < navKeys.length; i++) {
+    var k = navKeys[i];
+    if (content['nav_'+k+'_zh']) dict.zh['nav.'+k] = content['nav_'+k+'_zh'];
+    if (content['nav_'+k+'_en']) dict.en['nav.'+k] = content['nav_'+k+'_en'];
+  }
+}
+
+/* ============================================
+   i18n TRANSLATION DICTIONARY
+   ============================================ */
+const i18n = {
+  zh: {
+    'nav.home':'Home','nav.atelier':'Atelier','nav.heritage':'Heritage',
+    'nav.commission':'Commission','nav.care':'BRO CARE','nav.news':'News',
+    'hero.subtitle':'每一台电脑，都是不可复制的艺术品','hero.scroll':'SCROLL',
+    'latest.label':'Latest Masterpieces','latest.title':'最新作品',
+    'work.ztower':'20万级 · 电离子发光技术','work.winbot':'分体水冷',
+    'work.hyperion.title':'创世神','work.hyperion.desc':'电镀超人主题',
+    'work.garage.title':'格纳库主机','work.garage.desc':'机械美学',
+    'work.nv9':'高端黑色','work.cougar.title':'骨伽征服者','work.cougar.desc':'主题定制',
+    'atelier.label':'BRO Atelier','atelier.title':'作品馆',
+    'filter.all':'All Works','filter.tower':'Full Tower','filter.mid':'Mid Tower',
+    'filter.custom':'Custom Theme','filter.open':'Open Frame',
+    'badge.signature':'Signature','badge.limited':'Limited','badge.custom':'Custom',
+    'badge.classic':'Classic','badge.iconic':'Iconic','badge.popular':'Popular',
+    'badge.performance':'Performance',
+    'card.ztower':'¥200,000 · 电离子发光技术 · 2024',
+    'card.winbot.title':'WINBOT 球','card.winbot.desc':'分体水冷 · 球形机箱 · 2023',
+    'card.hyperion.title':'创世神','card.hyperion.desc':'电镀超人主题 · ROG Hyperion · 2024',
+    'card.garage.title':'格纳库主机','card.garage.desc':'机械美学 · 开放式框架 · 2023',
+    'card.nv9':'高端黑色 · Phanteks NV9 · 2024',
+    'card.cougar.title':'骨伽征服者','card.cougar.desc':'主题定制 · Cougar Conquer · 2018',
+    'card.o11d':'全视界水冷 · Lian Li · 2024','card.7000d':'双水路系统 · Corsair · 2024',
+    'loadmore':'Load More Works','loadmore.loading':'Loading...','loadmore.end':'No More Works',
+    'detail.label':'Masterpiece Detail','detail.title':'作品详情示例',
+    'detail.carousel':'FULLSCREEN CAROUSEL — 作品全屏轮播',
+    'spec.case':'Case / 机箱','spec.cpu':'CPU','spec.gpu':'GPU',
+    'spec.cooling':'Cooling / 散热','spec.lighting':'Lighting / 灯光',
+    'spec.completion':'Completion / 完成时间','spec.stress':'STRESS TEST · 烤机温度',
+    'spec.cpu_load':'CPU Package (Prime95)','spec.gpu_load':'GPU Core (FurMark)',
+    'heritage.label':'Brand Heritage','heritage.title':'品牌传承',
+    'heritage.2008':'入行电脑硬件改装领域，从第一台DIY水冷主机起步，开启手工定制之路。',
+    'heritage.2016':'入驻斗鱼直播，向全网展示水冷改装全过程，积累首批忠实粉丝。',
+    'heritage.2018':'骨伽征服者主题定制作品问世，标志性设计语言初步成型，引发行业关注。',
+    'heritage.2019':'自研电离子发光技术；Z-Tower Storm 横空出世，20万级旗舰奠定行业地位。',
+    'heritage.2023':'全国送机行启动，足迹覆盖北上广深等十余城，亲手将每台作品交付客户。',
+    'heritage.2024':'BRO Atelier 正式品牌化，每台作品署名认证，作品馆累计收录50+独创方案。',
+    'commission.label':'Commission','commission.title':'委托定制',
+    'step.1.title':'咨询需求','step.1.desc':'在线提交您的定制需求，包括预算范围、机箱偏好、主题风格和使用场景。我们将在24小时内与您取得联系。',
+    'step.2.title':'方案设计','step.2.desc':'BRO Atelier 设计师根据需求出3D渲染方案，包含水路布局、灯光系统与主题涂装。方案确认后进入制作排期。',
+    'step.3.title':'精工制作','step.3.desc':'全部手工打造，从水道板CNC加工到硬管弯折、灯光编程，制作周期约4-8周，全程同步进度照片。',
+    'step.4.title':'交付验收','step.4.desc':'48小时烤机测试通过后，全国送机上门或顺丰保价发货。附赠BRO署名认证证书及终身售后保障。',
+    'form.label':'Start Your Journey','form.title':'在线咨询',
+    'form.name_label':'Name / 称呼','form.name_placeholder':'您的称呼',
+    'form.contact_label':'Contact / 联系方式','form.contact_placeholder':'微信 / 手机 / 邮箱',
+    'form.budget_label':'Budget Range / 预算范围','form.budget_default':'请选择预算范围',
+    'form.budget_options':['请选择预算范围','¥5,000 - ¥10,000','¥10,000 - ¥30,000','¥30,000 - ¥100,000','¥100,000+'],
+    'form.vision_label':'Your Vision / 您的构想','form.vision_placeholder':'请描述您想要的机箱、主题、灯光效果、使用场景等',
+    'form.submit':'Submit Inquiry / 提交咨询','form.success':'Thank You / 提交成功',
+    'care.title':'售后承诺',
+    'care.warranty.title':'终身质保','care.warranty.desc':'所有BRO Atelier出品的水冷系统享受终身技术支持与维护服务。非人为损坏免费维修。',
+    'care.delivery.title':'全国送机','care.delivery.desc':'国内主要城市提供亲自送机上门服务，现场安装调试，确保每一台作品完美运行。',
+    'care.response.title':'快速响应','care.response.desc':'专属客服一对一响应，工作时间内2小时回复。紧急情况提供远程视频诊断支持。',
+    'news.label':'News & Updates','news.title':'最新动态',
+    'news.1.title':'BRO COOLING 参展 ChinaJoy 2024','news.1.desc':'Z-Tower Storm 亮相上海ChinaJoy，现场展示电离子发光技术，吸引数万观众驻足。',
+    'news.2.title':'O11D EVO 全视界水冷方案发布','news.2.desc':'全新Lian Li O11D EVO定制方案上线，支持双360冷排+水道板一体化设计。',
+    'news.3.title':'2024全国送机行启动','news.3.desc':'新一轮全国送机行五一启动，首站杭州，BRO亲自驾车护送三台作品交付客户。',
+    'footer.tagline':'每一台电脑，都是不可复制的艺术品',
+    'footer.col1':'Atelier','footer.col2':'Support','footer.col3':'Contact',
+    'footer.atelier':'作品馆','footer.commission':'委托定制','footer.heritage':'品牌传承',
+    'footer.care':'BRO CARE','footer.consult':'在线咨询','footer.faq':'FAQ',
+    'footer.wechat':'微信: BRO_COOLING','footer.douyin':'抖音: @BRO水冷',
+    'admin.badge':'Static HTML Prototype','admin.heading':'Backend Management System / 后台管理系统',
+    'admin.desc':'当前网站为静态HTML原型版本，所有图片使用占位符。完整的后台管理系统需要单独开发，可实现以下功能：',
+    'admin.f1.title':'Portfolio CMS','admin.f1.desc':'作品上传、分类编辑、拖拽排序',
+    'admin.f2.title':'Content Editor','admin.f2.desc':'所有页面内容在线编辑、多语言管理',
+    'admin.f3.title':'Inquiry Manager','admin.f3.desc':'咨询表单数据收集、CRM跟进',
+    'admin.f4.title':'Analytics Dashboard','admin.f4.desc':'访问统计、作品热度、用户行为分析'
+  },
+  en: {
+    'nav.home':'Home','nav.atelier':'Atelier','nav.heritage':'Heritage',
+    'nav.commission':'Commission','nav.care':'BRO CARE','nav.news':'News',
+    'hero.subtitle':'Every PC, an irreplicable masterpiece.','hero.scroll':'SCROLL',
+    'latest.label':'Latest Masterpieces','latest.title':'Latest Masterpieces',
+    'work.ztower':'¥200K Tier · Electro-Ion Luminescence','work.winbot':'Custom Loop Liquid Cooling',
+    'work.hyperion.title':'ROG Hyperion','work.hyperion.desc':'Electroplated Superman Theme',
+    'work.garage.title':'Garage Hangar Build','work.garage.desc':'Mechanical Aesthetics',
+    'work.nv9':'Premium Stealth Black','work.cougar.title':'Cougar Conquer','work.cougar.desc':'Themed Custom Build',
+    'atelier.label':'BRO Atelier','atelier.title':'The Atelier',
+    'filter.all':'All Works','filter.tower':'Full Tower','filter.mid':'Mid Tower',
+    'filter.custom':'Custom Theme','filter.open':'Open Frame',
+    'badge.signature':'Signature','badge.limited':'Limited','badge.custom':'Custom',
+    'badge.classic':'Classic','badge.iconic':'Iconic','badge.popular':'Popular','badge.performance':'Performance',
+    'card.ztower':'¥200,000 · Electro-Ion Luminescence · 2024',
+    'card.winbot.title':'WINBOT Sphere','card.winbot.desc':'Custom Loop · Spherical Chassis · 2023',
+    'card.hyperion.title':'ROG Hyperion','card.hyperion.desc':'Electroplated Superman Theme · ROG Hyperion · 2024',
+    'card.garage.title':'Garage Hangar Build','card.garage.desc':'Mechanical Aesthetics · Open Frame · 2023',
+    'card.nv9':'Premium Stealth Black · Phanteks NV9 · 2024',
+    'card.cougar.title':'Cougar Conquer','card.cougar.desc':'Themed Custom Build · Cougar Conquer · 2018',
+    'card.o11d':'Panoramic Water Cooling · Lian Li · 2024','card.7000d':'Dual-Loop System · Corsair · 2024',
+    'loadmore':'Load More Works','loadmore.loading':'Loading...','loadmore.end':'No More Works',
+    'detail.label':'Masterpiece Detail','detail.title':'Masterpiece Detail',
+    'detail.carousel':'FULLSCREEN CAROUSEL — Immersive Gallery',
+    'spec.case':'Case','spec.cpu':'CPU','spec.gpu':'GPU',
+    'spec.cooling':'Cooling','spec.lighting':'Lighting','spec.completion':'Completion',
+    'spec.stress':'STRESS TEST · Thermal Benchmark',
+    'spec.cpu_load':'CPU Package (Prime95)','spec.gpu_load':'GPU Core (FurMark)',
+    'heritage.label':'Brand Heritage','heritage.title':'Heritage',
+    'heritage.2008':'Entered the PC hardware modding scene. Started with the first DIY water-cooled build, embarking on a journey of handcrafted customization.',
+    'heritage.2016':'Joined Douyu live streaming, showcasing the entire water-cooling modding process to a nationwide audience, building the first wave of loyal followers.',
+    'heritage.2018':'The Cougar Conquer themed custom build debuted, establishing the signature BRO design language and drawing industry-wide attention.',
+    'heritage.2019':'Developed proprietary Electro-Ion Luminescence technology. The Z-Tower Storm emerged, a ¥200K flagship that defined BRO\'s position in the industry.',
+    'heritage.2023':'Launched the Nationwide Delivery Tour, covering over ten cities including Beijing, Shanghai, Guangzhou, and Shenzhen — personally delivering each masterpiece to its owner.',
+    'heritage.2024':'BRO Atelier officially launched as a brand. Every build now comes with a signed certificate. The Atelier has accumulated 50+ original designs.',
+    'commission.label':'Commission','commission.title':'Commission a Masterpiece',
+    'step.1.title':'Consultation','step.1.desc':'Submit your custom requirements online, including budget, case preference, theme, and usage scenario. We will contact you within 24 hours.',
+    'step.2.title':'Design','step.2.desc':'BRO Atelier designers produce a 3D render proposal, covering the liquid loop layout, lighting system, and themed finish. Production scheduling begins upon approval.',
+    'step.3.title':'Craftsmanship','step.3.desc':'Entirely hand-built — from CNC-machined distribution plates to hard-tube bending and lighting programming. Production takes approximately 4-8 weeks with progress photos shared throughout.',
+    'step.4.title':'Delivery','step.4.desc':'After passing a 48-hour stress test, we deliver nationwide in person or via SF Express insured shipping. Includes a BRO signed certificate and lifetime after-sales support.',
+    'form.label':'Start Your Journey','form.title':'Online Consultation',
+    'form.name_label':'Name','form.name_placeholder':'Your name',
+    'form.contact_label':'Contact','form.contact_placeholder':'WeChat / Phone / Email',
+    'form.budget_label':'Budget Range','form.budget_default':'Select budget range',
+    'form.budget_options':['Select budget range','¥5,000 - ¥10,000','¥10,000 - ¥30,000','¥30,000 - ¥100,000','¥100,000+'],
+    'form.vision_label':'Your Vision','form.vision_placeholder':'Describe your desired case, theme, lighting, usage scenario, etc.',
+    'form.submit':'Submit Inquiry','form.success':'Thank You — Inquiry Submitted',
+    'care.title':'BRO CARE',
+    'care.warranty.title':'Lifetime Warranty','care.warranty.desc':'All BRO Atelier liquid cooling systems enjoy lifetime technical support and maintenance. Free repairs for non-user-induced damage.',
+    'care.delivery.title':'Nationwide Delivery','care.delivery.desc':'In-person delivery and on-site setup available in major cities across China, ensuring every masterpiece runs perfectly from day one.',
+    'care.response.title':'Rapid Response','care.response.desc':'Dedicated 1-on-1 customer support with a 2-hour response time during business hours. Remote video diagnostics available for emergencies.',
+    'news.label':'News & Updates','news.title':'News',
+    'news.1.title':'BRO COOLING at ChinaJoy 2024','news.1.desc':'Z-Tower Storm debuted at Shanghai ChinaJoy, showcasing Electro-Ion Luminescence technology to tens of thousands of visitors.',
+    'news.2.title':'O11D EVO Panoramic Water Cooling Launched','news.2.desc':'The new Lian Li O11D EVO custom solution is now available, featuring dual 360 radiators and an integrated distribution plate design.',
+    'news.3.title':'2024 Nationwide Delivery Tour Begins','news.3.desc':'The new Nationwide Delivery Tour kicked off on May 1st, starting in Hangzhou. BRO personally drove to deliver three masterpieces to their owners.',
+    'footer.tagline':'Every PC, an irreplicable masterpiece.',
+    'footer.col1':'Atelier','footer.col2':'Support','footer.col3':'Contact',
+    'footer.atelier':'The Atelier','footer.commission':'Commission','footer.heritage':'Heritage',
+    'footer.care':'BRO CARE','footer.consult':'Consultation','footer.faq':'FAQ',
+    'footer.wechat':'WeChat: BRO_COOLING','footer.douyin':'Douyin: @BRO水冷',
+    'admin.badge':'Static HTML Prototype','admin.heading':'Backend Management System',
+    'admin.desc':'This site is currently a static HTML prototype. All images use placeholders. A full backend management system requires separate development and would enable the following capabilities:',
+    'admin.f1.title':'Portfolio CMS','admin.f1.desc':'Work upload, category editing, drag-and-drop sorting',
+    'admin.f2.title':'Content Editor','admin.f2.desc':'Online editing for all page content, multilingual management',
+    'admin.f3.title':'Inquiry Manager','admin.f3.desc':'Form data collection, CRM pipeline tracking',
+    'admin.f4.title':'Analytics Dashboard','admin.f4.desc':'Traffic stats, work popularity tracking, user behavior insights'
+  }
+};
+
+/* ============================================
+   LANGUAGE SWITCHER
+   ============================================ */
+let currentLang = localStorage.getItem('bro-lang') || 'zh';
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('bro-lang', lang);
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+
+  document.querySelectorAll('#langToggle button').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (i18n[lang] && i18n[lang][key] !== undefined) {
+      el.textContent = i18n[lang][key];
+    }
+  });
+
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (i18n[lang] && i18n[lang][key] !== undefined) {
+      el.setAttribute('placeholder', i18n[lang][key]);
+      // Also store for carousel CSS
+      el.setAttribute('data-placeholder-text', i18n[lang][key]);
+    }
+  });
+
+  document.querySelectorAll('[data-i18n-select]').forEach(select => {
+    const key = select.getAttribute('data-i18n-select');
+    if (i18n[lang] && i18n[lang][key] && Array.isArray(i18n[lang][key])) {
+      const options = i18n[lang][key];
+      Array.from(select.options).forEach((opt, idx) => {
+        if (options[idx] !== undefined) opt.textContent = options[idx];
+      });
+    }
+  });
+
+  // Update carousel placeholder CSS custom property
+  document.querySelectorAll('.carousel-placeholder').forEach(el => {
+    const text = el.getAttribute('data-placeholder-text') || i18n[lang]['detail.carousel'] || '';
+    el.style.setProperty('--carousel-text', "'" + text + "'");
+  });
+}
+
+document.querySelectorAll('#langToggle button').forEach(btn => {
+  btn.addEventListener('click', () => setLang(btn.dataset.lang));
+});
+
+setLang(currentLang);
+
+/* ============================================
+   INTERSECTION OBSERVER
+   ============================================ */
+const observerOptions = { threshold: 0.15, rootMargin: '0px 0px -40px 0px' };
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, observerOptions);
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+/* ============================================
+   ATELIER FILTER
+   ============================================ */
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    document.querySelectorAll('#atelierGrid .atelier-card').forEach(card => {
+      if (filter === 'all' || card.dataset.category.includes(filter)) {
+        card.style.display = '';
+        card.classList.remove('visible');
+        setTimeout(() => revealObserver.observe(card), 50);
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+});
+
+/* ============================================
+   LOAD MORE
+   ============================================ */
+document.getElementById('loadMoreBtn').addEventListener('click', function() {
+  this.textContent = i18n[currentLang]['loadmore.loading'];
+  setTimeout(() => {
+    this.textContent = i18n[currentLang]['loadmore.end'];
+    this.disabled = true;
+    this.style.opacity = '0.4';
+    this.style.cursor = 'default';
+  }, 800);
+});
+
+/* ============================================
+   SMOOTH SCROLL
+   ============================================ */
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+/* ============================================
+   HEADER SCROLL EFFECT
+   ============================================ */
+const header = document.querySelector('.site-header');
+window.addEventListener('scroll', () => {
+  header.style.background = window.scrollY > 100 ? 'rgba(0,0,0,0.95)' : 'rgba(0,0,0,0.85)';
+});
+
+/* ============================================
+   MOBILE HAMBURGER
+   ============================================ */
+let menuOpen = false;
+document.querySelector('.header-hamburger').addEventListener('click', () => {
+  menuOpen = !menuOpen;
+  const nav = document.querySelector('.header-nav');
+  if (menuOpen) {
+    Object.assign(nav.style, {
+      display:'flex', position:'absolute', top:'72px', left:'0', right:'0',
+      flexDirection:'column', background:'rgba(0,0,0,0.98)',
+      padding:'24px', gap:'20px', borderBottom:'1px solid rgba(255,255,255,0.06)'
+    });
+  } else {
+    nav.style.cssText = '';
+  }
+});
+
+/* ============================================
+   FORM SUBMIT
+   ============================================ */
+document.getElementById('consultForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var inputs = this.querySelectorAll('input, textarea, select');
+  var name = inputs[0].value, contact = inputs[1].value, budget = inputs[2].value, message = inputs[3].value;
+  var now = new Date().toISOString().replace('T',' ').substring(0,19);
+  var inquiry = { name: name, contact: contact, budget: budget, message: message, time: now, status: 'new' };
+  try {
+    var inqs = JSON.parse(localStorage.getItem('bro_inquiries') || '[]');
+    inqs.unshift(inquiry);
+    localStorage.setItem('bro_inquiries', JSON.stringify(inqs));
+  } catch(e) {}
+  var btn = this.querySelector('.btn-submit');
+  btn.textContent = i18n[currentLang]['form.success'];
+  btn.style.borderColor = '#00ff00';
+  btn.style.color = '#00ff00';
+  setTimeout(function() {
+    btn.textContent = i18n[currentLang]['form.submit'];
+    btn.style.borderColor = 'rgba(255,255,255,0.2)';
+    btn.style.color = '#fff';
+    btn.parentElement.reset();
+    setLang(currentLang);
+  }, 3000);
+  // Track page view stats
+  try {
+    var stats = JSON.parse(localStorage.getItem('bro_stats') || '{}');
+    stats.formSubmissions = (stats.formSubmissions || 0) + 1;
+    localStorage.setItem('bro_stats', JSON.stringify(stats));
+  } catch(e) {}
+});
+
+/* ============================================
+   DYNAMIC WORKS RENDERING
+   ============================================ */
+var shapeCycle = ['wide','tall','square','tall','wide','square','tall','wide'];
+function renderAllWorks() {
+  var works = broGetData('bro_works', []);
+  if (works.length === 0) {
+    // Fallback: no works in localStorage, show placeholder message
+    var ph = '<div class="grid-item wide reveal" style="padding:60px 40px;text-align:center">'+
+      '<p style="color:var(--text-secondary);font-size:14px;letter-spacing:2px">No works yet.</p>'+
+      '<p style="color:var(--text-secondary);font-size:11px;margin-top:8px">Use <a href="bro-cooling-admin.html" style="color:var(--accent-cyan)">Admin Panel</a> to add works.</p></div>';
+    document.getElementById('latestGrid').innerHTML = ph;
+    document.getElementById('atelierGrid').innerHTML = ph;
+    return;
+  }
+  var latestHTML = '', atelierHTML = '';
+  for (var i = 0; i < works.length; i++) {
+    var w = works[i];
+    var name = w.name_zh || w.name || 'Untitled';
+    var category = w.category || 'tower';
+    var badge = w.badge || 'custom';
+    var shape = shapeCycle[i % shapeCycle.length];
+    var imgHTML = '';
+    if (w.image) {
+      imgHTML = '<img src="'+w.image+'" alt="'+name+'" style="width:100%;display:block">';
+    } else {
+      imgHTML = '<div class="placeholder-img" style="padding-bottom:'+(shape==='wide'?'56%':(shape==='tall'?'140%':'100%'))+';background:linear-gradient(135deg,#0a0a1a,#1a0a2a,#0a1a0a);">'+
+        '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(0,255,255,0.06);font-size:20px;letter-spacing:4px">'+name.substring(0,12).toUpperCase()+'</div></div>';
+    }
+    var cardHTML = '<div class="grid-item '+shape+' reveal" data-work-id="'+i+'">'+
+      imgHTML +
+      '<div class="grid-item-overlay"><div><h3>'+name+'</h3><p style="font-size:11px;color:var(--text-secondary)">'+category+'</p></div></div></div>';
+    latestHTML += cardHTML;
+    var atelierCard = '<div class="grid-item '+shape+' atelier-card reveal" data-category="'+category+'">'+
+      imgHTML +
+      '<div class="card-badge">'+badge+'</div>'+
+      '<div class="grid-item-overlay"><div><h3>'+name+'</h3><p style="font-size:11px;color:var(--text-secondary)">'+category+'</p></div></div></div>';
+    atelierHTML += atelierCard;
+  }
+  document.getElementById('latestGrid').innerHTML = latestHTML;
+  document.getElementById('atelierGrid').innerHTML = atelierHTML;
+  // Re-observe reveal elements
+  document.querySelectorAll('#latestGrid .reveal, #atelierGrid .reveal').forEach(function(el) { revealObserver.observe(el); });
+}
+
+// Track work clicks
+document.addEventListener('click', function(e) {
+  var card = e.target.closest('[data-work-id]');
+  if (!card) return;
+  var idx = parseInt(card.getAttribute('data-work-id'));
+  var works = broGetData('bro_works', []);
+  if (works[idx]) {
+    works[idx].clicks = (works[idx].clicks || 0) + 1;
+    broSetData('bro_works', works);
+  }
+});
+
+// Track page view
+(function() {
+  var stats = broGetData('bro_stats', {});
+  stats.views = (stats.views || 0) + 1;
+  var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var today = days[new Date().getDay()];
+  stats.dailyViews = stats.dailyViews || {};
+  stats.dailyViews[today] = (stats.dailyViews[today] || 0) + 1;
+  broSetData('bro_stats', stats);
+})();
+
+/* ============================================
+   MERGE & RENDER
+   ============================================ */
+mergeContent(i18n, broContent);
+renderAllWorks();
+
+/* Scroll to atelier filter fix: re-bind after dynamic render */
+window.addEventListener('load', function() {
+  document.querySelectorAll('.filter-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      var filter = btn.dataset.filter;
+      document.querySelectorAll('#atelierGrid .atelier-card').forEach(function(card) {
+        if (filter === 'all' || (card.dataset.category && card.dataset.category.indexOf(filter) !== -1)) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+});
+
+console.log('BRO COOLING — Atelier of Liquid Masterpieces — Ready.');
+console.log('i18n: 中文/English bilingual support active. Current: ' + currentLang);
+console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).length);
+</script>
+
+</body>
+</html>
