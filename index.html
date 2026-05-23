@@ -2875,6 +2875,32 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
 })();
 
 /* ============================================
+   FALLBACK DATA — bro-data.json 后备数据源
+   ============================================ */
+function loadFallbackData(callback) {
+  fetch('bro-data.json')
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (data && data.content) {
+        broSetData('bro_content', data.content);
+      }
+      if (data && data.works) {
+        broSetData('bro_works', data.works);
+      }
+      if (data && data.inquiries) {
+        broSetData('bro_inquiries', data.inquiries);
+      }
+      if (data && data.settings) {
+        broSetData('bro_settings', data.settings);
+      }
+      callback();
+    })
+    .catch(function() {
+      callback(); // 网络失败也继续
+    });
+}
+
+/* ============================================
    HERO SLIDER — 首屏轮播图功能
    ============================================ */
 (function initHeroSlider() {
@@ -3020,19 +3046,35 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
   
   // 页面加载时初始化
   document.addEventListener('DOMContentLoaded', function() {
-    // 从 localStorage 加载数据并初始化轮播
-    var content = broGetData('bro_content', {});
-    if (content.hero_slides && content.hero_slides.length > 0) {
-      updateHeroSlider(content.hero_slides);
-    } else if (content.hero_bg_image) {
-      // 兼容旧数据
-      updateHeroSlider([{
-        image: content.hero_bg_image,
-        title: '',
-        subtitle: '',
-        link: '',
-        order: 0
-      }]);
+    function initSliderAndImages() {
+      // 从合并后的数据加载轮播
+      var content = broGetData('bro_content', {});
+      if (content.hero_slides && content.hero_slides.length > 0) {
+        updateHeroSlider(content.hero_slides);
+      } else if (content.hero_bg_image) {
+        // 兼容旧数据
+        updateHeroSlider([{
+          image: content.hero_bg_image,
+          title: '',
+          subtitle: '',
+          link: '',
+          order: 0
+        }]);
+      }
+      // 恢复页面中其他图片
+      restoreImages();
+    }
+
+    // 先检查 localStorage 是否有 bro_content
+    var existingContent = null;
+    try { existingContent = localStorage.getItem('bro_content'); } catch(e) {}
+    
+    if (existingContent) {
+      // localStorage 已有数据，直接初始化
+      initSliderAndImages();
+    } else {
+      // localStorage 为空，从 bro-data.json 加载后备数据
+      loadFallbackData(initSliderAndImages);
     }
   });
 })();
@@ -3040,7 +3082,7 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
 /* ============================================
    IMAGE RESTORATION — 页面加载时从 localStorage 恢复图片
    ============================================ */
-(function restoreImages() {
+function restoreImages() {
   var content = broGetData('bro_content', {});
   
   // 首屏轮播图已在 initHeroSlider 中处理
@@ -3094,7 +3136,7 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
       footerLogo.innerHTML = '<img src="' + content.footer_logo + '" alt="BRO Atelier">';
     }
   }
-})();
+}
 
 /* ============================================
    BLOCK EDITING — 区块编辑系统
