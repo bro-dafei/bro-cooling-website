@@ -665,62 +665,7 @@ ul { list-style: none; }
   color: var(--accent-cyan);
 }
 
-/* ========================================
-   ADMIN NOTICE
-   ======================================== */
-.admin-notice {
-  margin: 0 48px 60px;
-  padding: 32px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(255,255,255,0.02);
-}
-.admin-notice h3 {
-  font-size: 14px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-  color: var(--accent-cyan);
-}
-.notice-badge {
-  display: inline-block;
-  font-size: 9px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  background: rgba(0,255,255,0.1);
-  color: var(--accent-cyan);
-  padding: 3px 10px;
-  margin-bottom: 16px;
-  border: 1px solid rgba(0,255,255,0.2);
-}
-.admin-notice > p {
-  font-size: 12px;
-  color: var(--text-secondary);
-  line-height: 1.7;
-  font-family: var(--font-cn);
-  max-width: 700px;
-}
-.admin-features {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-top: 20px;
-}
-.admin-feature-item {
-  font-size: 11px;
-  color: var(--text-secondary);
-  line-height: 1.5;
-  padding: 12px;
-  border: 1px solid rgba(255,255,255,0.05);
-  font-family: var(--font-cn);
-}
-.admin-feature-item strong {
-  display: block;
-  font-size: 11px;
-  letter-spacing: 1px;
-  color: var(--text-primary);
-  margin-bottom: 4px;
-  font-family: var(--font-en);
-}
+
 
 /* ========================================
    NEWS
@@ -890,7 +835,7 @@ ul { list-style: none; }
   .care-grid { grid-template-columns: repeat(2, 1fr); }
   .news-grid { grid-template-columns: repeat(2, 1fr); }
   .footer-grid { grid-template-columns: 1fr 1fr; }
-  .admin-features { grid-template-columns: repeat(2, 1fr); }
+
 }
 @media (max-width: 768px) {
   .section { padding: 60px 20px; }
@@ -903,8 +848,7 @@ ul { list-style: none; }
   .care-grid { grid-template-columns: 1fr; }
   .news-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; }
-  .admin-features { grid-template-columns: 1fr; }
-  .admin-notice { margin: 0 20px 40px; }
+
   .timeline { padding-left: 24px; }
   .timeline-item { padding-left: 20px; }
   .hero-title { letter-spacing: 6px; }
@@ -1199,56 +1143,7 @@ body.edit-mode .grid-item:hover .edit-work-badge {
   to { opacity: 1; }
 }
 
-/* ========================================
-   BLOCK EDITING — 区块编辑样式
-   ========================================= */
-.edit-block-btn {
-  position: absolute;
-  top: 12px; right: 12px;
-  z-index: 1001;
-  background: rgba(0,0,0,0.9);
-  border: 1px solid var(--accent-cyan);
-  color: var(--accent-cyan);
-  padding: 4px 10px;
-  font-size: 9px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  cursor: pointer;
-  opacity: 1;
-  transition: opacity 0.3s;
-  backdrop-filter: blur(4px);
-  pointer-events: auto;
-}
 
-.hero-edit-btn {
-  background: linear-gradient(135deg, #1a1a2e, #16213e);
-  border: 1px solid #00d4ff;
-  color: #00d4ff;
-  padding: 8px 16px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 212, 255, 0.2);
-}
-
-.hero-edit-btn:hover {
-  background: linear-gradient(135deg, #16213e, #0f3460);
-  border-color: #00ffea;
-  color: #00ffea;
-  box-shadow: 0 6px 16px rgba(0, 212, 255, 0.4);
-  transform: translateY(-2px);
-}
-.edit-block-btn:hover {
-  background: rgba(0,255,255,0.15);
-  box-shadow: 0 0 8px rgba(0,255,255,0.2);
-}
-body.edit-mode .edit-block-btn {
-  opacity: 1;
-}
 
 /* 编辑模式下轮播图不拦截点击，确保编辑按钮可用 */
 body.edit-mode .hero-slide {
@@ -1651,7 +1546,7 @@ body.edit-mode .editable-block:hover {
      HERO
      ============================================ -->
 <section id="hero" class="hero editable-block" data-block-type="hero" data-block-id="hero">
-  <button class="edit-block-btn" data-block="hero" style="top:20px;right:20px;z-index:999;">编辑首屏</button>
+
   <div class="hero-slider">
     <!-- 轮播图将在这里动态生成 -->
   </div>
@@ -1693,7 +1588,7 @@ body.edit-mode .editable-block:hover {
     <span class="section-label" data-i18n="atelier.label">BRO Atelier</span>
     <h2 class="section-title" data-i18n="atelier.title">作品馆</h2>
   </div>
-  <button class="edit-block-btn" data-block="atelier">编辑作品馆</button>
+
   <div class="water-channel" style="margin-bottom:40px;"></div>
 
   <div class="atelier-filters">
@@ -1757,7 +1652,7 @@ body.edit-mode .editable-block:hover {
     <span class="section-label" data-i18n="heritage.label">Brand Heritage</span>
     <h2 class="section-title" data-i18n="heritage.title">品牌传承</h2>
   </div>
-  <button class="edit-block-btn" data-block="heritage">编辑时间线</button>
+  
   <div class="water-channel" style="margin-bottom:60px;"></div>
 
   <div class="timeline">
@@ -1796,7 +1691,7 @@ body.edit-mode .editable-block:hover {
     <span class="section-label" data-i18n="commission.label">Commission</span>
     <h2 class="section-title" data-i18n="commission.title">委托定制</h2>
   </div>
-  <button class="edit-block-btn" data-block="commission">编辑流程</button>
+
   <div class="fluid-line" style="margin-bottom:60px;"></div>
 
   <div class="step-flow">
@@ -1892,7 +1787,7 @@ body.edit-mode .editable-block:hover {
     <span class="section-label" data-i18n="news.label">News & Updates</span>
     <h2 class="section-title" data-i18n="news.title">最新动态</h2>
   </div>
-  <button class="edit-block-btn" data-block="news">编辑新闻</button>
+  
   <div class="fluid-line" style="margin-bottom:40px;"></div>
 
   <div class="news-grid">
@@ -1929,30 +1824,14 @@ body.edit-mode .editable-block:hover {
   </div>
 </section>
 
-<!-- ============================================
-     ADMIN NOTICE
-     ============================================ -->
-<div class="admin-notice" id="adminNotice">
-  <div class="notice-badge">Data-Driven</div>
-  <h3>Management — 后台管理系统</h3>
-  <p style="margin-bottom:16px">This site is powered by <strong>bro-cooling-admin.html</strong>. All content (works, text, inquiries) is stored in your browser's LocalStorage and shared between the admin panel and this website. No server required.</p>
-  <div style="margin-top:16px">
-    <a href="bro-cooling-admin.html" style="display:inline-block;padding:10px 24px;border:1px solid rgba(0,255,255,0.3);color:var(--accent-cyan);font-size:11px;letter-spacing:2px;text-transform:uppercase;transition:all 0.3s">Open Admin Panel</a>
-  </div>
-  <div class="admin-features">
-    <div class="admin-feature-item"><strong>Portfolio CMS</strong><span>Works upload, edit, sort</span></div>
-    <div class="admin-feature-item"><strong>Content Editor</strong><span>Bilingual text management</span></div>
-    <div class="admin-feature-item"><strong>Inquiry Manager</strong><span>View & manage inquiries</span></div>
-    <div class="admin-feature-item"><strong>Dashboard</strong><span>Stats & analytics</span></div>
-  </div>
-</div>
+
 
 <!-- ============================================
      FOOTER
      ============================================ -->
 <footer class="site-footer editable-block" data-block-type="footer" data-block-id="footer">
   
-  <button class="edit-block-btn" style="top: 20px; right: 20px;" data-block="footer">编辑页脚</button><div class="footer-grid">
+<div class="footer-grid">
     <div>
       <div class="footer-logo">BRO COOLING</div>
       <p class="footer-tagline cn" data-i18n="footer.tagline">每一台电脑，都是不可复制的艺术品</p>
@@ -2520,8 +2399,7 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
       '<div style="height:1px;background:rgba(255,255,255,0.1);margin:8px 0"></div>' +
       '<button id="addWorkBtn">添加作品</button>' +
       '<button id="reloadBtn">刷新页面</button>' +
-      '<div style="height:1px;background:rgba(255,255,255,0.1);margin:8px 0"></div>' +
-      '<button id="editHeroBtn" class="hero-edit-btn">编辑首屏</button>' +
+
     '</div>' +
     '<div class="edit-toast" id="editToast"></div>';
   document.body.insertAdjacentHTML('beforeend', toolbarHTML);
@@ -3293,21 +3171,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.appendChild(blockEditPanel);
   }
   
-  // Bind block edit buttons
-  document.querySelectorAll('.edit-block-btn').forEach(function(btn) {
-    btn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      e.preventDefault();
-      console.log('Block edit button clicked:', btn.getAttribute('data-block'));
-      if (window.openBlockEditor) {
-        window.openBlockEditor(btn.getAttribute('data-block'));
-      } else {
-        console.error('openBlockEditor not available');
-        showToast('编辑器尚未初始化，请刷新页面重试', 'error');
-      }
-    });
-  });
-  
   function openBlockEditor(blockId) {
     console.log('openBlockEditor called with blockId:', blockId);
     currentBlock = document.querySelector('[data-block-id="' + blockId + '"]');
@@ -3332,22 +3195,6 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // 将 openBlockEditor 暴露到全局，让编辑工具栏可以调用
   window.openBlockEditor = openBlockEditor;
-  
-  // 绑定工具栏中的编辑首屏按钮
-  var editHeroBtn = document.getElementById('editHeroBtn');
-  if (editHeroBtn) {
-    editHeroBtn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      e.preventDefault();
-      console.log('Edit hero button clicked');
-      if (window.openBlockEditor) {
-        window.openBlockEditor('hero');
-      } else {
-        console.error('openBlockEditor not available');
-        showToast('编辑器尚未初始化，请刷新页面重试', 'error');
-      }
-    });
-  }
   
   function closeBlockEditor() {
     if (blockEditPanel) {
