@@ -1004,13 +1004,22 @@ ul { list-style: none; }
   background: rgba(0,255,0,0.1);
   border-color: var(--accent-green);
 }
-.edit-toolbar button.publish-btn {
+.edit-toolbar button.download-btn {
   border-color: rgba(255,0,255,0.3);
   color: var(--accent-magenta);
 }
-.edit-toolbar button.publish-btn:hover {
+.edit-toolbar button.download-btn:hover {
   background: rgba(255,0,255,0.1);
   border-color: var(--accent-magenta);
+}
+
+.edit-toolbar button.deploy-btn {
+  border-color: rgba(0,255,0,0.3);
+  color: var(--accent-green);
+}
+.edit-toolbar button.deploy-btn:hover {
+  background: rgba(0,255,0,0.1);
+  border-color: var(--accent-green);
 }
 
 /* Edit Mode — Editable Element Styles */
@@ -2473,7 +2482,8 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
       '<div class="edit-toolbar-title">编辑模式</div>' +
       '<button id="toggleEditModeBtn" class="active">编辑模式开启</button>' +
       '<button id="saveBtn" class="save-btn">保存到本地</button>' +
-      '<button id="publishBtn" class="publish-btn">下载数据</button>' +
+      '<button id="downloadBtn" class="download-btn">下载数据</button>' +
+      '<button id="deployBtn" class="deploy-btn">一键部署</button>' +
       '<div style="height:1px;background:rgba(255,255,255,0.1);margin:8px 0"></div>' +
       '<button id="addWorkBtn">添加作品</button>' +
       '<button id="reloadBtn">刷新页面</button>' +
@@ -2485,7 +2495,8 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
   var toolbar = document.getElementById('editToolbar');
   var toggleEditBtn = document.getElementById('toggleEditModeBtn');
   var saveBtn = document.getElementById('saveBtn');
-  var publishBtn = document.getElementById('publishBtn');
+  var downloadBtn = document.getElementById('downloadBtn');
+  var deployBtn = document.getElementById('deployBtn');
   var addWorkBtn = document.getElementById('addWorkBtn');
   var reloadBtn = document.getElementById('reloadBtn');
   var toast = document.getElementById('editToast');
@@ -2529,6 +2540,58 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
     } catch(e) {
       showToast('下载失败: ' + e.message, 'error');
     }
+  });
+
+  downloadBtn.addEventListener('click', function() {
+    try {
+      var works = broGetData('bro_works', []);
+      var content = broGetData('bro_content', {});
+      var inquiries = broGetData('bro_inquiries', []);
+      var settings = broGetData('bro_settings', {});
+      var data = { works: works, content: content, inquiries: inquiries, settings: settings };
+      var jsonStr = JSON.stringify(data, null, 2);
+      var blob = new Blob([jsonStr], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'bro-data.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('数据已下载', 'success');
+    } catch(e) {
+      showToast('下载失败: ' + e.message, 'error');
+    }
+  });
+
+  deployBtn.addEventListener('click', function() {
+    showToast('正在部署到GitHub，请稍候...', 'info');
+    var works = broGetData('bro_works', []);
+    var content = broGetData('bro_content', {});
+    var inquiries = broGetData('bro_inquiries', []);
+    var settings = broGetData('bro_settings', {});
+    var data = { works: works, content: content, inquiries: inquiries, settings: settings };
+
+    fetch('/api/deploy', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        data: data,
+        commitMessage: 'Auto-deploy from editor: ' + new Date().toLocaleString()
+      })
+    })
+    .then(function(response) { return response.json(); })
+    .then(function(result) {
+      if (result.success) {
+        showToast('部署成功！Vercel正在自动更新网站', 'success');
+      } else {
+        showToast('部署失败：' + (result.error || '未知错误'), 'error');
+      }
+    })
+    .catch(function(error) {
+      showToast('网络错误：' + error.message, 'error');
+    });
   });
   
   addWorkBtn.addEventListener('click', function() {
