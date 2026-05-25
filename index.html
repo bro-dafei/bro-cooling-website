@@ -2554,7 +2554,7 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
     showToast('已保存到本地', 'success');
   });
   
-  publishBtn.addEventListener('click', function() {
+  downloadBtn.addEventListener('click', function() {
     try {
       var works = broGetData('bro_works', []);
       var content = broGetData('bro_content', {});
@@ -3297,19 +3297,32 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.edit-block-btn').forEach(function(btn) {
     btn.addEventListener('click', function(e) {
       e.stopPropagation();
+      e.preventDefault();
+      console.log('Block edit button clicked:', btn.getAttribute('data-block'));
       openBlockEditor(btn.getAttribute('data-block'));
     });
   });
   
   function openBlockEditor(blockId) {
+    console.log('openBlockEditor called with blockId:', blockId);
     currentBlock = document.querySelector('[data-block-id="' + blockId + '"]');
-    if (!currentBlock) return;
+    console.log('Found currentBlock:', currentBlock);
+    if (!currentBlock) {
+      console.error('Block not found:', blockId);
+      return;
+    }
     var blockType = currentBlock.getAttribute('data-block-type');
+    console.log('Block type:', blockType);
     
-    if (!blockEditPanel) createBlockEditPanel();
+    if (!blockEditPanel) {
+      console.log('Creating block edit panel');
+      createBlockEditPanel();
+    }
+    console.log('Loading block editor...');
     loadBlockEditor(blockId, blockType);
     blockEditPanel.style.display = 'block';
     document.body.style.overflow = 'hidden';
+    console.log('Block editor opened');
   }
   
   // 将 openBlockEditor 暴露到全局，让编辑工具栏可以调用
@@ -3320,6 +3333,8 @@ document.addEventListener('DOMContentLoaded', function() {
   if (editHeroBtn) {
     editHeroBtn.addEventListener('click', function(e) {
       e.stopPropagation();
+      e.preventDefault();
+      console.log('Edit hero button clicked');
       openBlockEditor('hero');
     });
   }
