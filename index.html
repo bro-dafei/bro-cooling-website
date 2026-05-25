@@ -196,7 +196,7 @@ ul { list-style: none; }
 .hero-slider {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: 1;
   overflow: hidden;
 }
 .hero-slide {
@@ -215,10 +215,11 @@ ul { list-style: none; }
   pointer-events: auto;
 }
 .hero-slide-link {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
   cursor: pointer;
+  display: block;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  text-decoration: none;
 }
 .hero-slider-controls {
   position: absolute;
@@ -274,6 +275,7 @@ ul { list-style: none; }
   position: relative;
   z-index: 2;
   text-align: center;
+  pointer-events: none;
 }
 .hero-title {
   font-size: clamp(48px, 8vw, 96px);
@@ -298,6 +300,7 @@ ul { list-style: none; }
   left: 50%;
   transform: translateX(-50%);
   z-index: 2;
+  pointer-events: none;
 }
 .hero-scroll-line {
   width: 1px;
@@ -857,6 +860,13 @@ ul { list-style: none; }
   .slider-next { width: 32px; height: 32px; font-size: 18px; }
   .slider-dots { gap: 6px; }
   .slider-dot { width: 6px; height: 6px; }
+  .hero-slide-link {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .hero-content, .hero-scroll {
+    pointer-events: none;
+  }
 }
 
 .reveal {
@@ -1170,6 +1180,29 @@ body.edit-mode .hero-slide {
   background: linear-gradient(135deg, #16213e, #0f3460);
   border-color: #00ffea;
   color: #00ffea;
+  box-shadow: 0 6px 16px rgba(0, 212, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+/* 通用区块编辑按钮样式 */
+.block-edit-btn {
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--text-primary);
+  padding: 8px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.block-edit-btn:hover {
+  background: linear-gradient(135deg, #16213e, #0f3460);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
   box-shadow: 0 6px 16px rgba(0, 212, 255, 0.4);
   transform: translateY(-2px);
 }
@@ -1777,7 +1810,7 @@ body.edit-mode .editable-block:hover {
 <!-- ============================================
      BRO CARE
      ============================================ -->
-<section id="care" class="section">
+<section id="care" class="section editable-block" data-block-type="care" data-block-id="care">
   <div class="section-header">
     <span class="section-label">BRO CARE</span>
     <h2 class="section-title" data-i18n="care.title">售后承诺</h2>
@@ -2431,6 +2464,11 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
       '<button id="addWorkBtn">添加作品</button>' +
       '<button id="reloadBtn">刷新页面</button>' +
       '<button id="editHeroBtn" class="hero-edit-btn">编辑首图</button>' +
+      '<button id="editAtelierBtn" class="block-edit-btn">编辑作品馆</button>' +
+      '<button id="editHeritageBtn" class="block-edit-btn">编辑品牌历程</button>' +
+      '<button id="editCommissionBtn" class="block-edit-btn">编辑定制流程</button>' +
+      '<button id="editCareBtn" class="block-edit-btn">编辑售后保障</button>' +
+      '<button id="editNewsBtn" class="block-edit-btn">编辑最新动态</button>' +
 
     '</div>' +
     '<div class="edit-toast" id="editToast"></div>';
@@ -3007,16 +3045,31 @@ function loadFallbackData(callback) {
         slideEl.style.background = 'linear-gradient(135deg, #0a0a0a 0%, #000 30%, #0a0a10 60%, #000 100%)';
       }
       
-      // 添加点击链接
+      sliderContainer.appendChild(slideEl);
+      
+      // 添加点击链接（放在slide外部，确保触摸事件）
       if (slide.link) {
         var linkEl = document.createElement('a');
         linkEl.className = 'hero-slide-link';
         linkEl.href = slide.link;
         linkEl.target = '_blank';
-        slideEl.appendChild(linkEl);
+        linkEl.setAttribute('aria-label', '查看详情');
+        linkEl.innerHTML = '<span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">查看详情</span>';
+        // 将链接放在slide同级，但通过绝对定位覆盖
+        linkEl.style.position = 'absolute';
+        linkEl.style.inset = '0';
+        linkEl.style.zIndex = '3';
+        linkEl.style.pointerEvents = 'auto';
+        // 挂到hero section上，独立于slider的层叠上下文
+        var heroSection = document.getElementById('hero');
+        if (heroSection) heroSection.appendChild(linkEl);
+        // 记录链接与slide的对应关系
+        linkEl.setAttribute('data-slide-index', index);
+        // 非激活状态的链接隐藏
+        if (index !== 0) {
+          linkEl.style.display = 'none';
+        }
       }
-      
-      sliderContainer.appendChild(slideEl);
       
       // 创建指示点
       var dotEl = document.createElement('div');
@@ -3076,6 +3129,7 @@ function loadFallbackData(callback) {
   function goToSlide(index) {
     var slides = document.querySelectorAll('.hero-slide');
     var dots = document.querySelectorAll('.slider-dot');
+    var links = document.querySelectorAll('.hero-slide-link');
     if (slides.length === 0) return;
     
     // 计算新索引
@@ -3088,6 +3142,12 @@ function loadFallbackData(callback) {
     
     slides[index].classList.add('active');
     dots[index].classList.add('active');
+    
+    // 同步切换链接显示
+    links.forEach(function(link) {
+      var linkIdx = parseInt(link.getAttribute('data-slide-index'));
+      link.style.display = (linkIdx === index) ? 'block' : 'none';
+    });
     
     currentIndex = index;
   }
@@ -3281,6 +3341,76 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
+
+  // 绑定工具栏中的编辑作品馆按钮
+  var editAtelierBtn = document.getElementById('editAtelierBtn');
+  if (editAtelierBtn) {
+    editAtelierBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      if (window.openBlockEditor) {
+        window.openBlockEditor('atelier');
+      } else {
+        showToast('编辑器尚未初始化，请刷新页面重试', 'error');
+      }
+    });
+  }
+
+  // 绑定工具栏中的编辑品牌历程按钮
+  var editHeritageBtn = document.getElementById('editHeritageBtn');
+  if (editHeritageBtn) {
+    editHeritageBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      if (window.openBlockEditor) {
+        window.openBlockEditor('heritage');
+      } else {
+        showToast('编辑器尚未初始化，请刷新页面重试', 'error');
+      }
+    });
+  }
+
+  // 绑定工具栏中的编辑定制流程按钮
+  var editCommissionBtn = document.getElementById('editCommissionBtn');
+  if (editCommissionBtn) {
+    editCommissionBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      if (window.openBlockEditor) {
+        window.openBlockEditor('commission');
+      } else {
+        showToast('编辑器尚未初始化，请刷新页面重试', 'error');
+      }
+    });
+  }
+
+  // 绑定工具栏中的编辑售后保障按钮
+  var editCareBtn = document.getElementById('editCareBtn');
+  if (editCareBtn) {
+    editCareBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      if (window.openBlockEditor) {
+        window.openBlockEditor('care');
+      } else {
+        showToast('编辑器尚未初始化，请刷新页面重试', 'error');
+      }
+    });
+  }
+
+  // 绑定工具栏中的编辑最新动态按钮
+  var editNewsBtn = document.getElementById('editNewsBtn');
+  if (editNewsBtn) {
+    editNewsBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      if (window.openBlockEditor) {
+        window.openBlockEditor('news');
+      } else {
+        showToast('编辑器尚未初始化，请刷新页面重试', 'error');
+      }
+    });
+  }
   
   function closeBlockEditor() {
     if (blockEditPanel) {
@@ -3324,6 +3454,42 @@ document.addEventListener('DOMContentLoaded', function() {
           '</div>' +
           '<button class="add-slide-btn" id="addSlideBtn">+ 添加幻灯片</button>' +
         '</div>' +
+        '<div class="block-edit-actions">' +
+          '<button class="cancel-btn" id="cancelBlockEdit">取消</button>' +
+          '<button class="save-btn" id="saveBlockEdit">保存更改</button>' +
+        '</div>';
+    }
+    else if (blockType === 'atelier') {
+      var works = broGetData('bro_works', []);
+      html = '<h3>编辑作品馆</h3><div class="block-edit-content active">' +
+        '<div class="form-group"><label>作品馆标题</label>' +
+          '<input type="text" id="atelierTitle" value="' + escapeHtml(i18n.zh['atelier.title']) + '"></div>' +
+        '<div class="form-group"><label>作品馆副标题</label>' +
+          '<input type="text" id="atelierSubtitle" value="' + escapeHtml(i18n.zh['atelier.subtitle']) + '"></div>' +
+        '<div class="item-list-edit">' +
+          '<h4 style="font-size:12px;letter-spacing:1px;color:var(--text-secondary);margin-bottom:12px;">作品管理</h4>';
+      works.forEach(function(work, i) {
+        html += '<div class="item" data-index="' + i + '">' +
+          '<div class="item-header"><div class="item-title">' + escapeHtml(work.title) + '</div>' +
+          '<div class="item-actions">' +
+            '<button class="move-up-btn" data-index="' + i + '">上移</button>' +
+            '<button class="move-down-btn" data-index="' + i + '">下移</button>' +
+            '<button class="delete-item-btn" data-index="' + i + '">删除</button>' +
+          '</div></div>' +
+          '<div class="form-group"><label>作品标题</label>' +
+            '<input type="text" class="work-title-input" value="' + escapeHtml(work.title) + '" data-index="' + i + '"></div>' +
+          '<div class="form-group"><label>作品描述</label>' +
+            '<textarea class="work-desc-input" rows="2" data-index="' + i + '">' + escapeHtml(work.description) + '</textarea></div>' +
+          '<div class="form-group"><label>作品标签</label>' +
+            '<input type="text" class="work-tags-input" value="' + escapeHtml(work.tags) + '" data-index="' + i + '"></div>' +
+          '<div class="image-upload-area mini"><div class="upload-text">上传作品图片</div>' +
+            '<input type="file" accept="image/*" class="work-image-input" data-index="' + i + '"></div>' +
+          '<div class="block-image-preview work-image-preview" id="workImgPreview' + i + '">' +
+            (work.image ? '<img src="' + work.image + '" style="max-height:80px;border-radius:2px;">' : '') +
+          '</div>' +
+        '</div>';
+      });
+      html += '</div><button class="add-item-btn" id="addWorkItem">+ 添加作品</button></div>' +
         '<div class="block-edit-actions">' +
           '<button class="cancel-btn" id="cancelBlockEdit">取消</button>' +
           '<button class="save-btn" id="saveBlockEdit">保存更改</button>' +
@@ -3416,6 +3582,38 @@ document.addEventListener('DOMContentLoaded', function() {
         '</div>';
       });
       html += '</div><button class="add-item-btn" id="addNewsBtn">+ 添加新闻</button></div>' +
+        '<div class="block-edit-actions">' +
+          '<button class="cancel-btn" id="cancelBlockEdit">取消</button>' +
+          '<button class="save-btn" id="saveBlockEdit">保存更改</button>' +
+        '</div>';
+    }
+    else if (blockType === 'care') {
+      var careCards = document.querySelectorAll('.care-card');
+      html = '<h3>编辑售后保障</h3><div class="block-edit-content active">' +
+        '<div class="form-group"><label>售后保障标题</label>' +
+          '<input type="text" id="careTitle" value="' + escapeHtml(i18n.zh['care.title']) + '"></div>' +
+        '<div class="item-list-edit">' +
+          '<h4 style="font-size:12px;letter-spacing:1px;color:var(--text-secondary);margin-bottom:12px;">保障项目</h4>';
+      careCards.forEach(function(card, i) {
+        var title = card.querySelector('.care-title').textContent;
+        var desc = card.querySelector('.care-desc').textContent;
+        var icon = card.querySelector('.care-icon').textContent;
+        html += '<div class="item" data-index="' + i + '">' +
+          '<div class="item-header"><div class="item-title">保障 ' + (i+1) + '</div>' +
+          '<div class="item-actions">' +
+            '<button class="move-up-btn" data-index="' + i + '">上移</button>' +
+            '<button class="move-down-btn" data-index="' + i + '">下移</button>' +
+            '<button class="delete-item-btn" data-index="' + i + '">删除</button>' +
+          '</div></div>' +
+          '<div class="form-group"><label>图标文字</label>' +
+            '<input type="text" class="care-icon-input" value="' + escapeHtml(icon) + '" data-index="' + i + '"></div>' +
+          '<div class="form-group"><label>标题</label>' +
+            '<input type="text" class="care-title-input" value="' + escapeHtml(title) + '" data-index="' + i + '"></div>' +
+          '<div class="form-group"><label>描述</label>' +
+            '<textarea class="care-desc-input" rows="2" data-index="' + i + '">' + escapeHtml(desc) + '</textarea></div>' +
+        '</div>';
+      });
+      html += '</div><button class="add-item-btn" id="addCareBtn">+ 添加保障项目</button></div>' +
         '<div class="block-edit-actions">' +
           '<button class="cancel-btn" id="cancelBlockEdit">取消</button>' +
           '<button class="save-btn" id="saveBlockEdit">保存更改</button>' +
@@ -3932,6 +4130,62 @@ document.addEventListener('DOMContentLoaded', function() {
         });
       });
     }
+    else if (blockType === 'atelier') {
+      var atelierTitle = document.getElementById('atelierTitle');
+      var atelierSubtitle = document.getElementById('atelierSubtitle');
+      if (atelierTitle) {
+        content.atelier_title = atelierTitle.value;
+        i18n.zh['atelier.title'] = atelierTitle.value;
+        document.querySelector('#atelier .section-title').textContent = atelierTitle.value;
+      }
+      if (atelierSubtitle) {
+        content.atelier_subtitle = atelierSubtitle.value;
+        i18n.zh['atelier.subtitle'] = atelierSubtitle.value;
+      }
+      
+      // 更新作品数据
+      var works = [];
+      document.querySelectorAll('.item-list-edit .item').forEach(function(item, i) {
+        var title = item.querySelector('.work-title-input');
+        var desc = item.querySelector('.work-desc-input');
+        var tags = item.querySelector('.work-tags-input');
+        var preview = document.getElementById('workImgPreview' + i);
+        var image = '';
+        if (preview) {
+          var compressed = preview.getAttribute('data-compressed');
+          var img = preview.querySelector('img');
+          image = compressed || (img ? img.src : '');
+        }
+        works.push({
+          title: title ? title.value : '',
+          description: desc ? desc.value : '',
+          tags: tags ? tags.value : '',
+          image: image
+        });
+      });
+      broSetData('bro_works', works);
+    }
+    else if (blockType === 'care') {
+      var careTitle = document.getElementById('careTitle');
+      if (careTitle) {
+        content.care_title = careTitle.value;
+        i18n.zh['care.title'] = careTitle.value;
+        document.querySelector('#care .section-title').textContent = careTitle.value;
+      }
+      
+      // 更新保障项目数据
+      content.care_items = [];
+      document.querySelectorAll('.item-list-edit .item').forEach(function(item, i) {
+        var icon = item.querySelector('.care-icon-input');
+        var title = item.querySelector('.care-title-input');
+        var desc = item.querySelector('.care-desc-input');
+        content.care_items.push({
+          icon: icon ? icon.value : '',
+          title: title ? title.value : '',
+          desc: desc ? desc.value : ''
+        });
+      });
+    }
     else if (blockType === 'news') {
       content.news_items = [];
       document.querySelectorAll('.item-list-edit .item').forEach(function(item, i) {
@@ -4008,6 +4262,19 @@ document.addEventListener('DOMContentLoaded', function() {
             '<div class="step-title">' + escapeHtml(step.title) + '</div>' +
             '<div class="step-desc">' + escapeHtml(step.desc) + '</div>' + imgHtml;
           container.appendChild(stepEl);
+        });
+      }
+    } else if (blockType === 'care') {
+      var container = document.querySelector('.care-grid');
+      if (container) {
+        container.innerHTML = '';
+        content.care_items.forEach(function(care, i) {
+          var careEl = document.createElement('div');
+          careEl.className = 'care-card reveal';
+          careEl.innerHTML = '<div class="care-icon">' + escapeHtml(care.icon) + '</div>' +
+            '<h3 class="care-title">' + escapeHtml(care.title) + '</h3>' +
+            '<p class="care-desc cn">' + escapeHtml(care.desc) + '</p>';
+          container.appendChild(careEl);
         });
       }
     } else if (blockType === 'news') {
