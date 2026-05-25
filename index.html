@@ -2319,15 +2319,22 @@ function renderAllWorks() {
   document.querySelectorAll('#latestGrid .reveal, #atelierGrid .reveal').forEach(function(el) { revealObserver.observe(el); });
 }
 
-// Track work clicks
+// Track work clicks and show detail
 document.addEventListener('click', function(e) {
   var card = e.target.closest('[data-work-id]');
   if (!card) return;
+  e.preventDefault();
+  e.stopPropagation();
+  
   var idx = parseInt(card.getAttribute('data-work-id'));
   var works = broGetData('bro_works', []);
   if (works[idx]) {
+    // Track click count
     works[idx].clicks = (works[idx].clicks || 0) + 1;
     broSetData('bro_works', works);
+    
+    // Show work detail modal
+    showWorkDetailModal(idx);
   }
 });
 
@@ -2728,6 +2735,44 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
       if (e.key === 'Escape') {
         cancel();
       }
+    });
+  }
+  
+  // 作品详情弹窗（用户点击作品卡片时显示）
+  function showWorkDetailModal(idx) {
+    var works = broGetData('bro_works', []);
+    var w = works[idx];
+    if (!w) return;
+    
+    var name = w.name_zh || w.name || 'Untitled';
+    var nameEn = w.name_en || '';
+    var category = w.category || '';
+    var badge = w.badge || '';
+    var imgTag = w.image 
+      ? '<img src="'+w.image+'" alt="'+name+'" style="width:100%;display:block;border-radius:4px">'
+      : '<div style="padding:80px 40px;text-align:center;color:var(--text-secondary);background:rgba(255,255,255,0.02);border-radius:4px">暂无图片</div>';
+    
+    var html = 
+      '<div class="edit-modal-overlay" id="detailModalOverlay">' +
+        '<div class="edit-modal" style="max-width:600px;text-align:center">' +
+          '<button id="closeDetailModal" style="position:absolute;top:12px;right:12px;background:none;border:none;color:var(--text-secondary);font-size:24px;cursor:pointer">&times;</button>' +
+          imgTag +
+          '<h3 style="margin-top:20px;font-size:16px;letter-spacing:2px">' + name + '</h3>' +
+          (nameEn ? '<p style="font-size:12px;color:var(--text-secondary);margin-top:4px">' + nameEn + '</p>' : '') +
+          '<div style="margin-top:12px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">' +
+            (category ? '<span style="font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:3px 10px;border:1px solid rgba(0,255,255,0.2);color:var(--accent-cyan);border-radius:2px">' + category + '</span>' : '') +
+            (badge ? '<span style="font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:3px 10px;border:1px solid rgba(255,255,255,0.1);color:var(--text-secondary);border-radius:2px">' + badge + '</span>' : '') +
+          '</div>' +
+          (w.description ? '<p style="margin-top:16px;font-size:12px;color:var(--text-secondary);line-height:1.7;font-family:var(--font-cn);text-align:left">' + w.description + '</p>' : '') +
+        '</div>' +
+      '</div>';
+    document.body.insertAdjacentHTML('beforeend', html);
+    
+    document.getElementById('closeDetailModal').addEventListener('click', function() {
+      document.getElementById('detailModalOverlay').remove();
+    });
+    document.getElementById('detailModalOverlay').addEventListener('click', function(e) {
+      if (e.target === this) this.remove();
     });
   }
   
