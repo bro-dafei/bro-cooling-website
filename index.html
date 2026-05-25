@@ -1150,6 +1150,30 @@ body.edit-mode .hero-slide {
   pointer-events: none;
 }
 
+/* 编辑首图按钮样式 */
+.hero-edit-btn {
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border: 1px solid #00d4ff;
+  color: #00d4ff;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 212, 255, 0.2);
+}
+
+.hero-edit-btn:hover {
+  background: linear-gradient(135deg, #16213e, #0f3460);
+  border-color: #00ffea;
+  color: #00ffea;
+  box-shadow: 0 6px 16px rgba(0, 212, 255, 0.4);
+  transform: translateY(-2px);
+}
+
 /* 区块编辑模式边框 */
 body.edit-mode .editable-block {
   outline: 1px dashed rgba(0,255,255,0.3);
@@ -2399,6 +2423,7 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
       '<div style="height:1px;background:rgba(255,255,255,0.1);margin:8px 0"></div>' +
       '<button id="addWorkBtn">添加作品</button>' +
       '<button id="reloadBtn">刷新页面</button>' +
+      '<button id="editHeroBtn" class="hero-edit-btn">编辑首图</button>' +
 
     '</div>' +
     '<div class="edit-toast" id="editToast"></div>';
@@ -3195,6 +3220,22 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // 将 openBlockEditor 暴露到全局，让编辑工具栏可以调用
   window.openBlockEditor = openBlockEditor;
+  
+  // 绑定工具栏中的编辑首图按钮
+  var editHeroBtn = document.getElementById('editHeroBtn');
+  if (editHeroBtn) {
+    editHeroBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      console.log('Edit hero button clicked');
+      if (window.openBlockEditor) {
+        window.openBlockEditor('hero');
+      } else {
+        console.error('openBlockEditor not available');
+        showToast('编辑器尚未初始化，请刷新页面重试', 'error');
+      }
+    });
+  }
   
   function closeBlockEditor() {
     if (blockEditPanel) {
