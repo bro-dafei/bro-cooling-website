@@ -1205,7 +1205,7 @@ body.edit-mode .grid-item:hover .edit-work-badge {
 .edit-block-btn {
   position: absolute;
   top: 12px; right: 12px;
-  z-index: 100;
+  z-index: 1001;
   background: rgba(0,0,0,0.9);
   border: 1px solid var(--accent-cyan);
   color: var(--accent-cyan);
@@ -1217,6 +1217,7 @@ body.edit-mode .grid-item:hover .edit-work-badge {
   opacity: 1;
   transition: opacity 0.3s;
   backdrop-filter: blur(4px);
+  pointer-events: auto;
 }
 
 .hero-edit-btn {
@@ -1247,6 +1248,11 @@ body.edit-mode .grid-item:hover .edit-work-badge {
 }
 body.edit-mode .edit-block-btn {
   opacity: 1;
+}
+
+/* 编辑模式下轮播图不拦截点击，确保编辑按钮可用 */
+body.edit-mode .hero-slide {
+  pointer-events: none;
 }
 
 /* 区块编辑模式边框 */
@@ -2631,11 +2637,6 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
     location.reload();
   });
   
-  var editHeroBtn = document.getElementById('editHeroBtn');
-  editHeroBtn.addEventListener('click', function() {
-    openBlockEditor('hero');
-  });
-  
   function showToast(message, type) {
     type = type || 'info';
     toast.textContent = message;
@@ -3309,6 +3310,18 @@ document.addEventListener('DOMContentLoaded', function() {
     loadBlockEditor(blockId, blockType);
     blockEditPanel.style.display = 'block';
     document.body.style.overflow = 'hidden';
+  }
+  
+  // 将 openBlockEditor 暴露到全局，让编辑工具栏可以调用
+  window.openBlockEditor = openBlockEditor;
+  
+  // 绑定工具栏中的编辑首屏按钮
+  var editHeroBtn = document.getElementById('editHeroBtn');
+  if (editHeroBtn) {
+    editHeroBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      openBlockEditor('hero');
+    });
   }
   
   function closeBlockEditor() {
