@@ -2944,7 +2944,8 @@ function loadFallbackData(callback) {
       // 设置背景图片
       if (slide.image) {
         console.log('Slide', index, 'has image, length:', slide.image.length);
-        slideEl.style.backgroundImage = 'url(' + slide.image + ')';
+        // 使用引号包裹 data URI，确保移动端兼容
+        slideEl.style.backgroundImage = 'url("' + slide.image + '")';
         // 预加载图片
         var img = new Image();
         img.onload = function() {
