@@ -2911,8 +2911,11 @@ function loadFallbackData(callback) {
   
   // 更新轮播图
   window.updateHeroSlider = function(slides) {
+    console.log('updateHeroSlider called with', slides ? slides.length : 0, 'slides');
+    
     if (!slides || slides.length === 0) {
       // 如果没有幻灯片，使用默认渐变背景
+      console.log('No slides, using default gradient');
       var sliderContainer = document.querySelector('.hero-slider');
       if (sliderContainer) {
         sliderContainer.innerHTML = '<div class="hero-slide active" style="background: linear-gradient(135deg, #0a0a0a 0%, #000 30%, #0a0a10 60%, #000 100%);"></div>';
@@ -2922,7 +2925,12 @@ function loadFallbackData(callback) {
     
     var sliderContainer = document.querySelector('.hero-slider');
     var dotsContainer = document.querySelector('.slider-dots');
-    if (!sliderContainer || !dotsContainer) return;
+    if (!sliderContainer || !dotsContainer) {
+      console.error('Slider containers not found:', {sliderContainer, dotsContainer});
+      return;
+    }
+    
+    console.log('Found containers, creating', slides.length, 'slides');
     
     // 清空现有内容
     sliderContainer.innerHTML = '';
@@ -2935,8 +2943,19 @@ function loadFallbackData(callback) {
       
       // 设置背景图片
       if (slide.image) {
+        console.log('Slide', index, 'has image, length:', slide.image.length);
         slideEl.style.backgroundImage = 'url(' + slide.image + ')';
+        // 预加载图片
+        var img = new Image();
+        img.onload = function() {
+          console.log('Slide', index, 'image loaded successfully');
+        };
+        img.onerror = function() {
+          console.error('Slide', index, 'image failed to load');
+        };
+        img.src = slide.image;
       } else {
+        console.log('Slide', index, 'no image, using gradient');
         slideEl.style.background = 'linear-gradient(135deg, #0a0a0a 0%, #000 30%, #0a0a10 60%, #000 100%)';
       }
       
@@ -2961,6 +2980,8 @@ function loadFallbackData(callback) {
       dotsContainer.appendChild(dotEl);
     });
     
+    console.log('Slides created, initializing controls');
+    
     // 初始化轮播控制
     initSliderControls();
     
@@ -2968,6 +2989,8 @@ function loadFallbackData(callback) {
     if (slides.length > 1) {
       startAutoSlide();
     }
+    
+    console.log('Slider initialization complete');
   };
   
   function initSliderControls() {
@@ -3049,10 +3072,18 @@ function loadFallbackData(callback) {
     function initSliderAndImages() {
       // 从合并后的数据加载轮播
       var content = broGetData('bro_content', {});
+      
+      // 调试信息
+      console.log('initSliderAndImages called');
+      console.log('content keys:', Object.keys(content));
+      console.log('hero_slides:', content.hero_slides ? content.hero_slides.length : 0);
+      
       if (content.hero_slides && content.hero_slides.length > 0) {
+        console.log('Calling updateHeroSlider with', content.hero_slides.length, 'slides');
         updateHeroSlider(content.hero_slides);
       } else if (content.hero_bg_image) {
         // 兼容旧数据
+        console.log('Using hero_bg_image');
         updateHeroSlider([{
           image: content.hero_bg_image,
           title: '',
@@ -3062,6 +3093,7 @@ function loadFallbackData(callback) {
         }]);
       } else {
         // 如果都没有，显示默认渐变背景
+        console.log('No slides found, using default gradient');
         updateHeroSlider([]);
       }
       // 恢复页面中其他图片
