@@ -203,6 +203,7 @@ ul { list-style: none; }
   position: absolute;
   inset: 0;
   opacity: 0;
+  pointer-events: none;
   transition: opacity 1s ease-in-out;
   background-size: contain;
   background-position: center;
@@ -211,6 +212,7 @@ ul { list-style: none; }
 }
 .hero-slide.active {
   opacity: 1;
+  pointer-events: auto;
 }
 .hero-slide-link {
   position: absolute;
@@ -1620,6 +1622,7 @@ body.edit-mode .editable-block:hover {
      HERO
      ============================================ -->
 <section id="hero" class="hero editable-block" data-block-type="hero" data-block-id="hero">
+  <button class="edit-block-btn" data-block="hero" style="top:20px;right:20px;z-index:999;">编辑首屏</button>
   <div class="hero-slider">
     <!-- 轮播图将在这里动态生成 -->
   </div>
@@ -1629,7 +1632,6 @@ body.edit-mode .editable-block:hover {
     <div class="slider-dots"></div>
   </div>
   <div class="hero-content">
-  <button class="edit-block-btn" data-block="hero">编辑首屏</button>
     <h1 class="hero-title fade-in">BRO COOLING</h1>
     <p class="hero-subtitle fade-in fade-in-d1 cn" data-i18n="hero.subtitle">每一台电脑，都是不可复制的艺术品</p>
   </div>
@@ -2032,8 +2034,8 @@ function mergeContent(dict, content) {
    ============================================ */
 const i18n = {
   zh: {
-    'nav.home':'Home','nav.atelier':'Atelier','nav.heritage':'Heritage',
-    'nav.commission':'Commission','nav.care':'BRO CARE','nav.news':'News',
+    'nav.home':'首页','nav.atelier':'作品馆','nav.heritage':'品牌历程',
+    'nav.commission':'定制流程','nav.care':'售后保障','nav.news':'最新动态',
     'hero.subtitle':'每一台电脑，都是不可复制的艺术品','hero.scroll':'SCROLL',
     'latest.label':'Latest Masterpieces','latest.title':'最新作品',
     'work.ztower':'20万级 · 电离子发光技术','work.winbot':'分体水冷',
@@ -2171,7 +2173,8 @@ const i18n = {
 /* ============================================
    LANGUAGE SWITCHER
    ============================================ */
-let currentLang = localStorage.getItem('bro-lang') || 'zh';
+let currentLang = 'zh'; // 强制默认中文，不再从localStorage读取
+localStorage.setItem('bro-lang', 'zh');
 
 function setLang(lang) {
   currentLang = lang;
@@ -2215,11 +2218,12 @@ function setLang(lang) {
   });
 }
 
-document.querySelectorAll('#langToggle button').forEach(btn => {
-  btn.addEventListener('click', () => setLang(btn.dataset.lang));
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('#langToggle button').forEach(btn => {
+    btn.addEventListener('click', () => setLang(btn.dataset.lang));
+  });
+  setLang(currentLang);
 });
-
-setLang(currentLang);
 
 /* ============================================
    INTERSECTION OBSERVER
