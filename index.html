@@ -3060,6 +3060,9 @@ function loadFallbackData(callback) {
           link: '',
           order: 0
         }]);
+      } else {
+        // 如果都没有，显示默认渐变背景
+        updateHeroSlider([]);
       }
       // 恢复页面中其他图片
       restoreImages();
