@@ -3299,7 +3299,12 @@ document.addEventListener('DOMContentLoaded', function() {
       e.stopPropagation();
       e.preventDefault();
       console.log('Block edit button clicked:', btn.getAttribute('data-block'));
-      openBlockEditor(btn.getAttribute('data-block'));
+      if (window.openBlockEditor) {
+        window.openBlockEditor(btn.getAttribute('data-block'));
+      } else {
+        console.error('openBlockEditor not available');
+        showToast('编辑器尚未初始化，请刷新页面重试', 'error');
+      }
     });
   });
   
@@ -3335,7 +3340,12 @@ document.addEventListener('DOMContentLoaded', function() {
       e.stopPropagation();
       e.preventDefault();
       console.log('Edit hero button clicked');
-      openBlockEditor('hero');
+      if (window.openBlockEditor) {
+        window.openBlockEditor('hero');
+      } else {
+        console.error('openBlockEditor not available');
+        showToast('编辑器尚未初始化，请刷新页面重试', 'error');
+      }
     });
   }
   
