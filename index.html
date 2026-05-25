@@ -3245,9 +3245,7 @@ function restoreImages() {
 /* ============================================
    BLOCK EDITING — 区块编辑系统
    ============================================ */
-(function initBlockEditing() {
-  // Always initialize block editing system, not just in edit-mode
-  
+document.addEventListener('DOMContentLoaded', function() {
   console.log('Block editing system initialized');
   
   var blockEditPanel = null;
@@ -4035,7 +4033,7 @@ function restoreImages() {
   }
   
   console.log('Block editing ready');
-})();
+});
 
 </script>
 
