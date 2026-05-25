@@ -3246,7 +3246,7 @@ function restoreImages() {
    BLOCK EDITING — 区块编辑系统
    ============================================ */
 (function initBlockEditing() {
-  if (!document.body.classList.contains('edit-mode')) return;
+  // Always initialize block editing system, not just in edit-mode
   
   console.log('Block editing system initialized');
   
