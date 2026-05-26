@@ -1918,7 +1918,7 @@ body.edit-mode .editable-block:hover {
     <div>
       <div class="footer-heading" data-i18n="footer.col3">Contact</div>
       <div class="footer-links">
-        <a href="#">bro@bro-cooling.com</a>
+        <a href="#" data-i18n="footer.email">bro@bro-cooling.com</a>
         <a href="#" data-i18n="footer.wechat">微信: BRO_COOLING</a>
         <a href="#" data-i18n="footer.douyin">抖音: @BRO水冷</a>
       </div>
@@ -2058,7 +2058,7 @@ const i18n = {
     'footer.col1':'Atelier','footer.col2':'Support','footer.col3':'Contact',
     'footer.atelier':'作品馆','footer.commission':'委托定制','footer.heritage':'品牌传承',
     'footer.care':'BRO CARE','footer.consult':'在线咨询','footer.faq':'FAQ',
-    'footer.wechat':'微信: BRO_COOLING','footer.douyin':'抖音: @BRO水冷',
+    'footer.email':'bro@bro-cooling.com','footer.wechat':'微信: BRO_COOLING','footer.douyin':'抖音: @BRO水冷',
     'admin.badge':'Static HTML Prototype','admin.heading':'Backend Management System / 后台管理系统',
     'admin.desc':'当前网站为静态HTML原型版本，所有图片使用占位符。完整的后台管理系统需要单独开发，可实现以下功能：',
     'admin.f1.title':'Portfolio CMS','admin.f1.desc':'作品上传、分类编辑、拖拽排序',
@@ -2125,7 +2125,7 @@ const i18n = {
     'footer.col1':'Atelier','footer.col2':'Support','footer.col3':'Contact',
     'footer.atelier':'The Atelier','footer.commission':'Commission','footer.heritage':'Heritage',
     'footer.care':'BRO CARE','footer.consult':'Consultation','footer.faq':'FAQ',
-    'footer.wechat':'WeChat: BRO_COOLING','footer.douyin':'Douyin: @BRO水冷',
+    'footer.email':'bro@bro-cooling.com','footer.wechat':'WeChat: BRO_COOLING','footer.douyin':'Douyin: @BRO水冷',
     'admin.badge':'Static HTML Prototype','admin.heading':'Backend Management System',
     'admin.desc':'This site is currently a static HTML prototype. All images use placeholders. A full backend management system requires separate development and would enable the following capabilities:',
     'admin.f1.title':'Portfolio CMS','admin.f1.desc':'Work upload, category editing, drag-and-drop sorting',
@@ -2469,6 +2469,7 @@ console.log('Works loaded from localStorage: ' + broGetData('bro_works', []).len
       '<button id="editCommissionBtn" class="block-edit-btn">编辑定制流程</button>' +
       '<button id="editCareBtn" class="block-edit-btn">编辑售后保障</button>' +
       '<button id="editNewsBtn" class="block-edit-btn">编辑最新动态</button>' +
+      '<button id="editFooterBtn" class="block-edit-btn">编辑页脚</button>' +
 
     '</div>' +
     '<div class="edit-toast" id="editToast"></div>';
@@ -3412,6 +3413,20 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
+  // 绑定工具栏中的编辑页脚按钮
+  var editFooterBtn = document.getElementById('editFooterBtn');
+  if (editFooterBtn) {
+    editFooterBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      if (window.openBlockEditor) {
+        window.openBlockEditor('footer');
+      } else {
+        showToast('编辑器尚未初始化，请刷新页面重试', 'error');
+      }
+    });
+  }
+  
   function closeBlockEditor() {
     if (blockEditPanel) {
       blockEditPanel.style.display = 'none';
@@ -3621,6 +3636,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     else if (blockType === 'footer') {
       var tagline = document.querySelector('.footer-tagline') ? document.querySelector('.footer-tagline').textContent : '';
+      var emailEl = document.querySelector('.footer-links a[href^="mailto"]') || document.querySelector('.footer-links a:not([data-i18n])');
+      var email = emailEl ? emailEl.textContent.trim() : 'bro@bro-cooling.com';
+      var wechat = i18n.zh['footer.wechat'] || '微信: BRO_COOLING';
+      var douyin = i18n.zh['footer.douyin'] || '抖音: @BRO水冷';
       html = '<h3>编辑页脚</h3><div class="block-edit-content active">' +
         '<div class="form-group"><label>标语（中文）</label>' +
           '<textarea id="footerTaglineZh" rows="2">' + escapeHtml(tagline) + '</textarea></div>' +
@@ -3632,6 +3651,12 @@ document.addEventListener('DOMContentLoaded', function() {
           '<div class="upload-hint">最大5MB | JPG, PNG, WebP</div>' +
           '<input type="file" id="footerLogoImage" accept="image/*"></div>' +
         '<div class="block-image-preview" id="footerLogoPreview"></div>' +
+        '<div class="form-group"><label>邮箱</label>' +
+          '<input type="text" id="footerEmail" value="' + escapeHtml(email) + '"></div>' +
+        '<div class="form-group"><label>微信</label>' +
+          '<input type="text" id="footerWechat" value="' + escapeHtml(wechat) + '"></div>' +
+        '<div class="form-group"><label>抖音</label>' +
+          '<input type="text" id="footerDouyin" value="' + escapeHtml(douyin) + '"></div>' +
         '<div class="form-group"><label>社交链接</label>' +
           '<div class="item-list-edit" id="socialLinks"></div>' +
           '<button class="add-item-btn" id="addSocialBtn">+ 添加链接</button></div>' +
@@ -4211,9 +4236,15 @@ document.addEventListener('DOMContentLoaded', function() {
       var taglineZh = document.getElementById('footerTaglineZh');
       var taglineEn = document.getElementById('footerTaglineEn');
       var copyright = document.getElementById('footerCopyright');
+      var email = document.getElementById('footerEmail');
+      var wechat = document.getElementById('footerWechat');
+      var douyin = document.getElementById('footerDouyin');
       if (taglineZh) content.footer_tagline_zh = taglineZh.value;
       if (taglineEn) content.footer_tagline_en = taglineEn.value;
       if (copyright) content.footer_copyright = copyright.value;
+      if (email) content.footer_email = email.value;
+      if (wechat) content.footer_wechat = wechat.value;
+      if (douyin) content.footer_douyin = douyin.value;
       // Footer logo
       var preview = document.getElementById('footerLogoPreview');
       if (preview) {
@@ -4297,6 +4328,31 @@ document.addEventListener('DOMContentLoaded', function() {
       if (footerLogo && content.footer_logo) {
         footerLogo.innerHTML = '<img src="' + content.footer_logo + '" alt="BRO Atelier">';
       }
+      // 更新联系信息
+      if (content.footer_email) {
+        i18n.zh['footer.email'] = content.footer_email;
+        i18n.en['footer.email'] = content.footer_email;
+      }
+      if (content.footer_wechat) {
+        i18n.zh['footer.wechat'] = content.footer_wechat;
+        i18n.en['footer.wechat'] = content.footer_wechat;
+      }
+      if (content.footer_douyin) {
+        i18n.zh['footer.douyin'] = content.footer_douyin;
+        i18n.en['footer.douyin'] = content.footer_douyin;
+      }
+      var contactLinks = document.querySelectorAll('.footer-links a');
+      contactLinks.forEach(function(a) {
+        if (content.footer_email && (a.getAttribute('data-i18n') === 'footer.email' || a.href && a.href.includes('mailto'))) {
+          a.textContent = content.footer_email;
+        }
+        if (content.footer_wechat && a.getAttribute('data-i18n') === 'footer.wechat') {
+          a.textContent = content.footer_wechat;
+        }
+        if (content.footer_douyin && a.getAttribute('data-i18n') === 'footer.douyin') {
+          a.textContent = content.footer_douyin;
+        }
+      });
     }
   }
   
