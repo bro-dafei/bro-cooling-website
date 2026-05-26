@@ -3277,6 +3277,25 @@ function restoreAllContent() {
    PAGE INITIALIZATION — 页面加载时统一初始化
    ============================================ */
 (function initializePage() {
+  // 首次访问时从 bro-data.json 初始化种子数据（仅一次）
+  if (!localStorage.getItem('bro_seed_done')) {
+    try {
+      var sxhr = new XMLHttpRequest();
+      sxhr.open('GET', 'bro-data.json', false);
+      sxhr.send();
+      if (sxhr.status === 200) {
+        var sdata = JSON.parse(sxhr.responseText);
+        if (sdata.works && !localStorage.getItem('bro_works')) {
+          localStorage.setItem('bro_works', JSON.stringify(sdata.works));
+        }
+        if (sdata.content && !localStorage.getItem('bro_content')) {
+          localStorage.setItem('bro_content', JSON.stringify(sdata.content));
+        }
+      }
+    } catch(e) {}
+    localStorage.setItem('bro_seed_done', '1');
+  }
+
   document.addEventListener('DOMContentLoaded', function() {
     console.log('Page initialization started');
     
@@ -3285,24 +3304,9 @@ function restoreAllContent() {
       btn.addEventListener('click', () => setLang(btn.dataset.lang));
     });
     
-    // 2. 同步加载数据：优先从 localStorage 读取，如果为空则从 bro-data.json 加载
+    // 2. 同步加载数据：localStorage 是唯一数据源
     function loadDataSync() {
       var content = broGetData('bro_content', {});
-      
-      // 如果 bro_content 为空，尝试从 bro-data.json 加载
-      if (Object.keys(content).length === 0) {
-        try {
-          var xhr = new XMLHttpRequest();
-          xhr.open('GET', 'bro-data.json', false); // 同步请求
-          xhr.send();
-          if (xhr.status === 200) {
-            var data = JSON.parse(xhr.responseText);
-            if (data.works) localStorage.setItem('bro_works', JSON.stringify(data.works));
-            if (data.content) localStorage.setItem('bro_content', JSON.stringify(data.content));
-            content = broGetData('bro_content', {});
-          }
-        } catch(e) {}
-      }
       
       // 3. 优先从独立的 bro_footer 读取页脚数据
       try {
@@ -3321,6 +3325,7 @@ function restoreAllContent() {
       var savedLang = localStorage.getItem('bro_lang') || 'zh';
       window.currentLang = savedLang;
       setLang(savedLang);
+      console.log('Content loaded, lang:', savedLang, 'keys:', Object.keys(content).length);
       
       // 6. 在 setLang 之后，强制更新页脚 DOM（覆盖 i18n 渲染）
       if (content.footer_email) {
@@ -3380,7 +3385,7 @@ function restoreAllContent() {
         updateHeroSlider([]);
       }
       
-      // 7. 恢复页面中所有内容
+      // 8. 恢复页面中所有内容
       restoreAllContent();
     }
     
