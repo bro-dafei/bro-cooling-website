@@ -3283,6 +3283,52 @@ function restoreImages() {
       footerLogo.innerHTML = '<img src="' + content.footer_logo + '" alt="BRO Atelier">';
     }
   }
+  
+  // 恢复页脚联系信息
+  if (content.footer_email) {
+    i18n.zh['footer.email'] = content.footer_email;
+    i18n.en['footer.email'] = content.footer_email;
+    var emailLinks = document.querySelectorAll('.footer-links a[data-i18n="footer.email"], .footer-links a[href^="mailto"]');
+    emailLinks.forEach(function(a) {
+      a.textContent = content.footer_email;
+    });
+  }
+  if (content.footer_wechat) {
+    i18n.zh['footer.wechat'] = content.footer_wechat;
+    i18n.en['footer.wechat'] = content.footer_wechat;
+    var wechatLinks = document.querySelectorAll('.footer-links a[data-i18n="footer.wechat"]');
+    wechatLinks.forEach(function(a) {
+      a.textContent = content.footer_wechat;
+    });
+  }
+  if (content.footer_douyin) {
+    i18n.zh['footer.douyin'] = content.footer_douyin;
+    i18n.en['footer.douyin'] = content.footer_douyin;
+    var douyinLinks = document.querySelectorAll('.footer-links a[data-i18n="footer.douyin"]');
+    douyinLinks.forEach(function(a) {
+      a.textContent = content.footer_douyin;
+    });
+  }
+  
+  // 恢复社交链接
+  if (content.footer_social_links) {
+    content.footer_social_links.forEach(function(social) {
+      var key = 'footer.social_' + social.platform.toLowerCase();
+      if (social.platform === 'Bilibili') key = 'footer.social_bilibili';
+      else if (social.platform === 'YouTube') key = 'footer.social_youtube';
+      else if (social.platform === '斗鱼') key = 'footer.social_douyu';
+      else if (social.platform === '抖音') key = 'footer.social_douyin';
+      else if (social.platform === '淘宝') key = 'footer.social_taobao';
+      i18n.zh[key] = social.text;
+      i18n.en[key] = social.text;
+      var socialLink = document.querySelector('.footer-social a[data-i18n="' + key + '"]');
+      if (socialLink) {
+        socialLink.textContent = social.text;
+        socialLink.setAttribute('data-url', social.url);
+        socialLink.setAttribute('href', social.url);
+      }
+    });
+  }
 }
 
 /* ============================================
