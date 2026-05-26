@@ -2436,9 +2436,24 @@ document.addEventListener('click', function(e) {
         if (data.settings) localStorage.setItem('bro_settings', JSON.stringify(data.settings));
         // Re-render with loaded data
         broContent = broGetData('bro_content', {});
+        // 确保页脚字段有默认值
+        if (!broContent.footer_email) broContent.footer_email = 'bro@bro-cooling.com';
+        if (!broContent.footer_wechat) broContent.footer_wechat = '微信: BRO_COOLING';
+        if (!broContent.footer_douyin) broContent.footer_douyin = '抖音: @BRO水冷';
+        if (!broContent.footer_social_links || !Array.isArray(broContent.footer_social_links)) {
+          broContent.footer_social_links = [
+            { platform: 'Bilibili', text: 'Bilibili', url: 'https://space.bilibili.com/bro-cooling' },
+            { platform: 'YouTube', text: 'YouTube', url: 'https://youtube.com/@bro-cooling' },
+            { platform: '斗鱼', text: '斗鱼', url: 'https://www.douyu.com/bro-cooling' },
+            { platform: '抖音', text: '抖音', url: 'https://www.douyin.com/user/bro-cooling' },
+            { platform: '淘宝', text: '淘宝', url: 'https://shop.bro-cooling.com' }
+          ];
+        }
+        // 保存更新后的内容
+        localStorage.setItem('bro_content', JSON.stringify(broContent));
         mergeContent(i18n, broContent);
         renderAllWorks();
-        console.log('BRO data loaded from bro-data.json');
+        console.log('BRO data loaded from bro-data.json with default footer values');
       } catch(e) { console.warn('Failed to parse bro-data.json:', e); }
     }
   };
