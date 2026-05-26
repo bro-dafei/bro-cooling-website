@@ -2215,12 +2215,7 @@ function setLang(lang) {
   });
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('#langToggle button').forEach(btn => {
-    btn.addEventListener('click', () => setLang(btn.dataset.lang));
-  });
-  setLang(currentLang);
-});
+
 
 /* ============================================
    INTERSECTION OBSERVER
@@ -2418,8 +2413,14 @@ document.addEventListener('click', function(e) {
    TRY LOAD bro-data.json (deployed data) IF LOCALSTORAGE IS EMPTY
    ============================================ */
 (function tryLoadDeployData() {
+  var existingContent = broGetData('bro_content', {});
   var existingWorks = broGetData('bro_works', []);
-  if (existingWorks.length > 0) return; // Already have data, skip fetch
+  // 如果 bro_content 为空或缺少关键字段，从 bro-data.json 加载
+  var shouldLoad = Object.keys(existingContent).length === 0 || 
+                   !existingContent.footer_email || 
+                   !existingContent.footer_wechat || 
+                   !existingContent.footer_douyin;
+  if (!shouldLoad && existingWorks.length > 0) return; // Already have data, skip fetch
   
   var xhr = new XMLHttpRequest();
   xhr.open('GET', 'bro-data.json', true);
@@ -3208,57 +3209,12 @@ function loadFallbackData(callback) {
     startAutoSlide();
   }
   
-  // 页面加载时初始化
-  document.addEventListener('DOMContentLoaded', function() {
-    function initSliderAndImages() {
-      // 从合并后的数据加载轮播
-      var content = broGetData('bro_content', {});
-      
-      // 调试信息
-      console.log('initSliderAndImages called');
-      console.log('content keys:', Object.keys(content));
-      console.log('hero_slides:', content.hero_slides ? content.hero_slides.length : 0);
-      
-      if (content.hero_slides && content.hero_slides.length > 0) {
-        console.log('Calling updateHeroSlider with', content.hero_slides.length, 'slides');
-        updateHeroSlider(content.hero_slides);
-      } else if (content.hero_bg_image) {
-        // 兼容旧数据
-        console.log('Using hero_bg_image');
-        updateHeroSlider([{
-          image: content.hero_bg_image,
-          title: '',
-          subtitle: '',
-          link: '',
-          order: 0
-        }]);
-      } else {
-        // 如果都没有，显示默认渐变背景
-        console.log('No slides found, using default gradient');
-        updateHeroSlider([]);
-      }
-      // 恢复页面中其他图片
-      restoreImages();
-    }
 
-    // 先检查 localStorage 是否有 bro_content
-    var existingContent = null;
-    try { existingContent = localStorage.getItem('bro_content'); } catch(e) {}
-    
-    if (existingContent) {
-      // localStorage 已有数据，直接初始化
-      initSliderAndImages();
-    } else {
-      // localStorage 为空，从 bro-data.json 加载后备数据
-      loadFallbackData(initSliderAndImages);
-    }
-  });
-})();
 
 /* ============================================
-   IMAGE RESTORATION — 页面加载时从 localStorage 恢复图片
+   CONTENT RESTORATION — 页面加载时从 localStorage 恢复所有内容
    ============================================ */
-function restoreImages() {
+function restoreAllContent() {
   var content = broGetData('bro_content', {});
   
   // 首屏轮播图已在 initHeroSlider 中处理
@@ -3357,8 +3313,78 @@ function restoreImages() {
         socialLink.setAttribute('href', social.url);
       }
     });
+  
+  // 强制重新渲染语言以应用所有更新
+  if (window.currentLang) {
+    setLang(window.currentLang);
   }
 }
+
+/* ============================================
+   PAGE INITIALIZATION — 页面加载时统一初始化
+   ============================================ */
+(function initializePage() {
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('Page initialization started');
+    
+    // 1. 绑定语言切换按钮
+    document.querySelectorAll('#langToggle button').forEach(btn => {
+      btn.addEventListener('click', () => setLang(btn.dataset.lang));
+    });
+    
+    // 2. 确保 mergeContent 被调用
+    var content = broGetData('bro_content', {});
+    mergeContent(i18n, content);
+    
+    // 3. 设置初始语言
+    var savedLang = localStorage.getItem('bro_lang') || 'zh';
+    window.currentLang = savedLang;
+    setLang(savedLang);
+    
+    // 4. 初始化轮播图
+    function initSliderAndImages() {
+      var content = broGetData('bro_content', {});
+      
+      console.log('initSliderAndImages called');
+      console.log('content keys:', Object.keys(content));
+      
+      if (content.hero_slides && content.hero_slides.length > 0) {
+        console.log('Calling updateHeroSlider with', content.hero_slides.length, 'slides');
+        updateHeroSlider(content.hero_slides);
+      } else if (content.hero_bg_image) {
+        // 兼容旧数据
+        console.log('Using hero_bg_image');
+        updateHeroSlider([{
+          image: content.hero_bg_image,
+          title: '',
+          subtitle: '',
+          link: '',
+          order: 0
+        }]);
+      } else {
+        // 如果都没有，显示默认渐变背景
+        console.log('No slides found, using default gradient');
+        updateHeroSlider([]);
+      }
+      // 恢复页面中所有内容
+      restoreAllContent();
+    }
+    
+    // 5. 检查 localStorage 是否有 bro_content
+    var existingContent = null;
+    try { existingContent = localStorage.getItem('bro_content'); } catch(e) {}
+    
+    if (existingContent) {
+      // localStorage 已有数据，直接初始化
+      initSliderAndImages();
+    } else {
+      // localStorage 为空，从 bro-data.json 加载后备数据
+      loadFallbackData(initSliderAndImages);
+    }
+    
+    console.log('Page initialization completed');
+  });
+})();
 
 /* ============================================
    BLOCK EDITING — 区块编辑系统
