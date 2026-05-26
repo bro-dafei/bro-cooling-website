@@ -1987,6 +1987,35 @@ function mergeContent(dict, content) {
   if (content.hero_subtitle_en) dict.en['hero.subtitle'] = content.hero_subtitle_en;
   if (content.footer_tagline_zh) dict.zh['footer.tagline'] = content.footer_tagline_zh;
   if (content.footer_tagline_en) dict.en['footer.tagline'] = content.footer_tagline_en;
+  
+  // 合并页脚联系信息
+  if (content.footer_email) {
+    dict.zh['footer.email'] = content.footer_email;
+    dict.en['footer.email'] = content.footer_email;
+  }
+  if (content.footer_wechat) {
+    dict.zh['footer.wechat'] = content.footer_wechat;
+    dict.en['footer.wechat'] = content.footer_wechat;
+  }
+  if (content.footer_douyin) {
+    dict.zh['footer.douyin'] = content.footer_douyin;
+    dict.en['footer.douyin'] = content.footer_douyin;
+  }
+  
+  // 合并社交链接
+  if (content.footer_social_links) {
+    content.footer_social_links.forEach(function(social) {
+      var key = 'footer.social_' + social.platform.toLowerCase();
+      if (social.platform === 'Bilibili') key = 'footer.social_bilibili';
+      else if (social.platform === 'YouTube') key = 'footer.social_youtube';
+      else if (social.platform === '斗鱼') key = 'footer.social_douyu';
+      else if (social.platform === '抖音') key = 'footer.social_douyin';
+      else if (social.platform === '淘宝') key = 'footer.social_taobao';
+      dict.zh[key] = social.text;
+      dict.en[key] = social.text;
+    });
+  }
+  
   var navKeys = ['home','atelier','heritage','commission','care','news'];
   for (var i = 0; i < navKeys.length; i++) {
     var k = navKeys[i];
