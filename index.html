@@ -3176,6 +3176,19 @@ function restoreAllContent() {
     if (footerData.footer_social_links) content.footer_social_links = footerData.footer_social_links;
   } catch(e) {}
   
+  // 通用还原：遍历 bro_content 中所有 key，找到 DOM 上匹配的 [data-content-key] 元素直接回填
+  // 这是 saveAllContent() 能存但 mergeContent() 不会取的问题的彻底修复
+  Object.keys(content).forEach(function(k) {
+    var el = document.querySelector('[data-content-key="' + k + '"]');
+    if (el && typeof content[k] === 'string') {
+      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        el.value = content[k];
+      } else {
+        el.textContent = content[k];
+      }
+    }
+  });
+  
   // 首屏轮播图已在 initHeroSlider 中处理
   
   // 恢复时间线配图
@@ -3333,7 +3346,20 @@ function restoreAllContent() {
       setLang(savedLang);
       console.log('Content loaded, lang:', savedLang, 'keys:', Object.keys(content).length);
       
-      // 6. 在 setLang 之后，强制更新页脚 DOM（覆盖 i18n 渲染）
+      // 6. 通用还原：遍历 bro_content 中所有 key，找到 DOM 上匹配的 [data-content-key] 元素直接回填
+      //    这是 saveAllContent() 能存但 mergeContent() 不会取的问题的彻底修复
+      Object.keys(content).forEach(function(k) {
+        var el = document.querySelector('[data-content-key="' + k + '"]');
+        if (el && typeof content[k] === 'string') {
+          if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+            el.value = content[k];
+          } else {
+            el.textContent = content[k];
+          }
+        }
+      });
+      
+      // 7. 在 setLang 之后，强制更新页脚 DOM（覆盖 i18n 渲染）
       if (content.footer_email) {
         console.log('Setting footer email:', content.footer_email);
         var emailLinks = document.querySelectorAll('.footer-links a[data-i18n="footer.email"], .footer-links a[href^="mailto"]');
