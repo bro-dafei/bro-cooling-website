@@ -1975,7 +1975,7 @@ function broGetData(key, def) {
 function broSetData(key, val) {
   // If data came from URL param, still allow writes for inquiries (form submits)
   // but works/content/settings writes persist to localStorage for this session only
-  try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {}
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) { console.error('broSetData failed for', key, ':', e); }
 }
 
 /* ============================================
@@ -3307,13 +3307,14 @@ function restoreAllContent() {
       // 3. 优先从独立的 bro_footer 读取页脚数据
       try {
         var footerData = JSON.parse(localStorage.getItem('bro_footer') || '{}');
+        console.log('bro_footer data:', JSON.stringify(footerData));
         if (footerData.footer_email) content.footer_email = footerData.footer_email;
         if (footerData.footer_wechat) content.footer_wechat = footerData.footer_wechat;
         if (footerData.footer_douyin) content.footer_douyin = footerData.footer_douyin;
         if (footerData.footer_social_links) content.footer_social_links = footerData.footer_social_links;
-      } catch(e) {}
+      } catch(e) { console.error('Error reading bro_footer:', e); }
       
-      // 4. 合并内容到 i18n
+      // 4. 合并内容到 i18n（包括页脚）
       mergeContent(i18n, content);
       
       // 5. 设置初始语言
@@ -3321,7 +3322,50 @@ function restoreAllContent() {
       window.currentLang = savedLang;
       setLang(savedLang);
       
-      // 6. 初始化轮播图
+      // 6. 在 setLang 之后，强制更新页脚 DOM（覆盖 i18n 渲染）
+      if (content.footer_email) {
+        console.log('Setting footer email:', content.footer_email);
+        var emailLinks = document.querySelectorAll('.footer-links a[data-i18n="footer.email"], .footer-links a[href^="mailto"]');
+        emailLinks.forEach(function(a) {
+          a.textContent = content.footer_email;
+          if (a.href && a.href.includes('mailto:')) {
+            a.href = 'mailto:' + content.footer_email;
+          }
+        });
+      }
+      if (content.footer_wechat) {
+        console.log('Setting footer wechat:', content.footer_wechat);
+        var wechatLinks = document.querySelectorAll('.footer-links a[data-i18n="footer.wechat"]');
+        wechatLinks.forEach(function(a) {
+          a.textContent = content.footer_wechat;
+        });
+      }
+      if (content.footer_douyin) {
+        console.log('Setting footer douyin:', content.footer_douyin);
+        var douyinLinks = document.querySelectorAll('.footer-links a[data-i18n="footer.douyin"]');
+        douyinLinks.forEach(function(a) {
+          a.textContent = content.footer_douyin;
+        });
+      }
+      if (content.footer_social_links) {
+        console.log('Setting social links:', content.footer_social_links.length, 'items');
+        content.footer_social_links.forEach(function(social) {
+          var key = 'footer.social_' + social.platform.toLowerCase();
+          if (social.platform === 'Bilibili') key = 'footer.social_bilibili';
+          else if (social.platform === 'YouTube') key = 'footer.social_youtube';
+          else if (social.platform === '斗鱼') key = 'footer.social_douyu';
+          else if (social.platform === '抖音') key = 'footer.social_douyin';
+          else if (social.platform === '淘宝') key = 'footer.social_taobao';
+          var socialLink = document.querySelector('.footer-social a[data-i18n="' + key + '"]');
+          if (socialLink) {
+            socialLink.textContent = social.text;
+            socialLink.setAttribute('data-url', social.url);
+            socialLink.setAttribute('href', social.url);
+          }
+        });
+      }
+      
+      // 7. 初始化轮播图
       if (content.hero_slides && content.hero_slides.length > 0) {
         updateHeroSlider(content.hero_slides);
       } else if (content.hero_bg_image) {
