@@ -2417,7 +2417,7 @@ document.addEventListener('click', function(e) {
   var existingWorks = broGetData('bro_works', []);
   // 如果 bro_content 为空，从 bro-data.json 加载
   var shouldLoad = Object.keys(existingContent).length === 0;
-  if (!shouldLoad && existingWorks.length > 0) return; // Already have data, skip fetch
+  if (!shouldLoad) return; // Already have data, skip fetch
   
   var xhr = new XMLHttpRequest();
   xhr.open('GET', 'bro-data.json', true);
@@ -2427,8 +2427,8 @@ document.addEventListener('click', function(e) {
       try {
         var data = JSON.parse(xhr.responseText);
         window.__BRO_DEPLOY_DATA__ = data;
-        if (data.works) localStorage.setItem('bro_works', JSON.stringify(data.works));
-        if (data.content) localStorage.setItem('bro_content', JSON.stringify(data.content));
+        if (data.works && existingWorks.length === 0) localStorage.setItem('bro_works', JSON.stringify(data.works));
+        if (data.content && Object.keys(existingContent).length === 0) localStorage.setItem('bro_content', JSON.stringify(data.content));
         if (data.inquiries) localStorage.setItem('bro_inquiries', JSON.stringify(data.inquiries));
         if (data.settings) localStorage.setItem('bro_settings', JSON.stringify(data.settings));
         // Re-render with loaded data
