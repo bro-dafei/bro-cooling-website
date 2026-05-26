@@ -1893,10 +1893,11 @@ body.edit-mode .editable-block:hover {
       <div class="footer-logo">BRO COOLING</div>
       <p class="footer-tagline cn" data-i18n="footer.tagline">每一台电脑，都是不可复制的艺术品</p>
       <div class="footer-social" style="margin-top:24px;">
-        <a href="#">抖音</a>
-        <a href="#">Bilibili</a>
-        <a href="#">淘宝</a>
-        <a href="#">斗鱼</a>
+        <a href="#" data-i18n="footer.social_douyin" data-url="https://www.douyin.com">抖音</a>
+        <a href="#" data-i18n="footer.social_bilibili" data-url="https://www.bilibili.com">Bilibili</a>
+        <a href="#" data-i18n="footer.social_youtube" data-url="https://www.youtube.com">YouTube</a>
+        <a href="#" data-i18n="footer.social_taobao" data-url="https://www.taobao.com">淘宝</a>
+        <a href="#" data-i18n="footer.social_douyu" data-url="https://www.douyu.com">斗鱼</a>
       </div>
     </div>
     <div>
@@ -2059,6 +2060,7 @@ const i18n = {
     'footer.atelier':'作品馆','footer.commission':'委托定制','footer.heritage':'品牌传承',
     'footer.care':'BRO CARE','footer.consult':'在线咨询','footer.faq':'FAQ',
     'footer.email':'bro@bro-cooling.com','footer.wechat':'微信: BRO_COOLING','footer.douyin':'抖音: @BRO水冷',
+    'footer.social_douyin':'抖音','footer.social_bilibili':'Bilibili','footer.social_youtube':'YouTube','footer.social_taobao':'淘宝','footer.social_douyu':'斗鱼',
     'admin.badge':'Static HTML Prototype','admin.heading':'Backend Management System / 后台管理系统',
     'admin.desc':'当前网站为静态HTML原型版本，所有图片使用占位符。完整的后台管理系统需要单独开发，可实现以下功能：',
     'admin.f1.title':'Portfolio CMS','admin.f1.desc':'作品上传、分类编辑、拖拽排序',
@@ -2126,6 +2128,7 @@ const i18n = {
     'footer.atelier':'The Atelier','footer.commission':'Commission','footer.heritage':'Heritage',
     'footer.care':'BRO CARE','footer.consult':'Consultation','footer.faq':'FAQ',
     'footer.email':'bro@bro-cooling.com','footer.wechat':'WeChat: BRO_COOLING','footer.douyin':'Douyin: @BRO水冷',
+    'footer.social_douyin':'Douyin','footer.social_bilibili':'Bilibili','footer.social_youtube':'YouTube','footer.social_taobao':'Taobao','footer.social_douyu':'Douyu',
     'admin.badge':'Static HTML Prototype','admin.heading':'Backend Management System',
     'admin.desc':'This site is currently a static HTML prototype. All images use placeholders. A full backend management system requires separate development and would enable the following capabilities:',
     'admin.f1.title':'Portfolio CMS','admin.f1.desc':'Work upload, category editing, drag-and-drop sorting',
@@ -3658,8 +3661,48 @@ document.addEventListener('DOMContentLoaded', function() {
         '<div class="form-group"><label>抖音</label>' +
           '<input type="text" id="footerDouyin" value="' + escapeHtml(douyin) + '"></div>' +
         '<div class="form-group"><label>社交链接</label>' +
-          '<div class="item-list-edit" id="socialLinks"></div>' +
-          '<button class="add-item-btn" id="addSocialBtn">+ 添加链接</button></div>' +
+          '<div class="item-list-edit" id="socialLinks">' +
+            '<div class="item">' +
+              '<div class="form-group"><label>平台</label>' +
+                '<input type="text" class="social-platform-input" value="抖音" readonly></div>' +
+              '<div class="form-group"><label>显示文字</label>' +
+                '<input type="text" class="social-text-input" value="' + escapeHtml(i18n.zh['footer.social_douyin']) + '"></div>' +
+              '<div class="form-group"><label>跳转链接</label>' +
+                '<input type="text" class="social-url-input" value="https://www.douyin.com"></div>' +
+            '</div>' +
+            '<div class="item">' +
+              '<div class="form-group"><label>平台</label>' +
+                '<input type="text" class="social-platform-input" value="Bilibili" readonly></div>' +
+              '<div class="form-group"><label>显示文字</label>' +
+                '<input type="text" class="social-text-input" value="' + escapeHtml(i18n.zh['footer.social_bilibili']) + '"></div>' +
+              '<div class="form-group"><label>跳转链接</label>' +
+                '<input type="text" class="social-url-input" value="https://www.bilibili.com"></div>' +
+            '</div>' +
+            '<div class="item">' +
+              '<div class="form-group"><label>平台</label>' +
+                '<input type="text" class="social-platform-input" value="YouTube" readonly></div>' +
+              '<div class="form-group"><label>显示文字</label>' +
+                '<input type="text" class="social-text-input" value="' + escapeHtml(i18n.zh['footer.social_youtube']) + '"></div>' +
+              '<div class="form-group"><label>跳转链接</label>' +
+                '<input type="text" class="social-url-input" value="https://www.youtube.com"></div>' +
+            '</div>' +
+            '<div class="item">' +
+              '<div class="form-group"><label>平台</label>' +
+                '<input type="text" class="social-platform-input" value="淘宝" readonly></div>' +
+              '<div class="form-group"><label>显示文字</label>' +
+                '<input type="text" class="social-text-input" value="' + escapeHtml(i18n.zh['footer.social_taobao']) + '"></div>' +
+              '<div class="form-group"><label>跳转链接</label>' +
+                '<input type="text" class="social-url-input" value="https://www.taobao.com"></div>' +
+            '</div>' +
+            '<div class="item">' +
+              '<div class="form-group"><label>平台</label>' +
+                '<input type="text" class="social-platform-input" value="斗鱼" readonly></div>' +
+              '<div class="form-group"><label>显示文字</label>' +
+                '<input type="text" class="social-text-input" value="' + escapeHtml(i18n.zh['footer.social_douyu']) + '"></div>' +
+              '<div class="form-group"><label>跳转链接</label>' +
+                '<input type="text" class="social-url-input" value="https://www.douyu.com"></div>' +
+            '</div>' +
+          '</div></div>' +
       '</div>' +
       '<div class="block-edit-actions">' +
         '<button class="cancel-btn" id="cancelBlockEdit">取消</button>' +
@@ -4245,14 +4288,21 @@ document.addEventListener('DOMContentLoaded', function() {
       if (email) content.footer_email = email.value;
       if (wechat) content.footer_wechat = wechat.value;
       if (douyin) content.footer_douyin = douyin.value;
-      // Footer logo
-      var preview = document.getElementById('footerLogoPreview');
-      if (preview) {
-        var compressed = preview.getAttribute('data-compressed');
-        var img = preview.querySelector('img');
-        var src = compressed || (img ? img.src : '');
-        if (src) content.footer_logo = src;
-      }
+      // 保存社交链接
+      var socialLinks = [];
+      document.querySelectorAll('#socialLinks .item').forEach(function(item) {
+        var platform = item.querySelector('.social-platform-input');
+        var text = item.querySelector('.social-text-input');
+        var url = item.querySelector('.social-url-input');
+        if (platform && text && url) {
+          socialLinks.push({
+            platform: platform.value,
+            text: text.value,
+            url: url.value
+          });
+        }
+      });
+      content.footer_social_links = socialLinks;
     }
     
     // Save all content atomically
@@ -4353,8 +4403,38 @@ document.addEventListener('DOMContentLoaded', function() {
           a.textContent = content.footer_douyin;
         }
       });
+      // 更新社交链接
+      if (content.footer_social_links) {
+        content.footer_social_links.forEach(function(social) {
+          var key = 'footer.social_' + social.platform.toLowerCase();
+          if (social.platform === 'Bilibili') key = 'footer.social_bilibili';
+          else if (social.platform === 'YouTube') key = 'footer.social_youtube';
+          else if (social.platform === '斗鱼') key = 'footer.social_douyu';
+          else if (social.platform === '抖音') key = 'footer.social_douyin';
+          else if (social.platform === '淘宝') key = 'footer.social_taobao';
+          i18n.zh[key] = social.text;
+          i18n.en[key] = social.text;
+          var socialLink = document.querySelector('.footer-social a[data-i18n="' + key + '"]');
+          if (socialLink) {
+            socialLink.textContent = social.text;
+            socialLink.setAttribute('data-url', social.url);
+            socialLink.setAttribute('href', social.url);
+          }
+        });
+      }
     }
   }
+  
+  // 绑定社交链接点击事件
+  document.querySelectorAll('.footer-social a').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      var url = this.getAttribute('data-url') || this.getAttribute('href');
+      if (url && url !== '#') {
+        e.preventDefault();
+        window.open(url, '_blank');
+      }
+    });
+  });
   
   console.log('Block editing ready');
 });
