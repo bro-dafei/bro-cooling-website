@@ -4552,33 +4552,33 @@ function restoreAllContent() {
   console.log('Block editing ready');
 })();
 
-  // ===== FOOTER PERSISTENCE HOTFIX =====
-  // Runs after ALL other scripts and DOM rendering complete
-  window.addEventListener('load', function() {
-    setTimeout(function() {
+  // ===== FOOTER PERSISTENCE HOTFIX v2 =====
+  (function() {
+    var SYNC_INTERVAL = 300;
+    var SYNC_DURATION = 8000;
+    var attempts = 0;
+    var maxAttempts = Math.ceil(SYNC_DURATION / SYNC_INTERVAL);
+
+    function syncFooter() {
       var data = localStorage.getItem('bro_footer');
       if (!data) return;
       try {
         var footer = JSON.parse(data);
-        // email
         if (footer.footer_email) {
           document.querySelectorAll('.footer-links a[data-i18n="footer.email"]').forEach(function(el) {
             el.textContent = footer.footer_email;
           });
         }
-        // wechat
         if (footer.footer_wechat) {
           document.querySelectorAll('.footer-links a[data-i18n="footer.wechat"]').forEach(function(el) {
             el.textContent = footer.footer_wechat;
           });
         }
-        // douyin
         if (footer.footer_douyin) {
           document.querySelectorAll('.footer-links a[data-i18n="footer.douyin"]').forEach(function(el) {
             el.textContent = footer.footer_douyin;
           });
         }
-        // social links (weibo, bilibili, instagram, youtube)
         if (footer.footer_social_links) {
           Object.keys(footer.footer_social_links).forEach(function(key) {
             document.querySelectorAll('.footer-links a[data-i18n="footer.' + key + '"]').forEach(function(el) {
@@ -4586,10 +4586,22 @@ function restoreAllContent() {
             });
           });
         }
-        console.log('[Footer Hotfix] Applied footer data from localStorage');
+        if (attempts === 0) console.log('[Footer Hotfix] Started sync cycle');
       } catch(e) {}
-    }, 0);
-  });
+      attempts++;
+      if (attempts < maxAttempts) {
+        setTimeout(syncFooter, SYNC_INTERVAL);
+      } else {
+        console.log('[Footer Hotfix] Sync cycle complete (' + attempts + ' checks)');
+      }
+    }
+    // Start immediately on DOMContentLoaded, then keep checking
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() { setTimeout(syncFooter, 500); });
+    } else {
+      setTimeout(syncFooter, 500);
+    }
+  })();
 
 </script>
 
