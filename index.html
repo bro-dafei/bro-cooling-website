@@ -2415,11 +2415,8 @@ document.addEventListener('click', function(e) {
 (function tryLoadDeployData() {
   var existingContent = broGetData('bro_content', {});
   var existingWorks = broGetData('bro_works', []);
-  // 如果 bro_content 为空或缺少关键字段，从 bro-data.json 加载
-  var shouldLoad = Object.keys(existingContent).length === 0 || 
-                   !existingContent.footer_email || 
-                   !existingContent.footer_wechat || 
-                   !existingContent.footer_douyin;
+  // 如果 bro_content 为空，从 bro-data.json 加载
+  var shouldLoad = Object.keys(existingContent).length === 0;
   if (!shouldLoad && existingWorks.length > 0) return; // Already have data, skip fetch
   
   var xhr = new XMLHttpRequest();
@@ -2436,24 +2433,9 @@ document.addEventListener('click', function(e) {
         if (data.settings) localStorage.setItem('bro_settings', JSON.stringify(data.settings));
         // Re-render with loaded data
         broContent = broGetData('bro_content', {});
-        // 确保页脚字段有默认值
-        if (!broContent.footer_email) broContent.footer_email = 'bro@bro-cooling.com';
-        if (!broContent.footer_wechat) broContent.footer_wechat = '微信: BRO_COOLING';
-        if (!broContent.footer_douyin) broContent.footer_douyin = '抖音: @BRO水冷';
-        if (!broContent.footer_social_links || !Array.isArray(broContent.footer_social_links)) {
-          broContent.footer_social_links = [
-            { platform: 'Bilibili', text: 'Bilibili', url: 'https://space.bilibili.com/bro-cooling' },
-            { platform: 'YouTube', text: 'YouTube', url: 'https://youtube.com/@bro-cooling' },
-            { platform: '斗鱼', text: '斗鱼', url: 'https://www.douyu.com/bro-cooling' },
-            { platform: '抖音', text: '抖音', url: 'https://www.douyin.com/user/bro-cooling' },
-            { platform: '淘宝', text: '淘宝', url: 'https://shop.bro-cooling.com' }
-          ];
-        }
-        // 保存更新后的内容
-        localStorage.setItem('bro_content', JSON.stringify(broContent));
         mergeContent(i18n, broContent);
         renderAllWorks();
-        console.log('BRO data loaded from bro-data.json with default footer values');
+        console.log('BRO data loaded from bro-data.json');
       } catch(e) { console.warn('Failed to parse bro-data.json:', e); }
     }
   };
@@ -2464,6 +2446,14 @@ document.addEventListener('click', function(e) {
 /* ============================================
    MERGE & RENDER
    ============================================ */
+// 优先从独立的 bro_footer 读取页脚数据
+try {
+  var footerData = JSON.parse(localStorage.getItem('bro_footer') || '{}');
+  if (footerData.footer_email) broContent.footer_email = footerData.footer_email;
+  if (footerData.footer_wechat) broContent.footer_wechat = footerData.footer_wechat;
+  if (footerData.footer_douyin) broContent.footer_douyin = footerData.footer_douyin;
+  if (footerData.footer_social_links) broContent.footer_social_links = footerData.footer_social_links;
+} catch(e) {}
 mergeContent(i18n, broContent);
 renderAllWorks();
 
@@ -3231,6 +3221,14 @@ function loadFallbackData(callback) {
    ============================================ */
 function restoreAllContent() {
   var content = broGetData('bro_content', {});
+  // 优先从独立的 bro_footer 读取页脚数据
+  try {
+    var footerData = JSON.parse(localStorage.getItem('bro_footer') || '{}');
+    if (footerData.footer_email) content.footer_email = footerData.footer_email;
+    if (footerData.footer_wechat) content.footer_wechat = footerData.footer_wechat;
+    if (footerData.footer_douyin) content.footer_douyin = footerData.footer_douyin;
+    if (footerData.footer_social_links) content.footer_social_links = footerData.footer_social_links;
+  } catch(e) {}
   
   // 首屏轮播图已在 initHeroSlider 中处理
   
@@ -3347,8 +3345,16 @@ function restoreAllContent() {
       btn.addEventListener('click', () => setLang(btn.dataset.lang));
     });
     
-    // 2. 确保 mergeContent 被调用
+    // 2. 确保 mergeContent 被调用，优先从 bro_footer 读取页脚数据
     var content = broGetData('bro_content', {});
+    // 优先从独立的 bro_footer 读取页脚数据
+    try {
+      var footerData = JSON.parse(localStorage.getItem('bro_footer') || '{}');
+      if (footerData.footer_email) content.footer_email = footerData.footer_email;
+      if (footerData.footer_wechat) content.footer_wechat = footerData.footer_wechat;
+      if (footerData.footer_douyin) content.footer_douyin = footerData.footer_douyin;
+      if (footerData.footer_social_links) content.footer_social_links = footerData.footer_social_links;
+    } catch(e) {}
     mergeContent(i18n, content);
     
     // 3. 设置初始语言
@@ -3399,12 +3405,8 @@ function restoreAllContent() {
     
     console.log('Page initialization completed');
   });
-})();
-
-/* ============================================
-   BLOCK EDITING — 区块编辑系统
-   ============================================ */
-document.addEventListener('DOMContentLoaded', function() {
+  
+  // BLOCK EDITING — 区块编辑系统
   console.log('Block editing system initialized');
   
   var blockEditPanel = null;
@@ -4428,6 +4430,17 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     broSetData('bro_content', allContent);
     
+    // 同时保存独立的页脚数据
+    if (blockType === 'footer') {
+      var footerData = {
+        footer_email: content.footer_email,
+        footer_wechat: content.footer_wechat,
+        footer_douyin: content.footer_douyin,
+        footer_social_links: content.footer_social_links
+      };
+      localStorage.setItem('bro_footer', JSON.stringify(footerData));
+    }
+    
     showToast('区块修改已保存', 'success');
     closeBlockEditor();
     
@@ -4553,7 +4566,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   
   console.log('Block editing ready');
-});
+})();
 
 </script>
 
