@@ -1,7 +1,17 @@
-// Vercel Serverless Function to save data
+// Vercel Serverless Function to save data to GitHub
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const REPO_OWNER = 'bro-dafei';
+const REPO_NAME = 'bro-cooling-website';
+const FILE_PATH = 'bro-data.json';
+const BRANCH = 'main';
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  if (!GITHUB_TOKEN) {
+    return res.status(500).json({ error: 'GitHub token not configured' });
   }
 
   try {
@@ -15,18 +25,63 @@ export default async function handler(req, res) {
     // Extract video data only (for now)
     const videoData = data.video || {};
     
-    // In a real implementation, you would save to a database
-    // For now, we'll just log and return success
-    console.log('Video data received:', Object.keys(videoData).map(p => `${p}: ${videoData[p]?.length || 0} items`));
-    
-    // You could save to a JSON file or database here
-    // For example, write to a file:
-    // await fs.writeFile('/tmp/bro-data-latest.json', JSON.stringify({ video: videoData }, null, 2));
+    // 1. Get current file SHA
+    const getFileRes = await fetch(
+      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`,
+      {
+        headers: {
+          'Authorization': `token ${GITHUB_TOKEN}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      }
+    );
+
+    let sha = null;
+    if (getFileRes.ok) {
+      const fileInfo = await getFileRes.json();
+      sha = fileInfo.sha;
+    }
+
+    // 2. Create new content
+    const newContent = JSON.stringify({ video: videoData }, null, 2);
+    const contentBase64 = Buffer.from(newContent).toString('base64');
+
+    // 3. Update file
+    const updateRes = await fetch(
+      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Authorization': `token ${GITHUB_TOKEN}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: `chore: auto-sync video data ${new Date().toISOString().split('T')[0]}`,
+          content: contentBase64,
+          sha: sha,
+          branch: BRANCH
+        })
+      }
+    );
+
+    const result = await updateRes.json();
+
+    if (!updateRes.ok) {
+      console.error('GitHub API error:', result);
+      return res.status(500).json({ 
+        error: 'Failed to update GitHub file',
+        details: result.message 
+      });
+    }
+
+    console.log('Auto-sync successful:', result.commit.sha);
     
     return res.status(200).json({ 
       success: true, 
-      message: 'Data saved successfully',
+      message: 'Data saved and synced to GitHub',
       timestamp: new Date().toISOString(),
+      commit: result.commit.sha,
       received: {
         video: Object.keys(videoData).map(p => `${p}: ${videoData[p]?.length || 0} items`)
       }
