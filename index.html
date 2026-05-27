@@ -2791,6 +2791,22 @@ function saveAdminData() {
   broSetData('bro_admin_data', adminData);
   applyAdminToPage();
   showSaveIndicator();
+  
+  // Auto-sync to server
+  if (typeof fetch === 'function') {
+    fetch('/api/save-data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ data: adminData })
+    })
+    .then(res => res.json())
+    .then(result => {
+      console.log('Auto-sync to server:', result);
+    })
+    .catch(err => {
+      console.warn('Auto-sync failed:', err);
+    });
+  }
 }
 
 function showSaveIndicator() {

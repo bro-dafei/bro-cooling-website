@@ -311,6 +311,21 @@ setLang(adminLang);
 // ============ DATA HELPERS ============
 function getData(key,defaultVal){try{var d=localStorage.getItem(key);return d?JSON.parse(d):defaultVal}catch(e){return defaultVal}}
 function setData(key,val){localStorage.setItem(key,JSON.stringify(val))}
+function syncToServer(){
+  var data={
+    works:getData('bro_works',[]),
+    content:getData('bro_content',{}),
+    inquiries:getData('bro_inquiries',[]),
+    settings:getData('bro_settings',{}),
+    stats:getData('bro_stats',{}),
+    updated_at:new Date().toISOString()
+  };
+  fetch('/api/save-data',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({data:data})
+  }).catch(function(){/* silent fail - localStorage still works */});
+}
 
 // ============ TOAST ============
 function toast(msg,type){var t=document.getElementById('toast');t.textContent=msg;t.className='toast show '+(type||'');setTimeout(function(){t.className='toast'},2500)}
@@ -390,14 +405,14 @@ image:document.getElementById('wm-image-data').value,
 clicks:wClicks
 };
 if(idx!==''){works[parseInt(idx)]=w}else{works.push(w)}
-setData('bro_works',works);closeWorkModal();renderWorks();refreshDashboard();toast(t('toast.saved'),'success')
+setData('bro_works',works);closeWorkModal();renderWorks();refreshDashboard();toast(t('toast.saved'),'success');syncToServer()
 }
 
 function editWork(i){openWorkModal(i)}
-function deleteWork(i){if(!confirm(t('pf.confirmDel')))return;var w=getData('bro_works',[]);w.splice(i,1);setData('bro_works',w);renderWorks();refreshDashboard();toast(t('toast.deleted'),'success')}
-function moveWork(i,dir){var w=getData('bro_works',[]);var j=i+dir;if(j<0||j>=w.length)return;var tmp=w[i];w[i]=w[j];w[j]=tmp;setData('bro_works',w);renderWorks()}
+function deleteWork(i){if(!confirm(t('pf.confirmDel')))return;var w=getData('bro_works',[]);w.splice(i,1);setData('bro_works',w);syncToServer();renderWorks();refreshDashboard();toast(t('toast.deleted'),'success')}
+function moveWork(i,dir){var w=getData('bro_works',[]);var j=i+dir;if(j<0||j>=w.length)return;var tmp=w[i];w[i]=w[j];w[j]=tmp;setData('bro_works',w);syncToServer();renderWorks()}
 function exportWorks(){var w=getData('bro_works',[]);downloadJSON('bro-works-export.json',w);toast(t('toast.worksExported'),'success')}
-function importWorks(input){var f=input.files[0];if(!f)return;var r=new FileReader();r.onload=function(e){try{var d=JSON.parse(e.target.result);if(Array.isArray(d)){setData('bro_works',d);renderWorks();refreshDashboard();toast(t('toast.importedNum').replace('{0}',d.length),'success')}else{toast(t('toast.invalidFormat'),'error')}}catch(ex){toast(t('toast.invalidJSON'),'error')}};r.readAsText(f);input.value=''}
+function importWorks(input){var f=input.files[0];if(!f)return;var r=new FileReader();r.onload=function(e){try{var d=JSON.parse(e.target.result);if(Array.isArray(d)){setData('bro_works',d);syncToServer();renderWorks();refreshDashboard();toast(t('toast.importedNum').replace('{0}',d.length),'success')}else{toast(t('toast.invalidFormat'),'error')}}catch(ex){toast(t('toast.invalidJSON'),'error')}};r.readAsText(f);input.value=''}
 
 // ============ CONTENT EDITOR ============
 var navKeys=['home','atelier','heritage','commission','care','news'];
@@ -416,7 +431,7 @@ c.hero_subtitle_en=document.getElementById('ce-hero-en').value;
 c.footer_tagline_zh=document.getElementById('ce-footer-zh').value;
 c.footer_tagline_en=document.getElementById('ce-footer-en').value;
 navKeys.forEach(function(k){c['nav_'+k+'_zh']=document.getElementById('ce-nav-'+k+'-zh').value;c['nav_'+k+'_en']=document.getElementById('ce-nav-'+k+'-en').value});
-setData('bro_content',c);toast(t('toast.contentSaved'),'success')
+setData('bro_content',c);syncToServer();toast(t('toast.contentSaved'),'success')
 }
 
 // ============ INQUIRIES ============
@@ -435,8 +450,8 @@ btns+='<button class="btn btn-sm btn-danger" onclick="deleteInq('+i+')">'+t('inq
 return'<tr><td>'+inq.name+'</td><td>'+inq.contact+'</td><td>'+inq.budget+'</td><td title="'+(inq.message||'')+'">'+msg+'</td><td>'+inq.time+'</td><td>'+badge+'</td><td>'+btns+'</td></tr>'
 }).join('')
 }
-function markInq(i,status){var inqs=getData('bro_inquiries',[]);inqs[i].status=status;setData('bro_inquiries',inqs);renderInquiries();toast(t(status==='read'?'toast.markedRead':'toast.markedReplied'),'success')}
-function deleteInq(i){if(!confirm(t('inq.confirmDel')))return;var inqs=getData('bro_inquiries',[]);inqs.splice(i,1);setData('bro_inquiries',inqs);renderInquiries();refreshDashboard();toast(t('toast.inqDeleted'))}
+function markInq(i,status){var inqs=getData('bro_inquiries',[]);inqs[i].status=status;setData('bro_inquiries',inqs);syncToServer();renderInquiries();toast(t(status==='read'?'toast.markedRead':'toast.markedReplied'),'success')}
+function deleteInq(i){if(!confirm(t('inq.confirmDel')))return;var inqs=getData('bro_inquiries',[]);inqs.splice(i,1);setData('bro_inquiries',inqs);syncToServer();renderInquiries();refreshDashboard();toast(t('toast.inqDeleted'))}
 function exportInquiriesCSV(){
 var inqs=getData('bro_inquiries',[]);if(inqs.length===0){toast(t('toast.noInquiries'),'error');return}
 var csv='Name,Contact,Budget,Message,Time,Status\n'+inqs.map(function(i){return'"'+i.name+'","'+i.contact+'","'+i.budget+'","'+(i.message||'').replace(/"/g,'""')+'","'+i.time+'","'+i.status+'"'}).join('\n');
@@ -451,7 +466,7 @@ document.getElementById('set-douyin').value=s.douyin||'';document.getElementById
 }
 function saveSettings(){
 var s={email:document.getElementById('set-email').value,wechat:document.getElementById('set-wechat').value,douyin:document.getElementById('set-douyin').value,bilibili:document.getElementById('set-bilibili').value};
-setData('bro_settings',s);toast(t('toast.settingsSaved'),'success')
+setData('bro_settings',s);syncToServer();toast(t('toast.settingsSaved'),'success')
 }
 
 // ============ DATA EXPORT/IMPORT ============
@@ -459,7 +474,7 @@ function exportAll(){
 var data={works:getData('bro_works',[]),content:getData('bro_content',{}),inquiries:getData('bro_inquiries',[]),settings:getData('bro_settings',{}),stats:getData('bro_stats',{})};
 downloadJSON('bro-cooling-full-backup.json',data);toast(t('toast.backupExported'),'success')
 }
-function importAll(input){var f=input.files[0];if(!f)return;var r=new FileReader();r.onload=function(e){try{var d=JSON.parse(e.target.result);if(d.works){setData('bro_works',d.works)}if(d.content){setData('bro_content',d.content)}if(d.inquiries){setData('bro_inquiries',d.inquiries)}if(d.settings){setData('bro_settings',d.settings)}if(d.stats){setData('bro_stats',d.stats)}renderAll();toast(t('toast.dataImported'),'success')}catch(ex){toast(t('toast.invalidBackup'),'error')}};r.readAsText(f);input.value=''}
+function importAll(input){var f=input.files[0];if(!f)return;var r=new FileReader();r.onload=function(e){try{var d=JSON.parse(e.target.result);if(d.works){setData('bro_works',d.works)}if(d.content){setData('bro_content',d.content)}if(d.inquiries){setData('bro_inquiries',d.inquiries)}if(d.settings){setData('bro_settings',d.settings)}if(d.stats){setData('bro_stats',d.stats)}syncToServer();renderAll();toast(t('toast.dataImported'),'success')}catch(ex){toast(t('toast.invalidBackup'),'error')}};r.readAsText(f);input.value=''}
 function resetAll(){['bro_works','bro_content','bro_inquiries','bro_settings','bro_stats'].forEach(function(k){localStorage.removeItem(k)});renderAll();toast(t('toast.dataReset'),'success')}
 function generateSimData(){
 var stats=getData('bro_stats',{views:Math.floor(Math.random()*5000)+1000,workClicks:{},dailyViews:{}});
