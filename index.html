@@ -2503,6 +2503,7 @@ document.addEventListener('click', function(e) {
   const title = videoCard.querySelector('.video-card-title').textContent;
   const meta = videoCard.querySelector('.video-card-meta span').textContent;
   const platform = videoCard.closest('.video-section-block').querySelector('.video-platform-badge').textContent.trim();
+  const platformKey = platform.toLowerCase();
   
   // Track video click stats
   try {
@@ -2513,10 +2514,23 @@ document.addEventListener('click', function(e) {
     localStorage.setItem('bro_stats', JSON.stringify(stats));
   } catch(e) {}
   
-  // Show modal or navigate to video (placeholder)
-  console.log(`Video clicked: ${title} | ${meta} | ${platform}`);
-  // In production: window.open('https://youtube.com/...') or show modal
-  alert(`${currentLang === 'zh' ? '视频链接功能需在后台管理系统中配置' : 'Video link feature requires backend configuration'}\n\n${title}\n${meta}\n${platform}`);
+  // Find video link from admin data
+  let videoLink = '';
+  if (adminData && adminData.video && adminData.video[platformKey]) {
+    const videos = adminData.video[platformKey];
+    const videoIndex = Array.from(videoCard.parentNode.children).indexOf(videoCard);
+    if (videos[videoIndex] && videos[videoIndex].link) {
+      videoLink = videos[videoIndex].link;
+    }
+  }
+  
+  // Navigate to video if link exists, otherwise show alert
+  if (videoLink) {
+    window.open(videoLink, '_blank');
+  } else {
+    console.log(`Video clicked: ${title} | ${meta} | ${platform}`);
+    alert(`${currentLang === 'zh' ? '视频链接功能需在后台管理系统中配置' : 'Video link feature requires backend configuration'}\n\n${title}\n${meta}\n${platform}`);
+  }
 });
 
 console.log('BRO COOLING — Atelier of Liquid Masterpieces — Ready.');
@@ -2786,14 +2800,27 @@ function applyAdminToPage() {
     var thumbClass = platform === 'youtube' ? 'video-thumb-yt' : platform === 'bilibili' ? 'video-thumb-bl' : 'video-thumb-dy';
     var iconText = platform === 'youtube' ? 'YOUTUBE' : platform === 'bilibili' ? 'BILIBILI' : 'DOUYIN';
     grid.innerHTML = '';
-    cards.forEach(function(card) {
+    cards.forEach(function(card, index) {
       var div = document.createElement('div');
       div.className = 'video-card reveal';
-      var thumbBg = card.thumb_url ? ' style="background-image:url(\'' + card.thumb_url + '\');background-size:cover;background-position:center"' : '';
+      
+      // Generate thumbnail from YouTube link if not provided
+      var thumbUrl = card.thumb_url;
+      if (!thumbUrl && card.link && platform === 'youtube') {
+        // Extract video ID from YouTube URL
+        var videoId = card.link.match(/[?&]v=([^&]+)/)?.[1] || 
+                     card.link.match(/youtu\.be\/([^?]+)/)?.[1] ||
+                     card.link.match(/embed\/([^?]+)/)?.[1];
+        if (videoId) {
+          thumbUrl = 'https://img.youtube.com/vi/' + videoId + '/maxresdefault.jpg';
+        }
+      }
+      
+      var thumbBg = thumbUrl ? ' style="background-image:url(\'' + thumbUrl + '\');background-size:cover;background-position:center"' : '';
       div.innerHTML =
         '<div class="video-card-thumb">' +
           '<div class="video-card-thumb-inner ' + thumbClass + '"' + thumbBg + '>' +
-            (card.thumb_url ? '' : '<span class="video-thumb-icon">' + iconText + '</span>') +
+            (thumbUrl ? '' : '<span class="video-thumb-icon">' + iconText + '</span>') +
           '</div>' +
           '<div class="video-card-thumb-overlay"></div>' +
           '<div class="video-card-play"></div>' +
