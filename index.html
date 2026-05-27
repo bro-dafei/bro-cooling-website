@@ -2750,9 +2750,42 @@ function getAdminDefaults() {
 /* --- Load / Save Admin Data --- */
 var adminData = broGetData('bro_admin_data', null);
 if (!adminData) {
+  // Try server fallback first, then defaults
   adminData = getAdminDefaults();
   broSetData('bro_admin_data', adminData);
 }
+
+// After page ready, try to update from server if localStorage was defaults
+(function() {
+  if (!broGetData('bro_admin_data', null)) { return; }
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'bro-data.json?v=' + Date.now(), true);
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      try {
+        var serverData = JSON.parse(xhr.responseText);
+        if (serverData && serverData.video) {
+          // Merge server data: only update links that user hasn't changed locally
+          var local = adminData || getAdminDefaults();
+          ['youtube','bilibili','douyin'].forEach(function(p) {
+            if (serverData.video[p]) {
+              serverData.video[p].forEach(function(sv, i) {
+                if (local.video && local.video[p] && local.video[p][i]) {
+                  if (!local.video[p][i].link && sv.link) local.video[p][i].link = sv.link;
+                  if (!local.video[p][i].thumb_url && sv.thumb_url) local.video[p][i].thumb_url = sv.thumb_url;
+                }
+              });
+            }
+          });
+          broSetData('bro_admin_data', local);
+          adminData = local;
+          applyAdminToPage();
+        }
+      } catch(e) { console.log('bro-data.json parse error:', e); }
+    }
+  };
+  xhr.send();
+})();
 
 function saveAdminData() {
   broSetData('bro_admin_data', adminData);
