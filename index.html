@@ -2755,9 +2755,8 @@ if (!adminData) {
   broSetData('bro_admin_data', adminData);
 }
 
-// After page ready, try to update from server if localStorage was defaults
+// After page ready, always try to update from server (merge server data into local)
 (function() {
-  if (!broGetData('bro_admin_data', null)) { return; }
   var xhr = new XMLHttpRequest();
   xhr.open('GET', 'bro-data.json?v=' + Date.now(), true);
   xhr.onload = function() {
