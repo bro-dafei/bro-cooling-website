@@ -1,3 +1,82 @@
 {
-  "video": {}
+  "video": {
+    "youtube": [
+      {
+        "title_zh": "「BRO」全球首款9950X3D + RTX 5090定制水冷塔900Build！（黑神话版）",
+        "title_en": "「BRO」World's FIRST 9950X3D + RTX 5090 Custom Water cooling TOWER 900Build! (Black Myth Edition)",
+        "meta_zh": "15万次观看 · 3个月前",
+        "meta_en": "150K views · 3 months ago",
+        "link": "https://youtu.be/Jv1ak_7N2bM",
+        "thumb_url": "https://img.youtube.com/vi/Jv1ak_7N2bM/maxresdefault.jpg"
+      },
+      {
+        "title_zh": "「BRO」4K 打造了一台价值 60,000 美元的电脑！RTX 6000 Blackwell & 96 核 Threadripper -InWin Winbot",
+        "title_en": "「BRO」4K Built a $60,000 PC! RTX 6000 Blackwell & 96-Core Threadripper -InWin Winbot",
+        "meta_zh": "155万次观看 · 3个月前",
+        "meta_en": "1.55 million views · 3 months ago",
+        "link": "https://youtu.be/ywBnRm5TZJI",
+        "thumb_url": "https://img.youtube.com/vi/ywBnRm5TZJI/maxresdefault.jpg"
+      },
+      {
+        "title_zh": "ROG Hyperion 电镀超人主题 装机实录",
+        "title_en": "ROG Hyperion Electroplated Superman Theme Build",
+        "meta_zh": "15万次观看 · 2个月前",
+        "meta_en": "150K views · 2 months ago",
+        "link": "",
+        "thumb_url": ""
+      }
+    ],
+    "bilibili": [
+      {
+        "title_zh": "【BRO水冷】Z-Tower Storm 电离子发光 深度解析",
+        "title_en": "【BRO Water Cooling】Z-Tower Storm Electro-Ion Luminescence Deep Dive",
+        "meta_zh": "25万播放 · 3周前",
+        "meta_en": "250K plays · 3 weeks ago",
+        "link": "",
+        "thumb_url": ""
+      },
+      {
+        "title_zh": "【BRO水冷】O11D EVO 双水路 装机全记录",
+        "title_en": "【BRO Water Cooling】O11D EVO Dual Loop Full Build Record",
+        "meta_zh": "18万播放 · 1个月前",
+        "meta_en": "180K plays · 1 month ago",
+        "link": "",
+        "thumb_url": ""
+      },
+      {
+        "title_zh": "【BRO水冷】骨伽征服者 经典复刻 主题改装",
+        "title_en": "【BRO Water Cooling】Cougar Conquer Classic Remake Themed Mod",
+        "meta_zh": "32万播放 · 2个月前",
+        "meta_en": "320K plays · 2 months ago",
+        "link": "",
+        "thumb_url": ""
+      }
+    ],
+    "douyin": [
+      {
+        "title_zh": "电离子发光技术的秘密 #水冷改装 #BRO水冷",
+        "title_en": "Secrets of Electro-Ion Luminescence #WaterCooling #BROWaterCooling",
+        "meta_zh": "50万播放 · 1周前",
+        "meta_en": "500K plays · 1 week ago",
+        "link": "",
+        "thumb_url": ""
+      },
+      {
+        "title_zh": "全国送机行·杭州站 交付实拍 #定制水冷",
+        "title_en": "Nationwide Delivery Tour · Hangzhou Station Delivery #CustomWaterCooling",
+        "meta_zh": "38万播放 · 2周前",
+        "meta_en": "380K plays · 2 weeks ago",
+        "link": "",
+        "thumb_url": ""
+      },
+      {
+        "title_zh": "创世神装机360°展示 #机箱改装 #RGB",
+        "title_en": "ROG Hyperion 360° Showcase #CaseMod #RGB",
+        "meta_zh": "62万播放 · 3周前",
+        "meta_en": "620K plays · 3 weeks ago",
+        "link": "",
+        "thumb_url": ""
+      }
+    ]
+  }
 }
