@@ -2772,10 +2772,8 @@ if (!adminData) {
               if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key]) && target[key] && typeof target[key] === 'object' && !Array.isArray(target[key])) {
                 mergeDeep(target[key], source[key]);
               } else if (source[key] !== undefined) {
-                // Only overwrite if local value is empty (null, undefined, empty string) or is default
-                if (!target[key] || target[key] === '' || (key === 'link' && !target[key]) || (key === 'thumb_url' && !target[key])) {
-                  target[key] = source[key];
-                }
+                // Server is source of truth: always overwrite local with server data
+                target[key] = source[key];
               }
             }
           }
