@@ -2852,7 +2852,7 @@ function applyAdminToPage() {
       var div = document.createElement('div');
       div.className = 'video-card reveal';
       
-      // Generate thumbnail from link if not provided
+      // Use provided thumbnail URL or generate from link
       var thumbUrl = card.thumb_url;
       if (!thumbUrl && card.link) {
         if (platform === 'youtube') {
@@ -2863,19 +2863,8 @@ function applyAdminToPage() {
           if (videoId) {
             thumbUrl = 'https://img.youtube.com/vi/' + videoId + '/maxresdefault.jpg';
           }
-        } else if (platform === 'bilibili') {
-          // Extract BV ID from Bilibili URL
-          var bvMatch = card.link.match(/\/video\/(BV[^\/\?#]+)/);
-          if (bvMatch) {
-            var bvId = bvMatch[1];
-            // Try to fetch thumbnail from our API
-            // This will be async, but we can pre-fetch or cache
-            // For now, keep as is - will show platform icon
-          }
-        } else if (platform === 'douyin') {
-          // Douyin short links need to be resolved to get video ID
-          // For now, keep as is - will show platform icon
         }
+        // Bilibili and Douyin thumbnails should be provided in data
       }
       
       var thumbBg = thumbUrl ? ' style="background-image:url(\'' + thumbUrl + '\');background-size:cover;background-position:center"' : '';
