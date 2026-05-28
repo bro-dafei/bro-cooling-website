@@ -34,7 +34,11 @@ export default async function handler(req, res) {
       });
     }
 
-    const thumbnailUrl = data.data.pic;
+    // Convert HTTP to HTTPS to avoid mixed content issues
+    var thumbnailUrl = data.data.pic;
+    if (thumbnailUrl && thumbnailUrl.startsWith('http://')) {
+      thumbnailUrl = thumbnailUrl.replace('http://', 'https://');
+    }
     
     // Return the thumbnail URL
     return res.status(200).json({

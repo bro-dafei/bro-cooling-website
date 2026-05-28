@@ -2864,8 +2864,42 @@ function applyAdminToPage() {
           if (videoId) {
             thumbUrl = 'https://img.youtube.com/vi/' + videoId + '/maxresdefault.jpg';
           }
+        } else if (platform === 'bilibili') {
+          // Extract BV ID from Bilibili URL
+          var bvMatch = card.link.match(/\/video\/(BV[^\/\?#]+)/);
+          if (bvMatch) {
+            var bvid = bvMatch[1];
+            // Use our API to get thumbnail
+            fetch('/api/bilibili-thumb?bvid=' + encodeURIComponent(bvid))
+              .then(function(response) {
+                if (!response.ok) return;
+                return response.json();
+              })
+              .then(function(data) {
+                if (data && data.thumbnail) {
+                  // Update the thumbnail in real-time
+                  var thumbDiv = div.querySelector('.video-card-thumb-inner');
+                  if (thumbDiv) {
+                    // Convert HTTP to HTTPS for mixed content
+                    var thumbUrl = data.thumbnail.replace('http://', 'https://');
+                    thumbDiv.style.backgroundImage = 'url("' + thumbUrl + '")';
+                    thumbDiv.style.backgroundSize = 'cover';
+                    thumbDiv.style.backgroundPosition = 'center';
+                    
+                    // Remove the icon
+                    var iconSpan = thumbDiv.querySelector('.video-thumb-icon');
+                    if (iconSpan) {
+                      iconSpan.remove();
+                    }
+                  }
+                }
+              })
+              .catch(function(error) {
+                console.log('Failed to fetch Bilibili thumbnail for', bvid, error);
+              });
+          }
         }
-        // Bilibili and Douyin thumbnails should be provided in data
+        // Douyin short links need server-side resolution, keep as is
       }
       
       var thumbBg = thumbUrl ? ' style="background-image:url(\'' + thumbUrl + '\');background-size:cover;background-position:center"' : '';
