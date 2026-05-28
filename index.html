@@ -2773,20 +2773,8 @@ if (!adminData) {
 })();
 
 function saveAdminData() {
-  // Clean video data before saving: remove title_zh/title_en/meta_zh/meta_en
+  // Save complete video data (all fields)
   var cleanedData = JSON.parse(JSON.stringify(adminData));
-  if (cleanedData.video) {
-    ['youtube', 'bilibili', 'douyin'].forEach(function(platform) {
-      if (cleanedData.video[platform]) {
-        cleanedData.video[platform] = cleanedData.video[platform].map(function(card) {
-          var newCard = {};
-          if (card.link !== undefined) newCard.link = card.link;
-          if (card.thumb_url !== undefined) newCard.thumb_url = card.thumb_url;
-          return newCard;
-        });
-      }
-    });
-  }
   
   broSetData('bro_admin_data', adminData);
   applyAdminToPage();

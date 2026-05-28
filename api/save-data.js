@@ -9,7 +9,21 @@ function deepMerge(target, source) {
   const output = { ...target };
   for (const key of Object.keys(source)) {
     if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key]) && target[key] && typeof target[key] === 'object' && !Array.isArray(target[key])) {
-      output[key] = deepMerge(target[key], source[key]);
+      // Special handling for video data: completely replace arrays
+      if (key === 'video') {
+        // For video data, completely replace the entire structure
+        output[key] = { ...source[key] };
+        // But keep any platforms not in source
+        if (target[key]) {
+          for (const platform in target[key]) {
+            if (!(platform in source[key])) {
+              output[key][platform] = target[key][platform];
+            }
+          }
+        }
+      } else {
+        output[key] = deepMerge(target[key], source[key]);
+      }
     } else {
       output[key] = source[key];
     }
