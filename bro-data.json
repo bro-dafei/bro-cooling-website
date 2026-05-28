@@ -72,12 +72,10 @@
     ],
     "bilibili": [
       {
-        "link": "https://www.bilibili.com/video/BV1fCL16eEkb/?spm_id_from=333.1387.upload.video_card.click",
-        "thumb_url": "https://i1.hdslb.com/bfs/archive/58bc8d5814dc5deb5b6377ff4839a8a1cf9c09cc.jpg@672w_378h_1c.webp"
+        "link": "https://www.bilibili.com/video/BV1fCL16eEkb/?spm_id_from=333.1387.upload.video_card.click"
       },
       {
-        "link": "https://www.bilibili.com/video/BV1RfAEziE2M/?spm_id_from=333.1387.upload.video_card.click",
-        "thumb_url": ""
+        "link": "https://www.bilibili.com/video/BV1RfAEziE2M/?spm_id_from=333.1387.upload.video_card.click"
       },
       {
         "link": "https://www.bilibili.com/video/BV1J5vsBXENd/?spm_id_from=333.1387.upload.video_card.click"
@@ -86,7 +84,7 @@
     "douyin": [
       {
         "link": "https://v.douyin.com/ptx4kgSM6ek/",
-        "thumb_url": "https://i1.hdslb.com/bfs/archive/1e6109709aed5a050352309f94b7230a9519f093.jpg@672w_378h_1c.webp"
+        "thumb_url": ""
       },
       {
         "link": "",
