@@ -2764,19 +2764,45 @@ if (!adminData) {
     if (xhr.status === 200) {
       try {
         var serverData = JSON.parse(xhr.responseText);
-        if (serverData && serverData.video) {
-          // Merge server data: only update links that user hasn't changed locally
+        if (serverData) {
+          // Merge ALL admin data from server, not just video
           var local = adminData || getAdminDefaults();
-          ['youtube','bilibili','douyin'].forEach(function(p) {
-            if (serverData.video[p]) {
-              serverData.video[p].forEach(function(sv, i) {
-                if (local.video && local.video[p] && local.video[p][i]) {
-                  if (!local.video[p][i].link && sv.link) local.video[p][i].link = sv.link;
-                  if (!local.video[p][i].thumb_url && sv.thumb_url) local.video[p][i].thumb_url = sv.thumb_url;
+          // Deep merge: server data overwrites local defaults, but keep user's local changes
+          function mergeDeep(target, source) {
+            for (var key in source) {
+              if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key]) && target[key] && typeof target[key] === 'object' && !Array.isArray(target[key])) {
+                mergeDeep(target[key], source[key]);
+              } else if (source[key] !== undefined) {
+                // Only overwrite if local value is empty (null, undefined, empty string) or is default
+                if (!target[key] || target[key] === '' || (key === 'link' && !target[key]) || (key === 'thumb_url' && !target[key])) {
+                  target[key] = source[key];
                 }
-              });
+              }
+            }
+          }
+          
+          // For video arrays, merge link/thumb_url only if empty
+          if (serverData.video) {
+            ['youtube','bilibili','douyin'].forEach(function(p) {
+              if (serverData.video[p]) {
+                serverData.video[p].forEach(function(sv, i) {
+                  if (local.video && local.video[p] && local.video[p][i]) {
+                    if (!local.video[p][i].link && sv.link) local.video[p][i].link = sv.link;
+                    if (!local.video[p][i].thumb_url && sv.thumb_url) local.video[p][i].thumb_url = sv.thumb_url;
+                  }
+                });
+              }
+            });
+          }
+          
+          // Merge all other sections (hero, nav, heritage, etc.)
+          Object.keys(serverData).forEach(function(section) {
+            if (section !== 'video') {
+              if (!local[section]) local[section] = {};
+              mergeDeep(local[section], serverData[section]);
             }
           });
+          
           broSetData('bro_admin_data', local);
           adminData = local;
           applyAdminToPage();
