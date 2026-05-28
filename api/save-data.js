@@ -22,9 +22,6 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid data' });
     }
 
-    // Extract video data only (for now)
-    const videoData = data.video || {};
-    
     // 1. Get current file SHA
     const getFileRes = await fetch(
       `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`,
@@ -43,7 +40,7 @@ export default async function handler(req, res) {
     }
 
     // 2. Create new content
-    const newContent = JSON.stringify({ video: videoData }, null, 2);
+    const newContent = JSON.stringify(data, null, 2);
     const contentBase64 = Buffer.from(newContent).toString('base64');
 
     // 3. Update file
@@ -57,7 +54,7 @@ export default async function handler(req, res) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          message: `chore: auto-sync video data ${new Date().toISOString().split('T')[0]}`,
+          message: `chore: auto-sync admin data ${new Date().toISOString().split('T')[0]}`,
           content: contentBase64,
           sha: sha,
           branch: BRANCH
@@ -83,7 +80,7 @@ export default async function handler(req, res) {
       timestamp: new Date().toISOString(),
       commit: result.commit.sha,
       received: {
-        video: Object.keys(videoData).map(p => `${p}: ${videoData[p]?.length || 0} items`)
+        sections: Object.keys(data).join(', ')
       }
     });
   } catch (error) {
