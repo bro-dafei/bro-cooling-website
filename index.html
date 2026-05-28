@@ -3053,19 +3053,19 @@ function renderAdminPanel() {
 
   function fieldLabel(key) { return '<div class="admin-field-label">' + adminT(key) + '</div>'; }
   function inputZh(val, dataKey, onChange) {
-    return '<input class="admin-input cn" value="' + escHtml(val) + '" data-key="' + dataKey + '" onchange="' + onChange + '" placeholder="' + adminT('field.zh') + '">';
+    return '<input class="admin-input cn" value="' + escHtml(val) + '" data-key="' + dataKey + '" onblur="' + onChange + '" placeholder="' + adminT('field.zh') + '">';
   }
   function inputEn(val, dataKey, onChange) {
-    return '<input class="admin-input" value="' + escHtml(val) + '" data-key="' + dataKey + '" onchange="' + onChange + '" placeholder="' + adminT('field.en') + '">';
+    return '<input class="admin-input" value="' + escHtml(val) + '" data-key="' + dataKey + '" onblur="' + onChange + '" placeholder="' + adminT('field.en') + '">';
   }
   function textareaZh(val, dataKey, onChange) {
-    return '<textarea class="admin-textarea cn" data-key="' + dataKey + '" onchange="' + onChange + '" placeholder="' + adminT('field.zh') + '">' + escHtml(val) + '</textarea>';
+    return '<textarea class="admin-textarea cn" data-key="' + dataKey + '" onblur="' + onChange + '" placeholder="' + adminT('field.zh') + '">' + escHtml(val) + '</textarea>';
   }
   function textareaEn(val, dataKey, onChange) {
-    return '<textarea class="admin-textarea" data-key="' + dataKey + '" onchange="' + onChange + '" placeholder="' + adminT('field.en') + '">' + escHtml(val) + '</textarea>';
+    return '<textarea class="admin-textarea" data-key="' + dataKey + '" onblur="' + onChange + '" placeholder="' + adminT('field.en') + '">' + escHtml(val) + '</textarea>';
   }
   function inputVal(val, dataKey, onChange, placeholder) {
-    return '<input class="admin-input" value="' + escHtml(val) + '" data-key="' + dataKey + '" onchange="' + onChange + '" placeholder="' + (placeholder||'') + '">';
+    return '<input class="admin-input" value="' + escHtml(val) + '" data-key="' + dataKey + '" onblur="' + onChange + '" placeholder="' + (placeholder||'') + '">';
   }
 
   // 1. NAV
