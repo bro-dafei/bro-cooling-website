@@ -1,6 +1,10 @@
 {
   "hero": {
-    "subtitle_zh": "???????",
-    "subtitle_en": "Post Deploy Final Test"
+    "subtitle_zh": "??????",
+    "subtitle_en": "Deep Merge Test"
+  },
+  "nav": {
+    "home_zh": "??",
+    "home_en": "Home"
   }
 }
