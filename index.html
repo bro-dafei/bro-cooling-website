@@ -2742,16 +2742,13 @@ if (!adminData) {
             }
           }
           
-          // For video arrays, merge link/thumb_url only if empty
+          // For video arrays: server is source of truth
           if (serverData.video) {
             ['youtube','bilibili','douyin'].forEach(function(p) {
               if (serverData.video[p]) {
-                serverData.video[p].forEach(function(sv, i) {
-                  if (local.video && local.video[p] && local.video[p][i]) {
-                    if (!local.video[p][i].link && sv.link) local.video[p][i].link = sv.link;
-                    if (!local.video[p][i].thumb_url && sv.thumb_url) local.video[p][i].thumb_url = sv.thumb_url;
-                  }
-                });
+                // Always overwrite with server data
+                if (!local.video) local.video = {};
+                local.video[p] = serverData.video[p];
               }
             });
           }
