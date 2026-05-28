@@ -1667,10 +1667,6 @@ ul { list-style: none; }
           <div class="video-card-thumb-overlay"></div>
           <div class="video-card-play"></div>
         </div>
-        <div class="video-card-body">
-          <div class="video-card-title" data-i18n="video.youtube.1.title">Z-Tower Storm 全手工水冷制作全过程</div>
-          <div class="video-card-meta"><span data-i18n="video.youtube.1.meta">12万次观看 · 3周前</span></div>
-        </div>
       </div>
       <div class="video-card reveal">
         <div class="video-card-thumb">
@@ -1680,10 +1676,6 @@ ul { list-style: none; }
           <div class="video-card-thumb-overlay"></div>
           <div class="video-card-play"></div>
         </div>
-        <div class="video-card-body">
-          <div class="video-card-title" data-i18n="video.youtube.2.title">BRO COOLING — 2024 年度改装合集</div>
-          <div class="video-card-meta"><span data-i18n="video.youtube.2.meta">8.5万次观看 · 1个月前</span></div>
-        </div>
       </div>
       <div class="video-card reveal">
         <div class="video-card-thumb">
@@ -1692,10 +1684,6 @@ ul { list-style: none; }
           </div>
           <div class="video-card-thumb-overlay"></div>
           <div class="video-card-play"></div>
-        </div>
-        <div class="video-card-body">
-          <div class="video-card-title" data-i18n="video.youtube.3.title">ROG Hyperion 电镀超人主题 装机实录</div>
-          <div class="video-card-meta"><span data-i18n="video.youtube.3.meta">15万次观看 · 2个月前</span></div>
         </div>
       </div>
     </div>
@@ -1716,10 +1704,6 @@ ul { list-style: none; }
           <div class="video-card-thumb-overlay"></div>
           <div class="video-card-play"></div>
         </div>
-        <div class="video-card-body">
-          <div class="video-card-title" data-i18n="video.bilibili.1.title">【BRO水冷】Z-Tower Storm 电离子发光 深度解析</div>
-          <div class="video-card-meta"><span data-i18n="video.bilibili.1.meta">25万播放 · 3周前</span></div>
-        </div>
       </div>
       <div class="video-card reveal">
         <div class="video-card-thumb">
@@ -1729,10 +1713,6 @@ ul { list-style: none; }
           <div class="video-card-thumb-overlay"></div>
           <div class="video-card-play"></div>
         </div>
-        <div class="video-card-body">
-          <div class="video-card-title" data-i18n="video.bilibili.2.title">【BRO水冷】O11D EVO 双水路 装机全记录</div>
-          <div class="video-card-meta"><span data-i18n="video.bilibili.2.meta">18万播放 · 1个月前</span></div>
-        </div>
       </div>
       <div class="video-card reveal">
         <div class="video-card-thumb">
@@ -1741,10 +1721,6 @@ ul { list-style: none; }
           </div>
           <div class="video-card-thumb-overlay"></div>
           <div class="video-card-play"></div>
-        </div>
-        <div class="video-card-body">
-          <div class="video-card-title" data-i18n="video.bilibili.3.title">【BRO水冷】骨伽征服者 经典复刻 主题改装</div>
-          <div class="video-card-meta"><span data-i18n="video.bilibili.3.meta">32万播放 · 2个月前</span></div>
         </div>
       </div>
     </div>
@@ -1765,10 +1741,6 @@ ul { list-style: none; }
           <div class="video-card-thumb-overlay"></div>
           <div class="video-card-play"></div>
         </div>
-        <div class="video-card-body">
-          <div class="video-card-title" data-i18n="video.douyin.1.title">电离子发光技术的秘密 #水冷改装 #BRO水冷</div>
-          <div class="video-card-meta"><span data-i18n="video.douyin.1.meta">50万播放 · 1周前</span></div>
-        </div>
       </div>
       <div class="video-card reveal">
         <div class="video-card-thumb">
@@ -1778,10 +1750,6 @@ ul { list-style: none; }
           <div class="video-card-thumb-overlay"></div>
           <div class="video-card-play"></div>
         </div>
-        <div class="video-card-body">
-          <div class="video-card-title" data-i18n="video.douyin.2.title">全国送机行·杭州站 交付实拍 #定制水冷</div>
-          <div class="video-card-meta"><span data-i18n="video.douyin.2.meta">38万播放 · 2周前</span></div>
-        </div>
       </div>
       <div class="video-card reveal">
         <div class="video-card-thumb">
@@ -1790,10 +1758,6 @@ ul { list-style: none; }
           </div>
           <div class="video-card-thumb-overlay"></div>
           <div class="video-card-play"></div>
-        </div>
-        <div class="video-card-body">
-          <div class="video-card-title" data-i18n="video.douyin.3.title">创世神装机360°展示 #机箱改装 #RGB</div>
-          <div class="video-card-meta"><span data-i18n="video.douyin.3.meta">62万播放 · 3周前</span></div>
         </div>
       </div>
     </div>
@@ -2500,8 +2464,7 @@ document.addEventListener('click', function(e) {
   const videoCard = e.target.closest('.video-card');
   if (!videoCard) return;
   
-  const title = videoCard.querySelector('.video-card-title').textContent;
-  const meta = videoCard.querySelector('.video-card-meta span').textContent;
+
   const platform = videoCard.closest('.video-section-block').querySelector('.video-platform-badge').textContent.trim();
   const platformKey = platform.toLowerCase();
   
@@ -2896,10 +2859,6 @@ function applyAdminToPage() {
           '</div>' +
           '<div class="video-card-thumb-overlay"></div>' +
           '<div class="video-card-play"></div>' +
-        '</div>' +
-        '<div class="video-card-body">' +
-          '<div class="video-card-title">' + (lang === 'zh' ? card.title_zh : card.title_en) + '</div>' +
-          '<div class="video-card-meta"><span>' + (lang === 'zh' ? card.meta_zh : card.meta_en) + '</span></div>' +
         '</div>';
       grid.appendChild(div);
     });
@@ -3142,16 +3101,7 @@ function renderAdminPanel() {
           '<span class="admin-item-index">#' + (i+1) + '</span>' +
           '<button class="admin-item-btn delete" onclick="deleteAdminItem(\'video.'+platform+'\',' + i + ')">×</button>' +
         '</div>' +
-        '<div class="admin-field">' + fieldLabel('field.title') + '</div>' +
-        '<div class="admin-field-row">' +
-          '<div class="admin-field">' + inputZh(card.title_zh, 'video.'+platform+'.'+i+'.title_zh', 'updateAdminField(this)') + '</div>' +
-          '<div class="admin-field">' + inputEn(card.title_en, 'video.'+platform+'.'+i+'.title_en', 'updateAdminField(this)') + '</div>' +
-        '</div>' +
-        '<div class="admin-field">' + fieldLabel('field.meta') + '</div>' +
-        '<div class="admin-field-row">' +
-          '<div class="admin-field">' + inputZh(card.meta_zh, 'video.'+platform+'.'+i+'.meta_zh', 'updateAdminField(this)') + '</div>' +
-          '<div class="admin-field">' + inputEn(card.meta_en, 'video.'+platform+'.'+i+'.meta_en', 'updateAdminField(this)') + '</div>' +
-        '</div>' +
+
         '<div class="admin-field-row">' +
           '<div class="admin-field">' + fieldLabel('field.link') + inputVal(card.link||'', 'video.'+platform+'.'+i+'.link', 'updateAdminField(this)', 'https://...') + '</div>' +
           '<div class="admin-field">' + fieldLabel('field.thumb_url') + inputVal(card.thumb_url||'', 'video.'+platform+'.'+i+'.thumb_url', 'updateAdminField(this)', 'https://...') + '</div>' +
@@ -3427,7 +3377,7 @@ function addAdminItem(type) {
     case 'video.youtube':
     case 'video.bilibili':
     case 'video.douyin':
-      newItem = { title_zh: '新视频', title_en: 'New Video', meta_zh: '0次观看', meta_en: '0 views', link: '', thumb_url: '' };
+      newItem = { link: '', thumb_url: '' };
       break;
     case 'heritage':
       newItem = { year: '2025', zh: '新内容', en: 'New content' };
