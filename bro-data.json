@@ -1,10 +1,356 @@
 {
+  "nav": [
+    {
+      "id": "home",
+      "zh": "主页测试",
+      "en": "Home",
+      "anchor": "#home",
+      "visible": true
+    },
+    {
+      "id": "video",
+      "zh": "视频媒体",
+      "en": "Video Channels",
+      "anchor": "#youtube-videos",
+      "visible": true
+    },
+    {
+      "id": "heritage",
+      "zh": "品牌传承",
+      "en": "Brand Heritage",
+      "anchor": "#about",
+      "visible": true
+    },
+    {
+      "id": "commission",
+      "zh": "委托定制",
+      "en": "Commission",
+      "anchor": "#contact",
+      "visible": true
+    },
+    {
+      "id": "lan",
+      "zh": "活动现场",
+      "en": "Event Galleries",
+      "anchor": "#lan-galleries",
+      "visible": true
+    },
+    {
+      "id": "partners",
+      "zh": "合作伙伴",
+      "en": "Partners",
+      "anchor": "#partners",
+      "visible": true
+    },
+    {
+      "id": "new",
+      "zh": "新菜单",
+      "en": "New Item",
+      "anchor": "#",
+      "visible": true
+    }
+  ],
   "hero": {
-    "subtitle_zh": "??????",
-    "subtitle_en": "Deep Merge Test"
+    "subtitle_zh": "跨浏览器同步验证 2026",
+    "subtitle_en": "Every PC, an irreplicable masterpiece",
+    "bg_url": ""
   },
-  "nav": {
-    "home_zh": "??",
-    "home_en": "Home"
+  "video": {
+    "youtube": [
+      {
+        "title_zh": "Z-Tower Storm 全手工水冷制作全过程",
+        "title_en": "Z-Tower Storm Full Handcrafted Water Cooling Process",
+        "meta_zh": "12万次观看 · 3周前",
+        "meta_en": "120K views · 3 weeks ago",
+        "link": "",
+        "thumb_url": ""
+      },
+      {
+        "title_zh": "BRO COOLING — 2024 年度改装合集",
+        "title_en": "BRO COOLING — 2024 Modding Compilation",
+        "meta_zh": "8.5万次观看 · 1个月前",
+        "meta_en": "85K views · 1 month ago",
+        "link": "",
+        "thumb_url": ""
+      },
+      {
+        "title_zh": "ROG Hyperion 电镀超人主题 装机实录",
+        "title_en": "ROG Hyperion Electroplated Superman Theme Build",
+        "meta_zh": "15万次观看 · 2个月前",
+        "meta_en": "150K views · 2 months ago",
+        "link": "",
+        "thumb_url": ""
+      }
+    ],
+    "bilibili": [
+      {
+        "title_zh": "【BRO水冷】Z-Tower Storm 电离子发光 深度解析",
+        "title_en": "【BRO Water Cooling】Z-Tower Storm Electro-Ion Luminescence Deep Dive",
+        "meta_zh": "25万播放 · 3周前",
+        "meta_en": "250K plays · 3 weeks ago",
+        "link": "",
+        "thumb_url": ""
+      },
+      {
+        "title_zh": "【BRO水冷】O11D EVO 双水路 装机全记录",
+        "title_en": "【BRO Water Cooling】O11D EVO Dual Loop Full Build Record",
+        "meta_zh": "18万播放 · 1个月前",
+        "meta_en": "180K plays · 1 month ago",
+        "link": "",
+        "thumb_url": ""
+      },
+      {
+        "title_zh": "【BRO水冷】骨伽征服者 经典复刻 主题改装",
+        "title_en": "【BRO Water Cooling】Cougar Conquer Classic Remake Themed Mod",
+        "meta_zh": "32万播放 · 2个月前",
+        "meta_en": "320K plays · 2 months ago",
+        "link": "",
+        "thumb_url": ""
+      }
+    ],
+    "douyin": [
+      {
+        "title_zh": "电离子发光技术的秘密 #水冷改装 #BRO水冷",
+        "title_en": "Secrets of Electro-Ion Luminescence #WaterCooling #BROWaterCooling",
+        "meta_zh": "50万播放 · 1周前",
+        "meta_en": "500K plays · 1 week ago",
+        "link": "",
+        "thumb_url": ""
+      },
+      {
+        "title_zh": "全国送机行·杭州站 交付实拍 #定制水冷",
+        "title_en": "Nationwide Delivery Tour · Hangzhou Station Delivery #CustomWaterCooling",
+        "meta_zh": "38万播放 · 2周前",
+        "meta_en": "380K plays · 2 weeks ago",
+        "link": "",
+        "thumb_url": ""
+      },
+      {
+        "title_zh": "创世神装机360°展示 #机箱改装 #RGB",
+        "title_en": "ROG Hyperion 360° Showcase #CaseMod #RGB",
+        "meta_zh": "62万播放 · 3周前",
+        "meta_en": "620K plays · 3 weeks ago",
+        "link": "",
+        "thumb_url": ""
+      }
+    ]
+  },
+  "heritage": [
+    {
+      "year": "2008",
+      "zh": "入行电脑硬件改装领域，从第一台DIY水冷主机起步，开启手工定制之路。",
+      "en": "Entered the PC hardware modding scene. Started with the first DIY water-cooled build, embarking on a journey of handcrafted customization."
+    },
+    {
+      "year": "2016",
+      "zh": "入驻斗鱼直播，向全网展示水冷改装全过程，积累首批忠实粉丝。",
+      "en": "Joined Douyu live streaming, showcasing the entire water-cooling modding process to a nationwide audience, building the first wave of loyal followers."
+    },
+    {
+      "year": "2018",
+      "zh": "骨伽征服者主题定制作品问世，标志性设计语言初步成型，引发行业关注。",
+      "en": "The Cougar Conquer themed custom build debuted, establishing the signature BRO design language and drawing industry-wide attention."
+    },
+    {
+      "year": "2019",
+      "zh": "自研电离子发光技术；Z-Tower Storm 横空出世，20万级旗舰奠定行业地位。",
+      "en": "Developed proprietary Electro-Ion Luminescence technology. The Z-Tower Storm emerged, a ¥200K flagship that defined BRO's position in the industry."
+    },
+    {
+      "year": "2023",
+      "zh": "全国送机行启动，足迹覆盖北上广深等十余城，亲手将每台作品交付客户。",
+      "en": "Launched the Nationwide Delivery Tour, covering over ten cities including Beijing, Shanghai, Guangzhou, and Shenzhen — personally delivering each masterpiece to its owner."
+    },
+    {
+      "year": "2024",
+      "zh": "BRO Atelier 正式品牌化，每台作品署名认证，作品馆累计收录50+独创方案。",
+      "en": "BRO Atelier officially launched as a brand. Every build now comes with a signed certificate. The Atelier has accumulated 50+ original designs."
+    }
+  ],
+  "commission": [
+    {
+      "num": "01",
+      "title_zh": "咨询需求",
+      "title_en": "Consultation",
+      "desc_zh": "在线提交您的定制需求，包括预算范围、机箱偏好、主题风格和使用场景。我们将在24小时内与您取得联系。",
+      "desc_en": "Submit your custom requirements online, including budget, case preference, theme, and usage scenario. We will contact you within 24 hours."
+    },
+    {
+      "num": "02",
+      "title_zh": "方案设计",
+      "title_en": "Design",
+      "desc_zh": "BRO Atelier 设计师根据需求出3D渲染方案，包含水路布局、灯光系统与主题涂装。方案确认后进入制作排期。",
+      "desc_en": "BRO Atelier designers produce a 3D render proposal, covering the liquid loop layout, lighting system, and themed finish. Production scheduling begins upon approval."
+    },
+    {
+      "num": "03",
+      "title_zh": "精工制作",
+      "title_en": "Craftsmanship",
+      "desc_zh": "全部手工打造，从水道板CNC加工到硬管弯折、灯光编程，制作周期约4-8周，全程同步进度照片。",
+      "desc_en": "Entirely hand-built — from CNC-machined distribution plates to hard-tube bending and lighting programming. Production takes approximately 4-8 weeks with progress photos shared throughout."
+    },
+    {
+      "num": "04",
+      "title_zh": "交付验收",
+      "title_en": "Delivery",
+      "desc_zh": "48小时烤机测试通过后，全国送机上门或顺丰保价发货。附赠BRO署名认证证书及终身售后保障。",
+      "desc_en": "After passing a 48-hour stress test, we deliver nationwide in person or via SF Express insured shipping. Includes a BRO signed certificate and lifetime after-sales support."
+    }
+  ],
+  "form": {
+    "name_label_zh": "Name / 称呼",
+    "name_label_en": "Name",
+    "name_ph_zh": "您的称呼",
+    "name_ph_en": "Your name",
+    "contact_label_zh": "Contact / 联系方式",
+    "contact_label_en": "Contact",
+    "contact_ph_zh": "微信 / 手机 / 邮箱",
+    "contact_ph_en": "WeChat / Phone / Email",
+    "budget_label_zh": "Budget Range / 预算范围",
+    "budget_label_en": "Budget Range",
+    "vision_label_zh": "Your Vision / 您的构想",
+    "vision_label_en": "Your Vision",
+    "vision_ph_zh": "请描述您想要的机箱、主题、灯光效果、使用场景等",
+    "vision_ph_en": "Describe your desired case, theme, lighting, usage scenario, etc.",
+    "submit_zh": "Submit Inquiry / 提交咨询",
+    "submit_en": "Submit Inquiry"
+  },
+  "events": [
+    {
+      "title_zh": "ChinaJoy 2024",
+      "title_en": "ChinaJoy 2024",
+      "meta_zh": "上海新国际博览中心 · 2024.07.26-29 · 3台作品展出",
+      "meta_en": "Shanghai New Int'l Expo Center · 2024.07.26-29 · 3 Builds Exhibited",
+      "desc_zh": "Z-Tower Storm 领衔亮相，电离子发光技术首次公开展示，吸引数万观众驻足体验。",
+      "desc_en": "Z-Tower Storm headlined the exhibition. Electro-Ion Luminescence technology made its public debut, drawing tens of thousands of visitors."
+    },
+    {
+      "title_zh": "2024 全国送机行",
+      "title_en": "2024 Nationwide Delivery Tour",
+      "meta_zh": "北上广深等十余城市 · 2024全年 · 20+台交付",
+      "meta_en": "10+ Cities Across China · 2024 · 20+ Deliveries",
+      "desc_zh": "BRO 亲自驾车巡回全国，亲手将每一台水冷大作交付客户，现场安装调试，留下无数精彩瞬间。",
+      "desc_en": "BRO personally drove across the country, hand-delivering each liquid-cooled masterpiece with on-site installation and tuning."
+    },
+    {
+      "title_zh": "2023 玩家改装聚会",
+      "title_en": "2023 Community Modding Meetup",
+      "meta_zh": "深圳 · 2023.11.18 · 50+改装爱好者",
+      "meta_en": "Shenzhen · 2023.11.18 · 50+ Enthusiasts",
+      "desc_zh": "首届 BRO 社区线下聚会，改装同好携爱机齐聚，交流水路设计、灯光方案与主题创意。",
+      "desc_en": "The first BRO community offline gathering. Modding enthusiasts brought their builds to exchange loop designs, lighting concepts, and creative themes."
+    },
+    {
+      "title_zh": "直播现场花絮",
+      "title_en": "Livestream Highlights",
+      "meta_zh": "斗鱼 / Bilibili 直播间 · 持续更新",
+      "meta_en": "Douyu / Bilibili · Ongoing",
+      "desc_zh": "每场直播中的精彩片段：硬管弯折教学、灯光编程幕后、装机翻车与救场瞬间，真实记录创作过程。",
+      "desc_en": "Memorable moments from every livestream: hard-tube bending tutorials, lighting programming behind-the-scenes, and real-time build recovery."
+    }
+  ],
+  "partners": [
+    {
+      "name": "ASUS ROG",
+      "logo_url": "",
+      "link": ""
+    },
+    {
+      "name": "MSI",
+      "logo_url": "",
+      "link": ""
+    },
+    {
+      "name": "NVIDIA",
+      "logo_url": "",
+      "link": ""
+    },
+    {
+      "name": "Intel",
+      "logo_url": "",
+      "link": ""
+    },
+    {
+      "name": "Corsair",
+      "logo_url": "",
+      "link": ""
+    },
+    {
+      "name": "Lian Li",
+      "logo_url": "",
+      "link": ""
+    },
+    {
+      "name": "Phanteks",
+      "logo_url": "",
+      "link": ""
+    },
+    {
+      "name": "EKWB",
+      "logo_url": "",
+      "link": ""
+    }
+  ],
+  "news": [
+    {
+      "title_zh": "BRO COOLING 参展 ChinaJoy 2024",
+      "title_en": "BRO COOLING at ChinaJoy 2024",
+      "desc_zh": "Z-Tower Storm 亮相上海ChinaJoy，现场展示电离子发光技术，吸引数万观众驻足。",
+      "desc_en": "Z-Tower Storm debuted at Shanghai ChinaJoy, showcasing Electro-Ion Luminescence technology to tens of thousands of visitors."
+    },
+    {
+      "title_zh": "O11D EVO 全视界水冷方案发布",
+      "title_en": "O11D EVO Panoramic Water Cooling Launched",
+      "desc_zh": "全新Lian Li O11D EVO定制方案上线，支持双360冷排+水道板一体化设计。",
+      "desc_en": "The new Lian Li O11D EVO custom solution is now available, featuring dual 360 radiators and an integrated distribution plate design."
+    },
+    {
+      "title_zh": "2024全国送机行启动",
+      "title_en": "2024 Nationwide Delivery Tour Begins",
+      "desc_zh": "新一轮全国送机行五一启动，首站杭州，BRO亲自驾车护送三台作品交付客户。",
+      "desc_en": "The new Nationwide Delivery Tour kicked off on May 1st, starting in Hangzhou. BRO personally drove to deliver three masterpieces to their owners."
+    }
+  ],
+  "care": [
+    {
+      "title_zh": "终身质保",
+      "title_en": "Lifetime Warranty",
+      "desc_zh": "所有BRO Atelier出品的水冷系统享受终身技术支持与维护服务。非人为损坏免费维修。",
+      "desc_en": "All BRO Atelier liquid cooling systems enjoy lifetime technical support and maintenance. Free repairs for non-user-induced damage."
+    },
+    {
+      "title_zh": "全国送机",
+      "title_en": "Nationwide Delivery",
+      "desc_zh": "国内主要城市提供亲自送机上门服务，现场安装调试，确保每一台作品完美运行。",
+      "desc_en": "In-person delivery and on-site setup available in major cities across China, ensuring every masterpiece runs perfectly from day one."
+    },
+    {
+      "title_zh": "快速响应",
+      "title_en": "Rapid Response",
+      "desc_zh": "专属客服一对一响应，工作时间内2小时回复。紧急情况提供远程视频诊断支持。",
+      "desc_en": "Dedicated 1-on-1 customer support with a 2-hour response time during business hours. Remote video diagnostics available for emergencies."
+    }
+  ],
+  "footer": {
+    "copyright": "© 2012 - 2026 BRO",
+    "wechat": "微信：BROMOD",
+    "social": [
+      {
+        "name": "YouTube",
+        "url": "https://www.youtube.com/@BROCOOLING"
+      },
+      {
+        "name": "Bilibili",
+        "url": "https://space.bilibili.com/BROCOOLING"
+      },
+      {
+        "name": "Douyin",
+        "url": "https://www.douyin.com/user/BROCOOLING"
+      },
+      {
+        "name": "Xiaohongshu",
+        "url": "https://www.xiaohongshu.com/user/profile/BROCOOLING"
+      }
+    ]
   }
 }
