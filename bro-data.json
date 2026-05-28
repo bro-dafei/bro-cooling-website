@@ -2,7 +2,7 @@
   "nav": [
     {
       "id": "home",
-      "zh": "Home",
+      "zh": "首页",
       "en": "Home",
       "anchor": "#home",
       "visible": true
