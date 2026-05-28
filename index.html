@@ -2721,7 +2721,8 @@ if (!adminData) {
 // After page ready, always try to update from server (merge server data into local)
 (function() {
   var xhr = new XMLHttpRequest();
-  xhr.open('GET', 'bro-data.json?v=' + Date.now(), true);
+  // Load from GitHub raw to bypass Vercel cache
+  xhr.open('GET', 'https://raw.githubusercontent.com/bro-dafei/bro-cooling-website/main/bro-data.json?v=' + Date.now(), true);
   xhr.onload = function() {
     if (xhr.status === 200) {
       try {
