@@ -2870,7 +2870,9 @@ function applyAdminToPage() {
           var bvMatch = card.link.match(/\/video\/(BV[^\/\?#]+)/);
           if (bvMatch) {
             var bvId = bvMatch[1];
-            thumbUrl = 'https://i0.hdslb.com/bfs/archive/' + bvId + '.jpg';
+            // Try to fetch thumbnail from our API
+            // This will be async, but we can pre-fetch or cache
+            // For now, keep as is - will show platform icon
           }
         } else if (platform === 'douyin') {
           // Douyin short links need to be resolved to get video ID
