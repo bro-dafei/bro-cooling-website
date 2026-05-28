@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bilibili 缩略图自动生成测试</title>
+    <style>
+        .video-card {
+            width: 300px;
+            height: 200px;
+            margin: 20px;
+            display: inline-block;
+            border: 1px solid #ccc;
+            position: relative;
+        }
+        .video-card-thumb {
+            width: 100%;
+            height: 100%;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .video-thumb-icon {
+            font-size: 24px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bilibili 缩略图自动生成测试</h1>
+    
+    <div id="test1" class="video-card">
+        <div class="video-card-thumb">
+            <span class="video-thumb-icon">B站</span>
+        </div>
+        <p>BV1fCL16eEkb (无 thumb_url)</p>
+    </div>
+    
+    <div id="test2" class="video-card">
+        <div class="video-card-thumb">
+            <span class="video-thumb-icon">B站</span>
+        </div>
+        <p>BV1RfAEziE2M (无 thumb_url)</p>
+    </div>
+    
+    <div id="test3" class="video-card">
+        <div class="video-card-thumb">
+            <span class="video-thumb-icon">B站</span>
+        </div>
+        <p>BV1J5vsBXENd (无 thumb_url)</p>
+    </div>
+    
+    <script>
+        // 模拟我们网站中的代码逻辑
+        function testBilibiliThumbnail(bvid, elementId) {
+            var div = document.getElementById(elementId);
+            var thumbDiv = div.querySelector('.video-card-thumb');
+            
+            console.log('测试 Bilibili 缩略图:', bvid);
+            
+            // 调用我们的 API
+            fetch('/api/bilibili-thumb?bvid=' + encodeURIComponent(bvid))
+                .then(function(response) {
+                    if (!response.ok) {
+                        console.error('API 错误:', response.status);
+                        return;
+                    }
+                    return response.json();
+                })
+                .then(function(data) {
+                    if (data && data.thumbnail) {
+                        console.log('获取成功:', bvid, data.thumbnail);
+                        
+                        // 转换为 HTTPS
+                        var thumbUrl = data.thumbnail.replace('http://', 'https://');
+                        
+                        // 更新缩略图
+                        thumbDiv.style.backgroundImage = 'url("' + thumbUrl + '")';
+                        thumbDiv.style.backgroundSize = 'cover';
+                        thumbDiv.style.backgroundPosition = 'center';
+                        
+                        // 移除图标
+                        var iconSpan = thumbDiv.querySelector('.video-thumb-icon');
+                        if (iconSpan) {
+                            iconSpan.remove();
+                        }
+                        
+                        // 更新文本
+                        var p = div.querySelector('p');
+                        p.innerHTML = bvid + '<br>已加载缩略图';
+                    } else {
+                        console.error('无缩略图数据:', data);
+                    }
+                })
+                .catch(function(error) {
+                    console.error('获取失败:', bvid, error);
+                });
+        }
+        
+        // 测试三个视频
+        setTimeout(function() {
+            testBilibiliThumbnail('BV1fCL16eEkb', 'test1');
+            testBilibiliThumbnail('BV1RfAEziE2M', 'test2');
+            testBilibiliThumbnail('BV1J5vsBXENd', 'test3');
+        }, 1000);
+    </script>
+</body>
+</html>
