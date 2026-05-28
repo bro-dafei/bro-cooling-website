@@ -2,7 +2,7 @@
   "nav": [
     {
       "id": "home",
-      "zh": "首页",
+      "zh": "Home",
       "en": "Home",
       "anchor": "#home",
       "visible": true
@@ -58,24 +58,24 @@
   "video": {
     "youtube": [
       {
-        "title_zh": "「BRO」全球首款9950X3D + RTX 5090定制水冷塔900Build！（黑神话版）",
-        "title_en": "「BRO」World's FIRST 9950X3D + RTX 5090 Custom Water cooling TOWER 900Build! (Black Myth Edition)",
-        "meta_zh": "15万次观看 · 3个月前",
-        "meta_en": "150K views · 3 months ago",
+        "title_zh": "Z-Tower Storm 全手工水冷制作全过程",
+        "title_en": "Z-Tower Storm Full Handcrafted Water Cooling Process",
+        "meta_zh": "12万次观看 · 3周前",
+        "meta_en": "120K views · 3 weeks ago",
         "link": "https://youtu.be/Jv1ak_7N2bM?si=INV-orCfR7GUs4k0",
         "thumb_url": "https://youtu.be/Jv1ak_7N2bM?si=INV-orCfR7GUs4k0"
       },
       {
-        "title_zh": "「BRO」4K 打造了一台价值 60,000 美元的电脑！RTX 6000 Blackwell & 96 核 Threadripper -InWin Winbot",
-        "title_en": "「BRO」4K Built a $60,000 PC! RTX 6000 Blackwell & 96-Core Threadripper -InWin Winbot",
-        "meta_zh": " 155万次观看  3个月前",
-        "meta_en": "1.55 million views  3 months ago",
+        "title_zh": "BRO COOLING — 2024 年度改装合集",
+        "title_en": "BRO COOLING — 2024 Modding Compilation",
+        "meta_zh": "8.5万次观看 · 1个月前",
+        "meta_en": "85K views · 1 month ago",
         "link": "https://youtu.be/ywBnRm5TZJI?si=AQBzgObgAYJ5fl1X",
         "thumb_url": "https://youtu.be/ywBnRm5TZJI?si=AQBzgObgAYJ5fl1X"
       },
       {
-        "title_zh": "超人主题 装机实录11",
-        "title_en": "Superman Theme Build",
+        "title_zh": "ROG Hyperion 电镀超人主题 装机实录",
+        "title_en": "ROG Hyperion Electroplated Superman Theme Build",
         "meta_zh": "15万次观看 · 2个月前",
         "meta_en": "150K views · 2 months ago",
         "link": "https://youtu.be/Jv1ak_7N2bM?si=INV-orCfR7GUs4k0",
@@ -341,15 +341,15 @@
       },
       {
         "name": "Bilibili",
-        "url": "https://space.bilibili.com/222038693"
+        "url": "https://space.bilibili.com/BROCOOLING"
       },
       {
         "name": "Douyin",
-        "url": "1"
+        "url": "https://www.douyin.com/user/BROCOOLING"
       },
       {
         "name": "Xiaohongshu",
-        "url": "https://xhslink.com/m/88qHawRPYEz"
+        "url": "https://www.xiaohongshu.com/user/profile/BROCOOLING"
       }
     ]
   }
