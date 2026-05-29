@@ -2870,15 +2870,16 @@ function applyAdminToPage() {
                   if (thumbDiv) {
                     // Convert HTTP to HTTPS for mixed content
                     var thumbUrl = data.thumbnail.replace('http://', 'https://');
-                    thumbDiv.style.backgroundImage = 'url("' + thumbUrl + '")';
-                    thumbDiv.style.backgroundSize = 'cover';
-                    thumbDiv.style.backgroundPosition = 'center';
-                    
-                    // Remove the icon
+                    var existingImg = thumbDiv.querySelector('img');
+                    if (existingImg) existingImg.remove();
+                    var img = document.createElement('img');
+                    img.src = thumbUrl;
+                    img.referrerPolicy = 'no-referrer';
+                    img.alt = '';
+                    img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center';
+                    thumbDiv.appendChild(img);
                     var iconSpan = thumbDiv.querySelector('.video-thumb-icon');
-                    if (iconSpan) {
-                      iconSpan.remove();
-                    }
+                    if (iconSpan) iconSpan.remove();
                   }
                 }
               })
@@ -2890,10 +2891,11 @@ function applyAdminToPage() {
         // Douyin short links need server-side resolution, keep as is
       }
       
-      var thumbBg = thumbUrl ? ' style="background-image:url(\'' + thumbUrl + '\');background-size:cover;background-position:center"' : '';
+      var thumbImg = thumbUrl ? '<img src="' + thumbUrl + '" referrerpolicy="no-referrer" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center" loading="lazy">' : '';
       div.innerHTML =
         '<div class="video-card-thumb">' +
-          '<div class="video-card-thumb-inner ' + thumbClass + '"' + thumbBg + '>' +
+          '<div class="video-card-thumb-inner ' + thumbClass + '">' +
+            thumbImg +
             (thumbUrl ? '' : '<span class="video-thumb-icon">' + iconText + '</span>') +
           '</div>' +
           '<div class="video-card-thumb-overlay"></div>' +
