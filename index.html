@@ -796,6 +796,11 @@ ul { list-style: none; }
 .video-section-block {
   margin-bottom: 80px;
 }
+#douyinSection {
+  margin-left: -60px; margin-right: -60px; width: calc(100% + 120px);
+}
+#douyinSection .video-platform-header { padding: 0 60px; }
+#douyinSection .video-card { border: none; }
 .video-platform-header {
   display: flex;
   align-items: center;
@@ -1740,24 +1745,6 @@ ul { list-style: none; }
       <span class="section-label" data-i18n="video.douyin.label">Douyin Channel</span>
     </div>
     <div class="video-grid" id="douyinGrid">
-      <div class="video-card reveal">
-        <div class="video-card-thumb">
-          <div class="video-card-thumb-inner video-thumb-dy">
-            <span class="video-thumb-icon">DOUYIN</span>
-          </div>
-          <div class="video-card-thumb-overlay"></div>
-          <div class="video-card-play"></div>
-        </div>
-      </div>
-      <div class="video-card reveal">
-        <div class="video-card-thumb">
-          <div class="video-card-thumb-inner video-thumb-dy">
-            <span class="video-thumb-icon">DOUYIN</span>
-          </div>
-          <div class="video-card-thumb-overlay"></div>
-          <div class="video-card-play"></div>
-        </div>
-      </div>
       <div class="video-card reveal">
         <div class="video-card-thumb">
           <div class="video-card-thumb-inner video-thumb-dy">
@@ -3200,7 +3187,9 @@ function renderAdminPanel() {
         '</div>' +
       '</div>';
     });
-    videoHtml += '<button class="admin-add-btn" onclick="addAdminItem(\'video.'+platform+'\')">' + adminT('add.video') + ' (' + pName + ')</button>';
+    if (platform !== 'douyin') {
+      videoHtml += '<button class="admin-add-btn" onclick="addAdminItem(\'video.'+platform+'\')">' + adminT('add.video') + ' (' + pName + ')</button>';
+    }
     videoHtml += '<div style="height:12px;"></div>';
   });
   html += section('video', 'section.video', videoHtml);
