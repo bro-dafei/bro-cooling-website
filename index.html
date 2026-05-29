@@ -2718,6 +2718,37 @@ var adminData = broGetData('bro_admin_data', null);
   if (adminData) {
     // Has local data (user has edited): use it directly, skip server
     applyAdminToPage();
+    // Background: fetch GitHub to merge missing video links
+    (function() {
+      var xhr2 = new XMLHttpRequest();
+      var cb2 = 'v=' + Date.now() + Math.random();
+      xhr2.open('GET', 'https://raw.githubusercontent.com/bro-dafei/bro-cooling-website/main/bro-data.json?' + cb2, true);
+      xhr2.onload = function() {
+        if (xhr2.status !== 200) return;
+        try {
+          var ghData = JSON.parse(xhr2.responseText);
+          if (!ghData || !ghData.video) return;
+          var merged = false;
+          ['youtube', 'bilibili', 'douyin'].forEach(function(platform) {
+            var ghVideos = ghData.video[platform] || [];
+            if (!adminData.video[platform]) adminData.video[platform] = [];
+            ghVideos.forEach(function(ghV, i) {
+              var lcV = adminData.video[platform][i];
+              if (ghV.link && (!lcV || !lcV.link)) {
+                if (!lcV) adminData.video[platform][i] = { link: '', thumb_url: '' };
+                adminData.video[platform][i].link = ghV.link;
+                merged = true;
+              }
+            });
+          });
+          if (merged) {
+            broSetData('bro_admin_data', adminData);
+            applyAdminToPage();
+          }
+        } catch(e) {}
+      };
+      xhr2.send();
+    })();
   } else {
     // No local data: load from GitHub
     var xhr = new XMLHttpRequest();
