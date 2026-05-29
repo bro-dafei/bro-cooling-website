@@ -2881,6 +2881,11 @@ function applyAdminToPage() {
                     thumbDiv.appendChild(img);
                     var iconSpan = thumbDiv.querySelector('.video-thumb-icon');
                     if (iconSpan) iconSpan.style.display = 'none';
+                    // 同步写入 adminData 防止被 save-data 覆盖
+                    if (d.video && d.video[platform] && d.video[platform][index]) {
+                      d.video[platform][index].thumb_url = thumbUrl;
+                      broSetData('bro_admin_data', d);
+                    }
                   }
                 }
               })
