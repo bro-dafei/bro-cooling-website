@@ -41,13 +41,6 @@
       "en": "Partners",
       "anchor": "#partners",
       "visible": true
-    },
-    {
-      "id": "new",
-      "zh": "新菜单",
-      "en": "New Item",
-      "anchor": "#",
-      "visible": true
     }
   ],
   "hero": {
@@ -65,15 +58,23 @@
       },
       {
         "link": "https://youtu.be/Jv1ak_7N2bM?si=XqCXmPOGfsV59cVb"
+      },
+      {
+        "link": "https://youtu.be/hGF1x341yuQ?si=C1bm-eySYLCetKV8",
+        "thumb_url": ""
+      },
+      {
+        "link": "https://youtu.be/CXwFC46130s?si=ix7iLis6aXYnhHbR",
+        "thumb_url": ""
+      },
+      {
+        "link": "https://youtu.be/XLcnhk2Ww0k?si=DLEQChaTGoQIhqxw",
+        "thumb_url": ""
       }
     ],
     "bilibili": [
       {
-        "title_zh": "ROG 5090 骇客拆解改装分体水！华硕幻世神沉浸式装机",
-        "title_en": "ROG RTX 5090 Teardown & Custom Water Cooling Build — ASUS GR701 Immersive Build",
-        "meta_zh": "",
-        "meta_en": "",
-        "link": "https://www.bilibili.com/video/BV1fCL16eEkb/",
+        "link": "https://www.bilibili.com/video/BV1fCL16eEkb/?spm_id_from=333.1387.upload.video_card.click&vd_source=184a30c34d215334fdaf1851afad269a",
         "thumb_url": "https://i1.hdslb.com/bfs/archive/58bc8d5814dc5deb5b6377ff4839a8a1cf9c09cc.jpg"
       },
       {
@@ -83,6 +84,18 @@
       {
         "link": "https://www.bilibili.com/video/BV1J5vsBXENd/?spm_id_from=333.1387.upload.video_card.click",
         "thumb_url": "https://i2.hdslb.com/bfs/archive/fa7f4e0431a2b784a0c7c4ac8c874d5aecad0c03.jpg"
+      },
+      {
+        "link": "https://www.bilibili.com/video/BV1BmcsznEVW/?spm_id_from=333.1387.upload.video_card.click",
+        "thumb_url": "https://i2.hdslb.com/bfs/archive/44d003558bcad6d8b1e21f5c119577540a1c1c1c.jpg"
+      },
+      {
+        "link": "https://www.bilibili.com/video/BV1YoQgB1EAs/?spm_id_from=333.1387.upload.video_card.click",
+        "thumb_url": "https://i1.hdslb.com/bfs/archive/514b1158d5dd69d648d0630f81d24f09eaf9fb45.jpg"
+      },
+      {
+        "link": "https://www.bilibili.com/video/BV1JQkoBAE3P/?spm_id_from=333.1387.upload.video_card.click",
+        "thumb_url": "https://i0.hdslb.com/bfs/archive/0886f418fe51338baf28724a4eac076f84790a6d.jpg"
       }
     ],
     "douyin": [
