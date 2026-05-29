@@ -2877,9 +2877,10 @@ function applyAdminToPage() {
                     img.referrerPolicy = 'no-referrer';
                     img.alt = '';
                     img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center';
+                    img.onerror = function() { this.style.display='none'; var s = thumbDiv.querySelector('.video-thumb-icon'); if(s) s.style.display='flex'; };
                     thumbDiv.appendChild(img);
                     var iconSpan = thumbDiv.querySelector('.video-thumb-icon');
-                    if (iconSpan) iconSpan.remove();
+                    if (iconSpan) iconSpan.style.display = 'none';
                   }
                 }
               })
@@ -2891,12 +2892,12 @@ function applyAdminToPage() {
         // Douyin short links need server-side resolution, keep as is
       }
       
-      var thumbImg = thumbUrl ? '<img src="' + thumbUrl + '" referrerpolicy="no-referrer" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center" loading="lazy">' : '';
+      var thumbImg = thumbUrl ? '<img src="' + thumbUrl + '" referrerpolicy="no-referrer" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center" loading="lazy" onerror="this.style.display=\'none\';this.parentElement.querySelector(\'.video-thumb-icon\').style.display=\'flex\'">' : '';
       div.innerHTML =
         '<div class="video-card-thumb">' +
           '<div class="video-card-thumb-inner ' + thumbClass + '">' +
             thumbImg +
-            (thumbUrl ? '' : '<span class="video-thumb-icon">' + iconText + '</span>') +
+            '<span class="video-thumb-icon"' + (thumbUrl ? ' style="display:none"' : '') + '>' + iconText + '</span>' +
           '</div>' +
           '<div class="video-card-thumb-overlay"></div>' +
           '<div class="video-card-play"></div>' +
