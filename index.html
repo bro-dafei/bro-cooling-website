@@ -775,6 +775,9 @@ ul { list-style: none; }
   .video-grid { grid-template-columns: 1fr; }
   .video-section-wrap { padding: 0 16px; }
   .video-card-body { padding: 16px 20px; }
+  #douyinSection { margin-left: -16px; margin-right: -16px; width: calc(100% + 32px); }
+  #douyinSection .video-platform-header { padding: 0 16px; }
+  #douyinSection .video-card { border: none; }
 }
 
 .reveal {
@@ -1731,7 +1734,7 @@ ul { list-style: none; }
   </div>
 
   <!-- Douyin -->
-  <div class="video-section-block">
+  <div class="video-section-block" id="douyinSection">
     <div class="video-platform-header">
       <div class="video-platform-badge dy"><span class="platform-dot"></span>DOUYIN</div>
       <span class="section-label" data-i18n="video.douyin.label">Douyin Channel</span>
