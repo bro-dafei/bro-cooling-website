@@ -2868,7 +2868,40 @@ function applyAdminToPage() {
               });
           }
         }
-        // Douyin short links need server-side resolution, keep as is
+        } else if (platform === 'douyin') {
+          // Use our API to resolve short link and get thumbnail
+          fetch('/api/douyin-thumb?url=' + encodeURIComponent(card.link))
+            .then(function(response) {
+              if (!response.ok) return;
+              return response.json();
+            })
+            .then(function(data) {
+              if (data && data.thumbnail) {
+                var thumbDiv = div.querySelector('.video-card-thumb-inner');
+                if (thumbDiv) {
+                  var existingImg = thumbDiv.querySelector('img');
+                  if (existingImg) existingImg.remove();
+                  var img = document.createElement('img');
+                  img.src = data.thumbnail;
+                  img.referrerPolicy = 'no-referrer';
+                  img.alt = '';
+                  img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center';
+                  img.loading = 'lazy';
+                  img.onerror = function() { this.style.display='none'; var s = thumbDiv.querySelector('.video-thumb-icon'); if(s) s.style.display='flex'; };
+                  thumbDiv.appendChild(img);
+                  var iconSpan = thumbDiv.querySelector('.video-thumb-icon');
+                  if (iconSpan) iconSpan.style.display = 'none';
+                  // Sync to adminData to prevent save-data overwrite
+                  if (d.video && d.video[platform] && d.video[platform][index]) {
+                    d.video[platform][index].thumb_url = data.thumbnail;
+                    broSetData('bro_admin_data', d);
+                  }
+                }
+              }
+            })
+            .catch(function(error) {
+              console.log('Failed to fetch Douyin thumbnail for', card.link, error);
+            });
       }
       
       var thumbImg = thumbUrl ? '<img src="' + thumbUrl + '" referrerpolicy="no-referrer" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center" loading="lazy" onerror="this.style.display=\'none\';this.parentElement.querySelector(\'.video-thumb-icon\').style.display=\'flex\'">' : '';
