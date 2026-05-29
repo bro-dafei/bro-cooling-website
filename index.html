@@ -2712,63 +2712,38 @@ function getAdminDefaults() {
 
 /* --- Load / Save Admin Data --- */
 var adminData = broGetData('bro_admin_data', null);
-if (!adminData) {
-  // Try server fallback first, then defaults
-  adminData = getAdminDefaults();
-  broSetData('bro_admin_data', adminData);
-}
 
-// After page ready, always try to update from server (merge server data into local)
+// Load data: local first, server fallback
 (function() {
-  var xhr = new XMLHttpRequest();
-  // Load from GitHub raw with cache busting
-  var cacheBuster = 'v=' + Date.now() + Math.random();
-  xhr.open('GET', 'https://raw.githubusercontent.com/bro-dafei/bro-cooling-website/main/bro-data.json?' + cacheBuster, true);
-  xhr.onload = function() {
-    if (xhr.status === 200) {
-      try {
-        var serverData = JSON.parse(xhr.responseText);
-        if (serverData) {
-          // Merge ALL admin data from server, not just video
-          var local = adminData || getAdminDefaults();
-          // Deep merge: server data overwrites local defaults, but keep user's local changes
-          function mergeDeep(target, source) {
-            for (var key in source) {
-              if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key]) && target[key] && typeof target[key] === 'object' && !Array.isArray(target[key])) {
-                mergeDeep(target[key], source[key]);
-              } else if (source[key] !== undefined && target[key] === undefined) {
-                // Local is source of truth: only fill in missing fields from server
-                target[key] = source[key];
-              }
-            }
-          }
-          
-          // For video arrays: only fill in missing platforms from server
-          if (serverData.video) {
-            ['youtube','bilibili','douyin'].forEach(function(p) {
-              if (serverData.video[p] && (!local.video || !local.video[p])) {
-                if (!local.video) local.video = {};
-                local.video[p] = serverData.video[p];
-              }
-            });
-          }
-          
-          // Merge all other sections: only fill in missing sections
-          Object.keys(serverData).forEach(function(section) {
-            if (section !== 'video') {
-              if (!local[section]) local[section] = {};
-              mergeDeep(local[section], serverData[section]);
-            }
-          });
-          
-          broSetData('bro_admin_data', local);
-          adminData = local;
+  if (adminData) {
+    // Has local data (user has edited): use it directly, skip server
+    applyAdminToPage();
+  } else {
+    // No local data: load from GitHub
+    var xhr = new XMLHttpRequest();
+    var cacheBuster = 'v=' + Date.now() + Math.random();
+    xhr.open('GET', 'https://raw.githubusercontent.com/bro-dafei/bro-cooling-website/main/bro-data.json?' + cacheBuster, true);
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        try {
+          adminData = JSON.parse(xhr.responseText);
+          if (!adminData) adminData = getAdminDefaults();
+          broSetData('bro_admin_data', adminData);
+          applyAdminToPage();
+        } catch(e) {
+          console.log('bro-data.json parse error:', e);
+          adminData = getAdminDefaults();
+          broSetData('bro_admin_data', adminData);
           applyAdminToPage();
         }
-      } catch(e) { console.log('bro-data.json parse error:', e); }
-    }
-  };
-  xhr.send();
+      } else {
+        adminData = getAdminDefaults();
+        broSetData('bro_admin_data', adminData);
+        applyAdminToPage();
+      }
+    };
+    xhr.send();
+  }
 })();
 
 function saveAdminData() {
