@@ -69,8 +69,12 @@
     ],
     "bilibili": [
       {
-        "link": "",
-        "thumb_url": ""
+        "title_zh": "ROG 5090 骇客拆解改装分体水！华硕幻世神沉浸式装机",
+        "title_en": "ROG RTX 5090 Teardown & Custom Water Cooling Build — ASUS GR701 Immersive Build",
+        "meta_zh": "",
+        "meta_en": "",
+        "link": "https://www.bilibili.com/video/BV1fCL16eEkb/",
+        "thumb_url": "https://i1.hdslb.com/bfs/archive/58bc8d5814dc5deb5b6377ff4839a8a1cf9c09cc.jpg"
       },
       {
         "link": "https://www.bilibili.com/video/BV1RfAEziE2M/?spm_id_from=333.1387.upload.video_card.click",
