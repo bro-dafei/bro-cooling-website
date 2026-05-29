@@ -2736,25 +2736,24 @@ if (!adminData) {
             for (var key in source) {
               if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key]) && target[key] && typeof target[key] === 'object' && !Array.isArray(target[key])) {
                 mergeDeep(target[key], source[key]);
-              } else if (source[key] !== undefined) {
-                // Server is source of truth: always overwrite local with server data
+              } else if (source[key] !== undefined && target[key] === undefined) {
+                // Local is source of truth: only fill in missing fields from server
                 target[key] = source[key];
               }
             }
           }
           
-          // For video arrays: server is source of truth
+          // For video arrays: only fill in missing platforms from server
           if (serverData.video) {
             ['youtube','bilibili','douyin'].forEach(function(p) {
-              if (serverData.video[p]) {
-                // Always overwrite with server data
+              if (serverData.video[p] && (!local.video || !local.video[p])) {
                 if (!local.video) local.video = {};
                 local.video[p] = serverData.video[p];
               }
             });
           }
           
-          // Merge all other sections (hero, nav, heritage, etc.)
+          // Merge all other sections: only fill in missing sections
           Object.keys(serverData).forEach(function(section) {
             if (section !== 'video') {
               if (!local[section]) local[section] = {};
